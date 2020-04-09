@@ -38,10 +38,15 @@ public class MyFrame extends JFrame{
 	 */
 	private JPanel buttonsSouth;
 	/**
-	 * The panel that will contain the text fields and labels for the "Center" section of the 
+	 * The panel that will contain the text fields and labels for the "West" section of the 
 	 * window
 	 */
-	private JPanel centreInput;
+	private JPanel westInput;
+	/**
+	 * The panel that will contain the text fields and labels for the "East" section of the 
+	 * window
+	 */
+	private JPanel eastInput;
 	private Container c;
 	/**
 	 * Default constructor where the frame is constructed 
@@ -50,7 +55,7 @@ public class MyFrame extends JFrame{
 		titlePanel = new JPanel();
 		buttonsSouth = new JPanel();
 		centreInput = new JPanel();
-		setSize(700,400);
+		setSize(700,200);
 		
     //Creating the title of the window
 		JLabel title = new JLabel("Student Application");
@@ -63,29 +68,31 @@ public class MyFrame extends JFrame{
     //Creating Studnet name label
     name = new JLabel("Enter Student's Name");
 		//Creating the textfield for the user to enter the id
-    idTF = new JTextField(20);
+    idTF = new JTextField(15);
     //Creating the textfield for the user to enter the name
-		nameTF = new JTextField(20);
+		nameTF = new JTextField(15);
 		
 		//Adding the title component to the top panel
 		titlePanel.add(title);
-    //Adding the save and find buttons to the bottum panel
+   		 //Adding the save and find buttons to the bottum panel
 		buttonsSouth.add(save);
 		buttonsSouth.add(find);
-	  //Adding the labels and textfields for the student's id and name
-		centreInput.add(id);
-		centreInput.add(idTF);
-		centreInput.add(name);
-		centreInput.add(nameTF);
+	  	//Adding the labels and textfields for the student's id to the east panel
+		eastInput.add(id);
+		eastInput.add(idTF);
+		//Adding the label and textfield for the student's name to the west panel
+		westInput.add(name);
+		westInput.add(nameTF);
 		
 		//Setting the layout
 		setLayout(new BorderLayout());
 		
 		c = getContentPane();
-    //Adding the different panels to the appropriate section of the container
+   		 //Adding the different panels to the appropriate section of the container
 		c.add("North", titlePanel);
 		c.add("South", buttonsSouth);
-		c.add("Center", centreInput);
+		c.add("East", eastInput);
+		c.add("West", westInput);
 		
 		setVisible(true);
     
