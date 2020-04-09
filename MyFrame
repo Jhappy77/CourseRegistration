@@ -1,0 +1,124 @@
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Scanner;
+
+import javax.swing.*;
+
+public class MyFrame extends JFrame{
+  /**
+  * Label for the student id
+  **/
+  private JLabel id;
+  /**
+  * Label for the student name
+  **/
+	private JLabel name;
+  /**
+  * TextField for the student id
+  **/
+  private JTextField idTF;
+  /**
+  * TextField for the student name
+  **/
+  private JTextField nameTF;
+	/**
+	 * The panel that will contain all the components that will be displayed in the "North" section
+	 * of the window
+	 */
+	private JPanel titlePanel;
+	/**
+	 * The panel that will contain all the buttons that will be displayed in the "South" section
+	 * of the window
+	 */
+	private JPanel buttonsSouth;
+	/**
+	 * The panel that will contain the text fields and labels for the "Center" section of the 
+	 * window
+	 */
+	private JPanel centreInput;
+	private Container c;
+	/**
+	 * Default constructor where the frame is constructed 
+	 */
+	public MyFrame() {
+		titlePanel = new JPanel();
+		buttonsSouth = new JPanel();
+		centreInput = new JPanel();
+		setSize(700,400);
+		
+    //Creating the title of the window
+		JLabel title = new JLabel("Student Application");
+    //Creating the save button
+		JButton save = new JButton("Save");
+    //Creating the Find button
+		JButton find = new JButton("Find");
+		//Creating student id label
+		id = new JLabel("Enter the Student ID");
+    //Creating Studnet name label
+    name = new JLabel("Enter Student's Name");
+		//Creating the textfield for the user to enter the id
+    idTF = new JTextField(20);
+    //Creating the textfield for the user to enter the name
+		nameTF = new JTextField(20);
+		
+		//Adding the title component to the top panel
+		titlePanel.add(title);
+    //Adding the save and find buttons to the bottum panel
+		buttonsSouth.add(save);
+		buttonsSouth.add(find);
+	  //Adding the labels and textfields for the student's id and name
+		centreInput.add(id);
+		centreInput.add(idTF);
+		centreInput.add(name);
+		centreInput.add(nameTF);
+		
+		//Setting the layout
+		setLayout(new BorderLayout());
+		
+		c = getContentPane();
+    //Adding the different panels to the appropriate section of the container
+		c.add("North", titlePanel);
+		c.add("South", buttonsSouth);
+		c.add("Center", centreInput);
+		
+		setVisible(true);
+    
+		
+		//listener for the save button to create a new student and send to the server
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+        //Get the student name from the text field
+        String studName = nameTF.getText();
+        //Get the student id from the text field
+        String studID = idTF.getText();
+				//Send the new student to server to be saved
+        Student stud = new Student(studName, studID);
+			}
+		});
+    
+		//listener for the find button to take the textfield inputs and search for 
+    // the corresponding student
+		find.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				//Get the student name from the text field
+        String studName = nameTF.getText();
+        //Get the student id from the text field
+        String studID = idTF.getText();
+				//Send the new student to server to be found
+        Student stud = new Student(studName, studID);
+        }
+		});
+		
+		
+	}
+
+
+}
