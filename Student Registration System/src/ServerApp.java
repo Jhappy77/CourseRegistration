@@ -15,22 +15,29 @@ public class ServerApp {
 	//Output for the client
 	ObjectOutputStream clientOut;
 	
+	//The client number to help keep track of the client when there's multiple connections
+	int clientNumber;
+	
 	//Registration app for this client
 	RegistrationApp reg;
 	
 	
-	/**
-	 * Constructor for the server app
-	 * @param in
-	 * @param out
-	 */
-	public ServerApp(ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DBManager db)
+/**
+ * Constructor for the server app
+ * @param clientNumber
+ * @param in input stream to the client
+ * @param out output stream to the client
+ * @param cat course catalogue
+ * @param db manager
+ */
+	public ServerApp(int clientNumber, ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DBManager db)
 	{
+		this.clientNumber = clientNumber;
 		reg = new RegistrationApp(cat,db);
 		clientIn = in;
 		clientOut = out;
 		
-		System.out.println("Connected to a Client");
+		System.out.println("Connected to Client: " + clientNumber);
 		
 		//For testing purposes, should be run from a thread
 		Execute();
@@ -51,12 +58,26 @@ public class ServerApp {
 				dealWithPackage(pac);
 			}
 			
-			//Catch any errors
+			//Catch any errors, if no longer connected to a socket stop looping
 			catch (Exception e)
 			{
-				System.out.println("Error reading package from client: " + e.getMessage());
+				System.out.println("Client: " + clientNumber + " lost connection to socket: " + e.getMessage());
+				break;
 			}
 			
+		}
+		
+		System.out.println("Ending connection with Client: " + clientNumber);
+		
+		//Try closing off communication
+		try
+		{
+			clientOut.close();
+			clientIn.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error Closing IN/OUT line to Client: " + clientNumber + " error: " + e.getMessage());
 		}
 	}
 	
@@ -80,7 +101,7 @@ public class ServerApp {
 				String[] l = (String[]) pac.getData();
 					
 				//Check if valid and return the result
-				loginResult(reg.validateStudent(Integer.parseInt(l[0]), l[1]));
+				sendLoginResult(reg.validateStudent(Integer.parseInt(l[0]), l[1]));
 				break;
 
 				
@@ -92,8 +113,8 @@ public class ServerApp {
 				//Add the course to the student
 				reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
 				
-				//Send updated schedule back to student
-				
+				//Send updated schedule
+				sendSchedule();
 				break;
 
 			//Remove a course from the student
@@ -104,20 +125,51 @@ public class ServerApp {
 				//Remove the course
 				reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
 				
-				//Send updated schedule back to the student
-				
+				//Send updated schedule
+				sendSchedule();
 				break;
 				
+			//Just send back their schedule
+			case REQUESTSCHEDULE:
+				//Send the schedule
+				sendSchedule();
+				break;
+				
+			//Find a requested course, must be completed
+			case FINDCOURSE:
+				//Get data
+				String[] f = (String[]) pac.getData();
+				
+				reg.getCourse(f[0],Integer.parseInt(f[1]));
+				
 		}
+	}
+	
+	//Needs to be completed
+	private void sendCourse()
+	{
+		//Make package
+		Package pac = new Package(PackageType.COURSE, null);
 		
+		//Send package
+		sendPackage(pac);
+	}
+	
+	//Needs to be completed
+	private void sendSchedule()
+	{
+		//Make package
+		Package pac = new Package(PackageType.SCHEDULE, null);
 		
+		//Send package
+		sendPackage(pac);
 	}
 	
 	/**
 	 * Sends a message to the client with the result of the login attempt
 	 * @param result
 	 */
-	private void loginResult(Boolean result)
+	private void sendLoginResult(Boolean result)
 	{
 		//Make package
 		Package pac = new Package(PackageType.LOGINRESULT, result);

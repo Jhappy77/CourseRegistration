@@ -25,6 +25,20 @@ public enum PackageType {
 	//first = course name (String)
 	//second = course number (int)
 	
+	SCHEDULE,
+	//Data is ??
+	
+	REQUESTSCHEDULE,
+	//Data is empty
+	
+	COURSE,
+	//Data is ??
+	
+	FINDCOURSE,
+	//Data is string[]
+	//first = course name
+	//second = course number
+	
 	MESSAGE
 	//Data is string
 	//Message to be printed on the server

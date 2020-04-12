@@ -33,16 +33,8 @@ public class RegistrationApp {
 		}
 		else
 			System.err.println("Trying to remove course from null student");
-		
 	}
 
-//	public void searchCatalogueCourses() {
-//		try {
-//		System.out.println(getCourse()); //Need to decide how to return courses
-//		} catch(Exception e) {
-//			System.err.println(e.getMessage());
-//		}
-//	}
 
 	/**
 	 * Adds the passed offering to the selected student
@@ -93,7 +85,7 @@ public class RegistrationApp {
 	 * @param courseNumber
 	 * @return the course
 	 */
-	private Course getCourse(String courseName, int courseNumber) throws Exception
+	public Course getCourse(String courseName, int courseNumber) throws Exception
 	{
 		return cat.searchCatalogue(courseName, courseNumber);
 	}

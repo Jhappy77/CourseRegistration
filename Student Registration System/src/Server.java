@@ -20,12 +20,16 @@ public class Server {
 	//The database manager
 	DBManager db;
 	
+	//The number of connections
+	int clientCount;
+	
 	/**
 	 * Makes a server with the passed port Number
 	 * @param portNumber 
 	 */
 	public Server(int portNumber)
 	{
+		clientCount = 0;
 		
 		//Start the server socket
 		try
@@ -37,6 +41,7 @@ public class Server {
 		catch (IOException e)
 		{
 			System.out.println("Error Starting Server: " + e.getMessage());
+			System.exit(0);
 		}
 		
 		//Make the course catalogue and the database
@@ -53,23 +58,30 @@ public class Server {
 	 */
 	private void monitorSocket()
 	{
-		try
+		while (true)
 		{
-			Socket clientSocket = socket.accept();
-			ObjectOutputStream clientOutput = new ObjectOutputStream(clientSocket.getOutputStream());
-			ObjectInputStream clientInput = new ObjectInputStream(clientSocket.getInputStream());
-			
-			//Create a server app to run on a different thread and deal with the client
-			ServerApp serverApp = new ServerApp(clientInput,clientOutput,catalogue,db);
-			
-			//Start the thread for the server
-			//Beep boop
-			
+			try
+			{
+				//Wait untill a new client is found
+				Socket clientSocket = socket.accept();
+				ObjectOutputStream clientOutput = new ObjectOutputStream(clientSocket.getOutputStream());
+				ObjectInputStream clientInput = new ObjectInputStream(clientSocket.getInputStream());
+				
+				clientCount += 1;
+				
+				//Create a server app to run on a different thread and deal with the client
+				ServerApp serverApp = new ServerApp(clientCount,clientInput,clientOutput,catalogue,db);
+				
+				//Start the thread for the server
+				//Beep boop
+				
+			}
+			catch (IOException e)
+			{
+				System.err.println("Error Connecting to a client: " + e.getMessage());
+			}
 		}
-		catch (IOException e)
-		{
-			System.err.println("Error Connecting to client: " + e.getMessage());
-		}
+		
 	}
 	
 	/**

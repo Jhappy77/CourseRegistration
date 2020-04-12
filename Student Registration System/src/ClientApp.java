@@ -17,6 +17,9 @@ public class ClientApp {
 	ObjectInputStream serverIn;
 	ObjectOutputStream serverOut;
 	
+	//While true the server will comunicate
+	Boolean keepCommunicating;
+	
 	//Connection to the GUI?
 	
 	/**
@@ -25,6 +28,9 @@ public class ClientApp {
 	 */
 	public ClientApp(String serverName, int portNumber)
 	{
+		
+		keepCommunicating = true;
+		
 		//Connect to the server
 		try
 		{
@@ -58,7 +64,7 @@ public class ClientApp {
 	 */
 	private void comunicate()
 	{
-		while(true)
+		while(keepCommunicating)
 		{
 			try
 			{
@@ -71,11 +77,63 @@ public class ClientApp {
 			catch (Exception e)
 			{
 				System.err.println("Error comunicating with server: " + e.getMessage());
+				break;
 			}
 		}
+		
+		//Deal with ending the communication
+		System.out.println("Ended comunication with server");
+		
+		//Close everything
+		try 
+		{
+			serverIn.close();
+			serverOut.close();
+			socket.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error closing socket: " + e.getMessage());
+		}
+		
+	}
+	
+	/**
+	 * Deals with the given package
+	 * @param pac
+	 */
+	private void dealWithPackage(Package pac)
+	{
+		switch(pac.getType())
+		{
+		
+			//Just print if its a message
+			case MESSAGE:
+				System.out.println(pac.getData());
+				break;
+
+			//Get the result from trying to login
+			case LOGINRESULT:
+					
+				//Just a placeholder, would change GUI here
+				System.out.println("Result from trying to login: " + pac.getData());
+				break;
+
+		}
+	}
+	
+	/**
+	 * Ends communication with the server
+	 */
+	public void endCommunication()
+	{
+		keepCommunicating = false;
 	}
 
-	//Start the client
+	/**
+	 * Simply starts the client and makes it comunicate with the server
+	 * @param args
+	 */
 	public static void main (String [] args) {
 		ClientApp client = new ClientApp("localhost", 9090);
 		client.comunicate();
