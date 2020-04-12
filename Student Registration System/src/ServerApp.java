@@ -66,21 +66,51 @@ public class ServerApp {
 	 */
 	private void dealWithPackage(Package pac)
 	{
-		//Just print if its a message
-		if (pac.getType() == PackageType.MESSAGE)
+		switch(pac.getType())
 		{
-			System.out.println(pac.getData());
+			//Just print if its a message
+			case MESSAGE:
+				System.out.println(pac.getData());
+				break;
+				
+				
+			//Check id and password
+			case LOGINREQUEST:
+				//Split the data into id and password
+				String[] l = pac.data.split(" ");
+					
+				//Check if valid and return the result
+				loginResult(reg.validateStudent(Integer.parseInt(l[0]), l[1]));
+				break;
+
+				
+			//Add a course to the student
+			case ADDCOURSE:
+				//Split string
+				String[] a = pac.data.split(" ");
+					
+				//Add the course to the student
+				reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
+				
+				//Send updated schedule back to student
+				
+				break;
+
+			//Remove a course from the student
+			case REMOVECOURSE:
+				//Split the string
+				String[] r = pac.data.split(" ");
+				
+				//Remove the course
+				reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
+				
+				//Send updated schedule back to the student
+				
+				break;
+				
 		}
 		
-		//Check id and password
-		else if (pac.getType() == PackageType.LOGINREQUEST)
-		{
-			//Split the data into id and password
-			String[] s = pac.data.split(" ");
-			
-			//Check if valid and return the result
-			loginResult(reg.validateStudent(Integer.parseInt(s[0]), s[1]));
-		}
+		
 	}
 	
 	/**

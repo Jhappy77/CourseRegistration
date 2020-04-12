@@ -22,12 +22,18 @@ public class RegistrationApp {
 	 * Remove selected course from the selected student
 	 * @param student
 	 */
-	public void removeCourseFromStudent(Course course) {
-		try {
-			selectedStudent.removeCourse(course); //Should update student list after
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
+	public void removeCourseFromStudent(String courseName, int courseNumber) {
+		if (selectedStudent != null)
+		{
+			try {
+				selectedStudent.removeCourse(getCourse(courseName, courseNumber));
+			} catch(Exception e) {
+				System.err.println("Error removing course from student: " + e.getMessage());
+			}
 		}
+		else
+			System.err.println("Trying to remove course from null student");
+		
 	}
 
 //	public void searchCatalogueCourses() {
