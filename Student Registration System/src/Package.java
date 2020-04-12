@@ -5,16 +5,16 @@ import java.io.Serializable;
  * @author Jerome Gobeil
  *
  */
-public class Package implements Serializable{
+public class Package <T> implements Serializable{
 
-	//Will change to generic probably
-	String data;
+	//Data to send
+	private T data;
 	
 	//The type of package
-	PackageType type;
+	private PackageType type;
 	
 	//Get the data
-	public String getData()
+	public T getData()
 	{
 		return data;
 	}
@@ -26,7 +26,7 @@ public class Package implements Serializable{
 	}
 	
 	//Constructor for the package
-	public Package(PackageType type, String data)
+	public Package(PackageType type, T data)
 	{
 		this.type = type;
 		this.data = data;

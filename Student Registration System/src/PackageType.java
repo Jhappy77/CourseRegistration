@@ -5,10 +5,28 @@
  *
  */
 public enum PackageType {
-	LOGINREQUEST, //Data should be id (integer) and password separated by a space
-	LOGINRESULT, //Data is SUCCESS or FAIL
-	ADDCOURSE, //Data is the course name, course number and offering index separated by spaces
-	REMOVECOURSE, //Data is the course name and course number separated by spaces
-	MESSAGE //Change/Remove this
+	LOGINREQUEST, 
+	//Data is a string []: 
+	//first element = student id (int) 
+	//second element = password (String)
+	
+	LOGINRESULT, 
+	//Data is boolean: 
+	//true is success, false if failure
+	
+	ADDCOURSE, 
+	//Data is string[]: 
+	//first element = course name, (String)
+	//second = course number (int)
+	//third = offering index (int)
+	
+	REMOVECOURSE, 
+	//Data is string[]
+	//first = course name (String)
+	//second = course number (int)
+	
+	MESSAGE
+	//Data is string
+	//Message to be printed on the server
 	
 }

@@ -76,8 +76,8 @@ public class ServerApp {
 				
 			//Check id and password
 			case LOGINREQUEST:
-				//Split the data into id and password
-				String[] l = pac.data.split(" ");
+				//Get Data
+				String[] l = (String[]) pac.getData();
 					
 				//Check if valid and return the result
 				loginResult(reg.validateStudent(Integer.parseInt(l[0]), l[1]));
@@ -86,8 +86,8 @@ public class ServerApp {
 				
 			//Add a course to the student
 			case ADDCOURSE:
-				//Split string
-				String[] a = pac.data.split(" ");
+				//Get Data
+				String[] a = (String[]) pac.getData();
 					
 				//Add the course to the student
 				reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
@@ -98,8 +98,8 @@ public class ServerApp {
 
 			//Remove a course from the student
 			case REMOVECOURSE:
-				//Split the string
-				String[] r = pac.data.split(" ");
+				//Get Data
+				String[] r = (String[]) pac.getData();
 				
 				//Remove the course
 				reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
@@ -119,16 +119,10 @@ public class ServerApp {
 	 */
 	private void loginResult(Boolean result)
 	{
-		Package pac;
-		if (result)
-		{
-			pac = new Package(PackageType.LOGINRESULT, "SUCCESS");
-		}
-		else
-		{
-			pac = new Package(PackageType.LOGINRESULT, "FAIL");
-		}
+		//Make package
+		Package pac = new Package(PackageType.LOGINRESULT, result);
 		
+		//Send package
 		sendPackage(pac);
 	}
 	
