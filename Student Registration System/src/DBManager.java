@@ -113,9 +113,14 @@ public class DBManager {
 		}
 	}
 	
-	public Student getStudent(String studentName) {
+	/**
+	 * Returns the student based on the id
+	 * @param id
+	 * @return The student
+	 */
+	public Student getStudent(int id) {
 		for(Student s:studentList) {
-			if(s.getStudentName().contentEquals(studentName))
+			if(s.getStudentId() == (id))
 				return s;
 		}
 		return null;

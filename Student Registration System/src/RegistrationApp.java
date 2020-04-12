@@ -1,93 +1,66 @@
 import java.util.Scanner;
 
+
+/**
+ * Class to deal with all the clients courses
+ * @author Joel Happ + Jerome Gobeil
+ *
+ */
 public class RegistrationApp {
-	private Scanner scan;
+
 	private CourseCatalogue cat;
 	private DBManager db;
 	
-	public RegistrationApp() {
-		scan = new Scanner(System.in);
-		cat = new CourseCatalogue();
-		db = new DBManager();
-		db.sampleDBTest(cat);
+	Student selectedStudent;
+	
+	public RegistrationApp(CourseCatalogue cat, DBManager db) {
+		this.cat = cat;
+		this.db = db;
 	}
 	
 	/**
-	 * Displays a menu for the user
+	 * Remove selected course from the selected student
+	 * @param student
 	 */
-	public void displayMenu() {
-		System.out.println("Please select one of the following choices:");
-		System.out.println("1. Search Catalogue Courses");
-		System.out.println("2. Add course to a student's courses");
-		System.out.println("3. Remove course from a student's courses");
-		System.out.println("4. View all courses in the catalogue");
-		System.out.println("5. View all courses taken by a student");
-		System.out.println("6. View all students (FOR TESTING)");
-		System.out.println("7. Quit Program");
-		System.out.println("");
-		System.out.println("Enter your selection:");
-	}
-	
-	/**
-	 * Lets user select different options to interact with backend
-	 */
-	public void menu() {
-		while(true) {
-			displayMenu();
-			int selection = scan.nextInt();
-			scan.nextLine();
-			switch(selection) {
-				case 1:
-					searchCatalogueCourses();
-					break;
-				case 2:
-					addCourseToStudent();
-					break;
-				case 3:
-					removeCourseFromStudent();
-					break;
-				case 4:
-					viewAllCoursesCatalogue();
-					break;
-				case 5:
-					viewAllCoursesStudent();
-					break;
-				case 6:
-					viewAllStudents();
-				case 7:
-					System.exit(0);
-					break;
-			}
-		}
-	}
-	
-	private void removeCourseFromStudent() {
+	public void removeCourseFromStudent(Course course) {
 		try {
-		getStudent().removeCourse(getCourse());
+			selectedStudent.removeCourse(course); //Should update student list after
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}
 	}
 
-	private void searchCatalogueCourses() {
-		try {
-		System.out.println(getCourse());
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
+//	public void searchCatalogueCourses() {
+//		try {
+//		System.out.println(getCourse()); //Need to decide how to return courses
+//		} catch(Exception e) {
+//			System.err.println(e.getMessage());
+//		}
+//	}
+
+	/**
+	 * Adds the passed offering to the selected student
+	 */
+	public void addCourseToStudent(String courseName, int courseNumber, int courseOffering) {
+		
+		//Check if student is selected
+		if (selectedStudent != null)
+		{
+			try {
+				//Find course and add it to the student
+				selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, courseOffering));
+			}catch(Exception e) {
+				System.err.println("Error trying to add course " + e.getMessage());
+			}
 		}
+		else
+			System.err.println("Trying to add a course when no student selected");
+		
 	}
 	
-	private void addCourseToStudent() {
-		try {
-		getStudent().addCourseOffering(getCourseOffering());
-		}catch(Exception e) {
-			System.out.println(e.getMessage());
-		}
-	}
-	
-	private void viewAllCoursesStudent() {
-		System.out.println(getStudent().stringAllRegs());
-	}
+//	private void viewAllCoursesStudent() {
+//		System.out.println(getStudent().stringAllRegs());
+//	}
 	
 	private void viewAllCoursesCatalogue() {
 		System.out.println(cat);
@@ -97,46 +70,67 @@ public class RegistrationApp {
 		db.printAllStudents();
 	}
 	
-	//////////////////// GETTERS ////////////////////////
-	private CourseOffering getCourseOffering() throws Exception{
-		Course c = getCourse();
-		System.out.println("Enter the lecture section you are searching for:");
-		return c.getCourseOfferingByNum(scan.nextInt()-1);
+	/**
+	 * Finds the course offering from the given course
+	 * @param courseName
+	 * @param courseNumber
+	 * @param offeringIndex
+	 * @return the offering
+	 */
+	private CourseOffering getCourseOffering(String courseName, int courseNumber, int offeringIndex) throws Exception{
+		return getCourse(courseName, courseNumber).getCourseOfferingByNum(offeringIndex);
 	}
 	
-	private Course getCourse() throws Exception{
-		return cat.searchCatalogue(scanCourseName(), scanCourseNumber());
+	/**
+	 * Finds the course corresponding to the given name and number
+	 * @param courseName
+	 * @param courseNumber
+	 * @return the course
+	 */
+	private Course getCourse(String courseName, int courseNumber) throws Exception
+	{
+		return cat.searchCatalogue(courseName, courseNumber);
 	}
 	
-	private Student getStudent() {
-		Student s = db.getStudent(scanStudentName());
-		if(s==null) {
-			System.err.println("The student you searched for does not exist");
-			System.exit(1);
-			return null;
+	/**
+	 * Finds a student by ID and checks if their password is correct
+	 * @param id
+	 * @param password
+	 * @return true if success, false if fail
+	 */
+	public Boolean validateStudent(int id, String password) {
+		selectedStudent = db.getStudent(id);
+		if(selectedStudent==null) { 
+			return false;
 		}
-		return s;
+		else
+		{
+			if (selectedStudent.checkPassword(password))
+			{
+				return true;
+			}
+			else
+			{
+				selectedStudent = null;
+				return false;
+			}
+		}
 	}
 	
 	
 	///////////////////// SCANNERS //////////////////////
-	private String scanStudentName() {
-		System.out.println("Please enter the name of the student:");
-		return scan.nextLine();
-	}
-	private String scanCourseName() {
-		System.out.println("Please enter the name of the course: (e.g. ENSF)");
-		return scan.nextLine().trim().toUpperCase();
-	}
-	
-	private int scanCourseNumber() {
-		System.out.println("Please enter the number of the course: (e.g. 409)");
-		return scan.nextInt();
-	}
-	
-	public static void main (String [] args) {
-		RegistrationApp theApp = new RegistrationApp();
-		theApp.menu();		
-	}
+//	private String scanStudentName() {
+//		System.out.println("Please enter the name of the student:");
+//		return scan.nextLine();
+//	}
+//	private String scanCourseName() {
+//		System.out.println("Please enter the name of the course: (e.g. ENSF)");
+//		return scan.nextLine().trim().toUpperCase();
+//	}
+//	
+//	private int scanCourseNumber() {
+//		System.out.println("Please enter the number of the course: (e.g. 409)");
+//		return scan.nextInt();
+//	}
 
 }

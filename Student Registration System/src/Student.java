@@ -4,6 +4,7 @@ public class Student {
 	
 	private String studentName;
 	private int studentId;
+	private String password;
 	private ArrayList<Registration> studentRegList;
 	private final int MAXCOURSENUMBER = 6;
 	
@@ -112,6 +113,18 @@ public class Student {
 	 */
 	public void removeRegistration(Registration registration) {
 		studentRegList.remove(registration);
+	}
+	
+	/**
+	 * Checks the students password, returns true if correct
+	 * @param password
+	 * @return true if correct, false if not
+	 */
+	public Boolean checkPassword(String password)
+	{
+		if (this.password.equals(password))
+			return true;
+		return false;
 	}
 
 }

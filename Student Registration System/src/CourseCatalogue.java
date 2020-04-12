@@ -4,16 +4,15 @@ public class CourseCatalogue {
 	
 	private ArrayList <Course> courseList;
 	
-	public CourseCatalogue () {
-		loadFromDataBase ();
+	public CourseCatalogue (DBManager db) {
+		loadFromDataBase (db);
 	}
 	
 	/**
 	 * Creates a new DBManager, and sets the course list to be the result of
 	 * reading from the database.
 	 */
-	private void loadFromDataBase() {
-		DBManager db = new DBManager();
+	private void loadFromDataBase(DBManager db) {
 		setCourseList(db.readFromDataBase());
 	}
 	
