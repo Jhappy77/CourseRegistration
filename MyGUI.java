@@ -1,13 +1,20 @@
 import java.util.Optional;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -304,6 +311,31 @@ public class MyGUI extends Application{
 		catalogue.initModality((Modality.APPLICATION_MODAL));
 		catalogue.setTitle("Course Catalogue");
 		catalogue.setMinWidth(250);
+		
+		VBox layout = new VBox();
+		
+		ObservableList<Course> courses = FXCollections.observableArrayList();
+		courses.add(new Course("ENGG", 200));
+		courses.add(new Course("ENGG", 201));
+		courses.add(new Course("ENGG", 225));
+		
+		TableView<Course> table;
+		
+		TableColumn<Course, String> nameCol = new TableColumn<>("Course");
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+		
+		TableColumn<Course, String> numberCol = new TableColumn<>("Number");
+		numberCol.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
+		
+		table = new TableView<>();
+		table.setItems(courses);
+		table.getColumns().addAll(nameCol, numberCol);
+		
+		layout.getChildren().addAll(table);
+		
+		Scene scene = new Scene(layout);
+		catalogue.setScene(scene);
+		catalogue.showAndWait();
 		
 		
 	}
