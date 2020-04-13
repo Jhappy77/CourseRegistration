@@ -37,7 +37,7 @@ public class ServerApp {
 		clientIn = in;
 		clientOut = out;
 		
-		System.out.println("Connected to Client: " + clientNumber);
+		System.out.println("Client " + clientNumber + ": Connected");
 		
 		//For testing purposes, should be run from a thread
 		Execute();
@@ -61,13 +61,13 @@ public class ServerApp {
 			//Catch any errors, if no longer connected to a socket stop looping
 			catch (Exception e)
 			{
-				System.out.println("Client: " + clientNumber + " lost connection to socket: " + e.getMessage());
+				System.out.println("Client " + clientNumber + ": lost connection to socket: " + e.getMessage());
 				break;
 			}
 			
 		}
 		
-		System.out.println("Ending connection with Client: " + clientNumber);
+		System.out.println("Client " + clientNumber + ": Ending connection");
 		
 		//Try closing off communication
 		try
@@ -77,7 +77,7 @@ public class ServerApp {
 		}
 		catch (IOException e)
 		{
-			System.err.println("Error Closing IN/OUT line to Client: " + clientNumber + " error: " + e.getMessage());
+			System.err.println("Client " + clientNumber + ": Error Closing IN/OUT line: " + e.getMessage());
 		}
 	}
 	
@@ -91,12 +91,14 @@ public class ServerApp {
 		{
 			//Just print if its a message
 			case MESSAGE:
-				System.out.println(pac.getData());
+				System.out.println("Client " + clientNumber + " Message: " + pac.getData());
 				break;
 				
 				
 			//Check id and password
 			case LOGINREQUEST:
+				System.out.println("Client " + clientNumber + ": Received Login Request");
+				
 				//Get Data
 				String[] l = (String[]) pac.getData();
 					
@@ -107,6 +109,8 @@ public class ServerApp {
 				
 			//Add a course to the student
 			case ADDCOURSE:
+				System.out.println("Client " + clientNumber + ": Received Add Course");
+				
 				//Get Data
 				String[] a = (String[]) pac.getData();
 					
@@ -119,6 +123,8 @@ public class ServerApp {
 
 			//Remove a course from the student
 			case REMOVECOURSE:
+				System.out.println("Client " + clientNumber + ": Received Remove Course");
+				
 				//Get Data
 				String[] r = (String[]) pac.getData();
 				
@@ -131,18 +137,24 @@ public class ServerApp {
 				
 			//Just send back their schedule
 			case REQUESTSCHEDULE:
+				System.out.println("Client " + clientNumber + ": Received Request Schedule");
+				
 				//Send the schedule
 				sendSchedule();
 				break;
 				
 			//Find a requested course, must be completed
 			case FINDCOURSE:
+				System.out.println("Client " + clientNumber + ": Received Find Course");
+				
 				//Try and find course, if cant send null
 				sendCourse((String[])pac.getData());
 				break;
 				
 			//Just send the entire list of all courses
 			case REQUESTCOURSECATALOGUE:
+				System.out.println("Client " + clientNumber + ": Received Request Catalogue");
+				
 				sendCatalogue();
 				break;
 				
@@ -151,8 +163,10 @@ public class ServerApp {
 	
 	private void sendCatalogue()
 	{
+		System.out.println("Client " + clientNumber + ": Sending Catalogue");
+		
 		//Make the package
-		Package<CourseLite[]> pac = new Package<CourseLite[]>(PackageType.CATALOGUE, reg.getEntireCourseList());
+		Package pac = new Package(PackageType.CATALOGUE, reg.getEntireCourseList());
 		
 		//Send package
 		sendPackage(pac);
@@ -164,6 +178,8 @@ public class ServerApp {
 	 */
 	private void sendCourse(String[] f)
 	{
+		System.out.println("Client " + clientNumber + ": Sending Course");
+		
 		CourseLite c;
 		try
 		{
@@ -175,7 +191,7 @@ public class ServerApp {
 		}
 		
 		//Make package
-		Package<CourseLite> pac = new Package<CourseLite>(PackageType.COURSE, c);
+		Package pac = new Package(PackageType.COURSE, c);
 		
 		//Send package
 		sendPackage(pac);
@@ -186,8 +202,10 @@ public class ServerApp {
 	 */
 	private void sendSchedule()
 	{
+		System.out.println("Client " + clientNumber + ": Sending Schedule");
+		
 		//Make package
-		Package<CourseLite[]> pac = new Package<CourseLite[]>(PackageType.SCHEDULE, reg.getSchedule());
+		Package pac = new Package(PackageType.SCHEDULE, reg.getSchedule());
 		
 		//Send package
 		sendPackage(pac);
@@ -199,8 +217,10 @@ public class ServerApp {
 	 */
 	private void sendLoginResult(Boolean result)
 	{
+		System.out.println("Client " + clientNumber + ": Sending Login Result");
+		
 		//Make package
-		Package<Boolean> pac = new Package<Boolean>(PackageType.LOGINRESULT, result);
+		Package pac = new Package(PackageType.LOGINRESULT, result);
 		
 		//Send package
 		sendPackage(pac);
@@ -218,7 +238,7 @@ public class ServerApp {
 		}
 		catch (IOException e)
 		{
-			System.err.println("Error sending package to client: " + e.getMessage());
+			System.err.println("Client " + clientNumber + ": Error sending package: " + e.getMessage());
 		}
 		
 	}

@@ -50,16 +50,16 @@ public class DBManager {
 	
 	
 	public void fillStudentArrayList() {
-		studentList.add(new Student("Timothy", 300769));
-		studentList.add(new Student("Petrune", 300669));
-		studentList.add(new Student("Donald", 308008));
-		studentList.add(new Student("Jebediah", 300750));
-		studentList.add(new Student("Luigi", 300546));
-		studentList.add(new Student("Zelda", 300333));
-		studentList.add(new Student("Moshi", 300777));
-		studentList.add(new Student("Egbert", 300543));
-		studentList.add(new Student("Zebulon", 300228));
-		studentList.add(new Student("Taylor Noel", 420420));
+		studentList.add(new Student("Timothy", 300769, "1234"));
+		studentList.add(new Student("Petrune", 300669, "1234"));
+		studentList.add(new Student("Donald", 308008, "1234"));
+		studentList.add(new Student("Jebediah", 300750, "1234"));
+		studentList.add(new Student("Luigi", 300546, "1234"));
+		studentList.add(new Student("Zelda", 300333, "1234"));
+		studentList.add(new Student("Moshi", 300777, "1234"));
+		studentList.add(new Student("Egbert", 300543, "1234"));
+		studentList.add(new Student("Zebulon", 300228, "1234"));
+		studentList.add(new Student("Taylor Noel", 420420, "I Suk"));
 	}
 	
 	/**
@@ -105,9 +105,10 @@ public class DBManager {
 	}
 	
 	public void sampleDBTest(CourseCatalogue cat) {
+		readFromDataBase();
 		fillStudentArrayList();
 		try {
-		addSampleCoursesToStudents(cat);
+			//addSampleCoursesToStudents(cat);
 		}catch(Exception e) {
 			System.out.println("You failed miserably");
 		}

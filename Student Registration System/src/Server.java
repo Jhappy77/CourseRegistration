@@ -50,7 +50,7 @@ public class Server {
 		
 		
 		//Fill the catalogue with test courses
-		//db.sampleDBTest(catalogue);
+		db.sampleDBTest(catalogue);
 	}
 	
 	/**

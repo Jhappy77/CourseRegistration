@@ -35,10 +35,12 @@ public class Student {
 	 * Constructs a student with the given name and id.
 	 * @param studentName Name of student
 	 * @param studentId Student's id number
+	 * @param password
 	 */
-	public Student (String studentName, int studentId) {
+	public Student (String studentName, int studentId, String password) {
 		this.setStudentName(studentName);
 		this.setStudentId(studentId);
+		this.password = password;
 		studentRegList = new ArrayList<Registration>();
 	}
 	
