@@ -18,7 +18,7 @@ public enum PackageType {
 	//Data is string[]: 
 	//first element = course name, (String)
 	//second = course number (int)
-	//third = offering index (int)
+	//third = offering section number (int)
 	
 	REMOVECOURSE, 
 	//Data is string[]
@@ -49,6 +49,6 @@ public enum PackageType {
 	
 	MESSAGE
 	//Data is string
-	//Message to be printed on the server
+	//Message to be printed when received
 	
 }

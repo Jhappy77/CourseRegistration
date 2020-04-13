@@ -71,27 +71,27 @@ public class DBManager {
 		for(Student st:studentList) {
 			
 			if(true) {
-			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingByNum(i%3);
+			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(i%3);
 			if(co!=null) {
 				new Registration(st, co);
 			}}
 			
 			if(i%2==0) {
-				CourseOffering co = cat.searchCatalogue("MATH", 277).getCourseOfferingByNum(1);
+				CourseOffering co = cat.searchCatalogue("MATH", 277).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
 			
 			if(i%3==0) {
-				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingByNum(0);
+				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(0);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
 			
 			if(i%4==0) {
-				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingByNum(0);
+				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(0);
 				if(co!=null) {
 					new Registration(st, co);
 				}
@@ -100,7 +100,7 @@ public class DBManager {
 			i++;
 			
 			if(st.getStudentName().contentEquals("Taylor Noel"))
-				new Registration(st, cat.searchCatalogue("SUCCOLOGY", 69).getCourseOfferingByNum(1));
+				new Registration(st, cat.searchCatalogue("SUCCOLOGY", 69).getCourseOfferingBySecNum(1));
 		}
 	}
 	

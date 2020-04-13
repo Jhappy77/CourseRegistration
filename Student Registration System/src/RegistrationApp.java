@@ -39,14 +39,14 @@ public class RegistrationApp {
 	/**
 	 * Adds the passed offering to the selected student
 	 */
-	public void addCourseToStudent(String courseName, int courseNumber, int courseOffering) {
+	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) {
 		
 		//Check if student is selected
 		if (selectedStudent != null)
 		{
 			try {
 				//Find course and add it to the student
-				selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, courseOffering));
+				selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, offeringSecNumber));
 			}catch(Exception e) {
 				System.err.println("Error trying to add course " + e.getMessage());
 			}
@@ -60,11 +60,11 @@ public class RegistrationApp {
 	 * Finds the course offering from the given course
 	 * @param courseName
 	 * @param courseNumber
-	 * @param offeringIndex
+	 * @param offeringSecNumber
 	 * @return the offering
 	 */
-	private CourseOffering getCourseOffering(String courseName, int courseNumber, int offeringIndex) throws Exception{
-		return getCourse(courseName, courseNumber).getCourseOfferingByNum(offeringIndex);
+	private CourseOffering getCourseOffering(String courseName, int courseNumber, int offeringSectionNumber) throws Exception{
+		return getCourse(courseName, courseNumber).getCourseOfferingBySecNum(offeringSectionNumber);
 	}
 	
 	/**
@@ -170,7 +170,7 @@ public class RegistrationApp {
 		{
 			try
 			{
-				newCourse.setOffering(i,c.getCourseOfferingByNum(i).getSecNum(), c.getCourseOfferingByNum(i).studentList().length(), c.getCourseOfferingByNum(i).getSecCap());
+				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).studentList().length(), c.getCourseOfferingByIndex(i).getSecCap());
 			}
 			catch (Exception e)
 			{

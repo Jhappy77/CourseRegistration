@@ -104,12 +104,31 @@ public class Course implements Comparable<Course>{
 	 * @return The course offering.
 	 * @exception Throws exception if the section number doesn't exist for this course.
 	 */
-	public CourseOffering getCourseOfferingByNum(int i) throws Exception {
+	public CourseOffering getCourseOfferingBySecNum(int i) throws Exception {
 		for(CourseOffering c: offeringList) {
 			if(c.isLectureNumber(i))
 				return c;
 		}
-		throw new Exception("Could not find the lecture number " + i + "");
+		throw new Exception("Could not find the offering section number " + i);
+	}
+	
+	/**
+	 * Get a course offering by index
+	 * @param i is the index
+	 * @return the course offering
+	 * @throws Exception if no offering at given index
+	 */
+	public CourseOffering getCourseOfferingByIndex(int i) throws Exception
+	{
+		try
+		{
+			return offeringList.get(i);
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Could not find the offering at index " + i);
+		}
+
 	}
 
 	/**

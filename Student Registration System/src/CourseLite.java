@@ -1,10 +1,11 @@
+import java.io.Serializable;
 
 /**
  * Trimmed down version of course class to use for sending over a socket
  * @author Jerome Gobeil
  *
  */
-public class CourseLite {
+public class CourseLite implements Serializable{
 
 	String name;
 	
@@ -56,6 +57,11 @@ public class CourseLite {
 	public int getNumber()
 	{
 		return number;
+	}
+	
+	public int getOfferingCount()
+	{
+		return offeringSecNum.length;
 	}
 	
 	public int getOfferingSecNumber(int index)

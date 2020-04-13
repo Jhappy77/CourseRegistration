@@ -46,12 +46,16 @@ public class ClientApp {
 			System.err.println("Error connecting to the server: " + e.getMessage());
 		}
 		
-		//A test functionality
+		//TESTING FUNCTIONALITY, REMOVE LATER
 		sendMessage("Im in dude");
+		attemptLogin(300769, "6969");
 		attemptLogin(300769, "1234");
-		addCourse("ENGG", 202, 0);
-		addCourse("PHYS", 259, 0);
+		findCourse("NotReal", 42069);
+		findCourse("ENGG", 202);
+		addCourse("ENGG", 202, 1);
+		addCourse("PHYS", 259, 2);
 		removeCourse("ENGG", 202);
+		requestCatalogue();
 
 	}
 	
@@ -111,7 +115,7 @@ public class ClientApp {
 			//Get the result from trying to login
 			case LOGINRESULT:
 					
-				//Just a placeholder, would change GUI here
+				//TESTING
 				System.out.println("Result from trying to login: " + pac.getData());
 				
 				break;
@@ -121,8 +125,11 @@ public class ClientApp {
 				
 				CourseLite[] schedule = (CourseLite[])pac.getData();
 				
-				//Testing 
-				System.out.println("Schedule length is: ");
+				//TESTING
+				if (schedule == null)
+					System.out.println("Schedule empty");
+				else
+					System.out.println("Schedule length is: " + schedule.length);
 				
 				//Update the GUI from here
 				
@@ -133,12 +140,24 @@ public class ClientApp {
 				CourseLite[] catalogue = (CourseLite[])pac.getData();
 				//Make pop up or whatever
 				
+				//TESTING
+				if (catalogue == null)
+					System.out.println("Catalogue is empty");
+				else
+					System.out.println("Catalogue contains " + catalogue.length + " courses");
+				
 				break;
 				
 			case COURSE:
 				
 				CourseLite course = (CourseLite)pac.getData();
 				//Update GUI or whatever the fuck you want really
+				
+				//TESTING
+				if (course == null)
+					System.out.println("COurse does not exist");
+				else
+					System.out.println("Course has " + course.getOfferingCount() + " Offerings");
 				
 				break;
 
@@ -203,12 +222,12 @@ public class ClientApp {
 	 * Sends a message to the server to add a certain course
 	 * @param courseName
 	 * @param courseNumber
-	 * @param offeringIndex
+	 * @param offeringSecNumber
 	 */
-	public void addCourse(String courseName, int courseNumber, int offeringIndex)
+	public void addCourse(String courseName, int courseNumber, int offeringSecNumber)
 	{
 		//Make package
-		String[] info = {courseName,Integer.toString(courseNumber), Integer.toString(offeringIndex)};
+		String[] info = {courseName,Integer.toString(courseNumber), Integer.toString(offeringSecNumber)};
 		Package pac = new Package(PackageType.ADDCOURSE, info);
 		
 		//Send message
