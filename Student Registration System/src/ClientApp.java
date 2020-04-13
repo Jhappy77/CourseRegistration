@@ -17,7 +17,7 @@ public class ClientApp {
 	ObjectInputStream serverIn;
 	ObjectOutputStream serverOut;
 	
-	//While true the server will comunicate
+	//While true the client will communicate with server
 	Boolean keepCommunicating;
 	
 	//Connection to the GUI?
@@ -98,6 +98,10 @@ public class ClientApp {
 		
 	}
 	
+	
+	////////////////////////////////////////////////////////////INTERACTION WITH GUI STARTS HERE////////////////////////////////////////////////
+	//IF creating new packages or getting errors from them check out the PackageType enum to see what the data contains
+	
 	/**
 	 * Deals with the given package
 	 * @param pac
@@ -107,7 +111,7 @@ public class ClientApp {
 		switch(pac.getType())
 		{
 		
-			//For testing purposes, just sends a message to print
+			//Just prints a message if received, mostly for testing purposes (Could be used for errors with a pop up window?);
 			case MESSAGE:
 				System.out.println(pac.getData());
 				break;
@@ -115,6 +119,9 @@ public class ClientApp {
 			//Get the result from trying to login
 			case LOGINRESULT:
 					
+				//pac.getData() is a Boolean, true if login success (correct username/password) and false if incorrect
+				//When correct username and password inputed the student is automatically selected
+				
 				//TESTING
 				System.out.println("Result from trying to login: " + pac.getData());
 				
@@ -124,6 +131,9 @@ public class ClientApp {
 			case SCHEDULE:
 				
 				CourseLite[] schedule = (CourseLite[])pac.getData();
+				
+				//pac data is a array of courseLite objects, the courseLite objects will only have one offering which is the one the student is registered in
+				//To access the offerings data/info just use functions getOfferingTotalSpots(0), getOfferingSecNum(0), etc (Check out courseLite class for details)
 				
 				//TESTING
 				if (schedule == null)
@@ -138,7 +148,9 @@ public class ClientApp {
 			case CATALOGUE:
 				
 				CourseLite[] catalogue = (CourseLite[])pac.getData();
-				//Make pop up or whatever
+				
+				//Pac data contains a array of course lite objects, the courseLite object contains all the info about the course including a list of all the offerings
+				//Check out the courseLite class to find all the getters
 				
 				//TESTING
 				if (catalogue == null)
@@ -153,9 +165,12 @@ public class ClientApp {
 				CourseLite course = (CourseLite)pac.getData();
 				//Update GUI or whatever the fuck you want really
 				
+				//Pac data is a single courseLite object, contains all the info about the course and its offerings
+				//Check out courseLite class for the getters
+				
 				//TESTING
 				if (course == null)
-					System.out.println("COurse does not exist");
+					System.out.println("Course does not exist");
 				else
 					System.out.println("Course has " + course.getOfferingCount() + " Offerings");
 				
@@ -281,7 +296,7 @@ public class ClientApp {
 	/**
 	 * Ends communication with the server
 	 */
-	public void endCommunication()
+	public void logout()
 	{
 		keepCommunicating = false;
 	}

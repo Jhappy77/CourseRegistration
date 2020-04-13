@@ -61,7 +61,7 @@ public class ServerApp {
 			//Catch any errors, if no longer connected to a socket stop looping
 			catch (Exception e)
 			{
-				System.out.println("Client " + clientNumber + ": lost connection to socket: " + e.getMessage());
+				System.out.println("Client " + clientNumber + ": Error comunicating: " + e.getMessage());
 				break;
 			}
 			

@@ -7,8 +7,14 @@ import java.io.Serializable;
  */
 public class CourseLite implements Serializable{
 
+	/**
+	 * The course name
+	 */
 	String name;
 	
+	/**
+	 * The course number
+	 */
 	int number;
 	
 	/**
@@ -49,31 +55,58 @@ public class CourseLite implements Serializable{
 		offeringSpots[index][1] = totalSpots;
 	}
 	
+	/**
+	 * Getter for course name
+	 * @return the name
+	 */
 	public String getName()
 	{
 		return name;
 	}
 	
+	/**
+	 * Getter for course Number
+	 * @return the course number
+	 */
 	public int getNumber()
 	{
 		return number;
 	}
 	
+	/**
+	 * Get the number of offerings
+	 * @return the number of offerings
+	 */
 	public int getOfferingCount()
 	{
 		return offeringSecNum.length;
 	}
 	
+	/**
+	 * Get offering section number by index
+	 * @param index
+	 * @return offering section number
+	 */
 	public int getOfferingSecNumber(int index)
 	{
 		return offeringSecNum[index];
 	}
 	
+	/**
+	 * Get offering total spots by index
+	 * @param index
+	 * @return offerings total spots
+	 */
 	public int getOfferingTotalSpots(int index)
 	{
 		return offeringSpots[index][1];
 	}
 	
+	/**
+	 * Get offering taken spots by index
+	 * @param index
+	 * @return offerings taken spots
+	 */
 	public int getOfferingTakenSpots(int index)
 	{
 		return offeringSpots[index][0];
