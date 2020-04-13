@@ -26,18 +26,26 @@ public enum PackageType {
 	//second = course number (int)
 	
 	SCHEDULE,
-	//Data is ??
+	//Data is CourseLite[], null if no registrations
+	//CourseLite only has one offering which is the one the student is registered in
+	//CourseLite is used to reduce the number of classes that both client and server must have
 	
 	REQUESTSCHEDULE,
 	//Data is empty
 	
 	COURSE,
-	//Data is ??
+	//Data is CourseLite, null if course not found
 	
 	FINDCOURSE,
 	//Data is string[]
 	//first = course name
 	//second = course number
+	
+	REQUESTCOURSECATALOGUE,
+	//Data is empty
+	
+	CATALOGUE,
+	//Data is CourseLite[], null if no courses exist
 	
 	MESSAGE
 	//Data is string

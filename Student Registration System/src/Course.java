@@ -69,6 +69,11 @@ public class Course implements Comparable<Course>{
 	public String getCourseName() {
 		return courseName;
 	}
+	
+	public int getNumOfferings()
+	{
+		return offeringList.size();
+	}
 
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;

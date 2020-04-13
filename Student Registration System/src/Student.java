@@ -1,5 +1,10 @@
 import java.util.ArrayList;
 
+/**
+ * Class created for each student to keep track of registrations
+ * @author Joel Happ + Jerome Gobeil
+ *
+ */
 public class Student {
 	
 	private String studentName;
@@ -12,8 +17,18 @@ public class Student {
 	 * Returns number of courses the student has registered in.
 	 * @return Number of registrations.
 	 */
-	private int numberOfRegistrations() {
+	public int numberOfRegistrations() {
 		return studentRegList.size();
+	}
+	
+	/**
+	 * Get the registered offering based on the given index
+	 * @param index
+	 * @return the offering
+	 */
+	public CourseOffering getOfferingByIndex(int index)
+	{
+		return studentRegList.get(index).getTheOffering();
 	}
 	
 	/**

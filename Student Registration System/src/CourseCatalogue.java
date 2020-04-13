@@ -1,11 +1,35 @@
 import java.util.ArrayList;
 
+/**
+ * Class to manage the list of all the classes once the program has started
+ * @author Joel Happ + Jerome Gobeil
+ *
+ */
 public class CourseCatalogue {
 	
 	private ArrayList <Course> courseList;
 	
 	public CourseCatalogue (DBManager db) {
 		loadFromDataBase (db);
+	}
+	
+	/**
+	 * Getter for the course list size
+	 * @return size of the course list
+	 */
+	public int getCourseCount()
+	{
+		return courseList.size();
+	}
+	
+	/**
+	 * Get a course by its index in the course list
+	 * @param index
+	 * @return the course at the index
+	 */
+	public Course getCourseByIndex(int index)
+	{
+		return courseList.get(index);
 	}
 	
 	/**

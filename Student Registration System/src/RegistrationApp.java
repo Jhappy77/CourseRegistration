@@ -56,18 +56,6 @@ public class RegistrationApp {
 		
 	}
 	
-//	private void viewAllCoursesStudent() {
-//		System.out.println(getStudent().stringAllRegs());
-//	}
-	
-	private void viewAllCoursesCatalogue() {
-		System.out.println(cat);
-	}
-	
-	private void viewAllStudents() {
-		db.printAllStudents();
-	}
-	
 	/**
 	 * Finds the course offering from the given course
 	 * @param courseName
@@ -85,9 +73,112 @@ public class RegistrationApp {
 	 * @param courseNumber
 	 * @return the course
 	 */
-	public Course getCourse(String courseName, int courseNumber) throws Exception
+	private Course getCourse(String courseName, int courseNumber) throws Exception
 	{
 		return cat.searchCatalogue(courseName, courseNumber);
+	}
+	
+	/**
+	 * Returns a list of all the students registrations
+	 * @return CourseLite[] of the courses the student is in
+	 */
+	public CourseLite[] getSchedule()
+	{
+		if (selectedStudent != null)
+		{
+			//If no registrations return null
+			if (selectedStudent.numberOfRegistrations() == 0)
+				return null;
+			
+			//Make a list for the courses
+			CourseLite[] courseList = new CourseLite[selectedStudent.numberOfRegistrations()];
+			
+			//For each course make a CourseLite for it and add registered section
+			for (int i = 0; i < selectedStudent.numberOfRegistrations(); i++)
+			{
+				CourseOffering off = selectedStudent.getOfferingByIndex(i);
+				
+				courseList[i] = new CourseLite(off.getTheCourse().getCourseName(),off.getTheCourse().getCourseNum(),1);
+				courseList[i].setOffering(0, off.getSecNum(), off.getSecCap(), off.studentList().length());
+			}
+			
+			return courseList;
+		}
+		else
+			System.err.println("Trying to get schedule when no student selected");
+		
+		return null;
+	}
+	
+	/**
+	 * Makes a array of courseLite for every single course in the catalogue
+	 * @return the array of course lite
+	 */
+	public CourseLite[] getEntireCourseList()
+	{
+		//If there aren't any course just return null
+		if (cat.getCourseCount() == 0)
+			return null;
+		
+		CourseLite[] courseList = new CourseLite[cat.getCourseCount()];
+		
+		//Make a courselite for every course
+		for (int i = 0; i < cat.getCourseCount(); i++)
+		{
+			courseList[i] = makeCourseLite(cat.getCourseByIndex(i));
+		}
+		
+		return courseList;
+	}
+	
+	/**
+	 * Finds the course corresponding to the given name and number, returns null if course cant be found
+	 * @param courseName
+	 * @param courseNumber
+	 * @return the course lite class
+	 */
+	public CourseLite findCourse(String courseName, int courseNumber)
+	{
+		Course c;
+		
+		//Try and get the course
+		try 
+		{
+			c = getCourse(courseName, courseNumber);
+		}
+		
+		//If course can't be found return a null course
+		catch (Exception e)
+		{
+			return null;
+		}
+		
+		//Make a course lite and return it
+		return makeCourseLite(c);
+	}
+	
+	/**
+	 * Makes a course lite object and returns it
+	 * @param c the course
+	 * @return the courseLite
+	 */
+	private CourseLite makeCourseLite(Course c)
+	{
+		CourseLite newCourse = new CourseLite(c.getCourseName(),c.getCourseNum(),c.getNumOfferings());
+		
+		for (int i = 0; i < c.getNumOfferings(); i++)
+		{
+			try
+			{
+				newCourse.setOffering(i,c.getCourseOfferingByNum(i).getSecNum(), c.getCourseOfferingByNum(i).studentList().length(), c.getCourseOfferingByNum(i).getSecCap());
+			}
+			catch (Exception e)
+			{
+				System.err.println("Error getting course offerings: " + e.getMessage());
+			}
+		}
+		
+		return newCourse;
 	}
 	
 	/**
@@ -114,21 +205,5 @@ public class RegistrationApp {
 			}
 		}
 	}
-	
-	
-	///////////////////// SCANNERS //////////////////////
-//	private String scanStudentName() {
-//		System.out.println("Please enter the name of the student:");
-//		return scan.nextLine();
-//	}
-//	private String scanCourseName() {
-//		System.out.println("Please enter the name of the course: (e.g. ENSF)");
-//		return scan.nextLine().trim().toUpperCase();
-//	}
-//	
-//	private int scanCourseNumber() {
-//		System.out.println("Please enter the number of the course: (e.g. 409)");
-//		return scan.nextInt();
-//	}
 
 }

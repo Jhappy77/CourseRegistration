@@ -83,7 +83,7 @@ public class CourseOffering {
 	 * Returns this offering's course
 	 * @return The course represented
 	 */
-	private Course getTheCourse() {
+	public Course getTheCourse() {
 		return theCourse;
 	}
 	

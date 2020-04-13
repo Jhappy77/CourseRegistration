@@ -52,7 +52,7 @@ public class ServerApp {
 			try
 			{
 				//Get package
-				Package pac = (Package)clientIn.readObject();
+				Package<?> pac = (Package<?>)clientIn.readObject();
 				
 				//Deal with it
 				dealWithPackage(pac);
@@ -85,7 +85,7 @@ public class ServerApp {
 	 * Deals with the package
 	 * @param pac
 	 */
-	private void dealWithPackage(Package pac)
+	private void dealWithPackage(Package<?> pac)
 	{
 		switch(pac.getType())
 		{
@@ -137,29 +137,57 @@ public class ServerApp {
 				
 			//Find a requested course, must be completed
 			case FINDCOURSE:
-				//Get data
-				String[] f = (String[]) pac.getData();
+				//Try and find course, if cant send null
+				sendCourse((String[])pac.getData());
+				break;
 				
-				reg.getCourse(f[0],Integer.parseInt(f[1]));
+			//Just send the entire list of all courses
+			case REQUESTCOURSECATALOGUE:
+				sendCatalogue();
+				break;
 				
 		}
 	}
 	
-	//Needs to be completed
-	private void sendCourse()
+	private void sendCatalogue()
 	{
-		//Make package
-		Package pac = new Package(PackageType.COURSE, null);
+		//Make the package
+		Package<CourseLite[]> pac = new Package<CourseLite[]>(PackageType.CATALOGUE, reg.getEntireCourseList());
 		
 		//Send package
 		sendPackage(pac);
 	}
 	
-	//Needs to be completed
+	/**
+	 * Sends a courseLite object to the client for display
+	 * @param f is the data from the find course packet
+	 */
+	private void sendCourse(String[] f)
+	{
+		CourseLite c;
+		try
+		{
+			c = reg.findCourse(f[0],Integer.parseInt(f[1]));
+		}
+		catch (Exception e)
+		{
+			c = null;
+		}
+		
+		//Make package
+		Package<CourseLite> pac = new Package<CourseLite>(PackageType.COURSE, c);
+		
+		//Send package
+		sendPackage(pac);
+	}
+	
+	/**
+	 * Sends the students schedule
+	 */
 	private void sendSchedule()
 	{
 		//Make package
-		Package pac = new Package(PackageType.SCHEDULE, null);
+		Package<CourseLite[]> pac = new Package<CourseLite[]>(PackageType.SCHEDULE, reg.getSchedule());
 		
 		//Send package
 		sendPackage(pac);
@@ -172,7 +200,7 @@ public class ServerApp {
 	private void sendLoginResult(Boolean result)
 	{
 		//Make package
-		Package pac = new Package(PackageType.LOGINRESULT, result);
+		Package<Boolean> pac = new Package<Boolean>(PackageType.LOGINRESULT, result);
 		
 		//Send package
 		sendPackage(pac);
