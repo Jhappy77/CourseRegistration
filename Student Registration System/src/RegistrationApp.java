@@ -1,142 +1,209 @@
 import java.util.Scanner;
 
+
+/**
+ * Class to deal with all the clients courses
+ * @author Joel Happ + Jerome Gobeil
+ *
+ */
 public class RegistrationApp {
-	private Scanner scan;
+
 	private CourseCatalogue cat;
 	private DBManager db;
 	
-	public RegistrationApp() {
-		scan = new Scanner(System.in);
-		cat = new CourseCatalogue();
-		db = new DBManager();
-		db.sampleDBTest(cat);
+	Student selectedStudent;
+	
+	public RegistrationApp(CourseCatalogue cat, DBManager db) {
+		this.cat = cat;
+		this.db = db;
 	}
 	
 	/**
-	 * Displays a menu for the user
+	 * Remove selected course from the selected student
+	 * @param student
 	 */
-	public void displayMenu() {
-		System.out.println("Please select one of the following choices:");
-		System.out.println("1. Search Catalogue Courses");
-		System.out.println("2. Add course to a student's courses");
-		System.out.println("3. Remove course from a student's courses");
-		System.out.println("4. View all courses in the catalogue");
-		System.out.println("5. View all courses taken by a student");
-		System.out.println("6. View all students (FOR TESTING)");
-		System.out.println("7. Quit Program");
-		System.out.println("");
-		System.out.println("Enter your selection:");
-	}
-	
-	/**
-	 * Lets user select different options to interact with backend
-	 */
-	public void menu() {
-		while(true) {
-			displayMenu();
-			int selection = scan.nextInt();
-			scan.nextLine();
-			switch(selection) {
-				case 1:
-					searchCatalogueCourses();
-					break;
-				case 2:
-					addCourseToStudent();
-					break;
-				case 3:
-					removeCourseFromStudent();
-					break;
-				case 4:
-					viewAllCoursesCatalogue();
-					break;
-				case 5:
-					viewAllCoursesStudent();
-					break;
-				case 6:
-					viewAllStudents();
-				case 7:
-					System.exit(0);
-					break;
+	public void removeCourseFromStudent(String courseName, int courseNumber) {
+		if (selectedStudent != null)
+		{
+			try {
+				selectedStudent.removeCourse(getCourse(courseName, courseNumber));
+			} catch(Exception e) {
+				System.err.println("Error removing course from student: " + e.getMessage());
 			}
 		}
-	}
-	
-	private void removeCourseFromStudent() {
-		try {
-		getStudent().removeCourse(getCourse());
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
-		}
+		else
+			System.err.println("Trying to remove course from null student");
 	}
 
-	private void searchCatalogueCourses() {
-		try {
-		System.out.println(getCourse());
-		} catch(Exception e) {
-			System.err.println(e.getMessage());
+
+	/**
+	 * Adds the passed offering to the selected student
+	 */
+	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) {
+		
+		//Check if student is selected
+		if (selectedStudent != null)
+		{
+			try {
+				//Find course and add it to the student
+				selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, offeringSecNumber));
+			}catch(Exception e) {
+				System.err.println("Error trying to add course " + e.getMessage());
+			}
 		}
+		else
+			System.err.println("Trying to add a course when no student selected");
+		
 	}
 	
-	private void addCourseToStudent() {
-		try {
-		getStudent().addCourseOffering(getCourseOffering());
-		}catch(Exception e) {
-			System.out.println(e.getMessage());
+	/**
+	 * Finds the course offering from the given course
+	 * @param courseName
+	 * @param courseNumber
+	 * @param offeringSecNumber
+	 * @return the offering
+	 */
+	private CourseOffering getCourseOffering(String courseName, int courseNumber, int offeringSectionNumber) throws Exception{
+		return getCourse(courseName, courseNumber).getCourseOfferingBySecNum(offeringSectionNumber);
+	}
+	
+	/**
+	 * Finds the course corresponding to the given name and number
+	 * @param courseName
+	 * @param courseNumber
+	 * @return the course
+	 */
+	private Course getCourse(String courseName, int courseNumber) throws Exception
+	{
+		return cat.searchCatalogue(courseName, courseNumber);
+	}
+	
+	/**
+	 * Returns a list of all the students registrations
+	 * @return CourseLite[] of the courses the student is in
+	 */
+	public CourseLite[] getSchedule()
+	{
+		if (selectedStudent != null)
+		{
+			//If no registrations return null
+			if (selectedStudent.numberOfRegistrations() == 0)
+				return null;
+			
+			//Make a list for the courses
+			CourseLite[] courseList = new CourseLite[selectedStudent.numberOfRegistrations()];
+			
+			//For each course make a CourseLite for it and add registered section
+			for (int i = 0; i < selectedStudent.numberOfRegistrations(); i++)
+			{
+				CourseOffering off = selectedStudent.getOfferingByIndex(i);
+				
+				courseList[i] = new CourseLite(off.getTheCourse().getCourseName(),off.getTheCourse().getCourseNum(),1);
+				courseList[i].setOffering(0, off.getSecNum(), off.getSecCap(), off.studentList().length());
+			}
+			
+			return courseList;
 		}
+		else
+			System.err.println("Trying to get schedule when no student selected");
+		
+		return null;
 	}
 	
-	private void viewAllCoursesStudent() {
-		System.out.println(getStudent().stringAllRegs());
+	/**
+	 * Makes a array of courseLite for every single course in the catalogue
+	 * @return the array of course lite
+	 */
+	public CourseLite[] getEntireCourseList()
+	{
+		//If there aren't any course just return null
+		if (cat.getCourseCount() == 0)
+			return null;
+		
+		CourseLite[] courseList = new CourseLite[cat.getCourseCount()];
+		
+		//Make a courselite for every course
+		for (int i = 0; i < cat.getCourseCount(); i++)
+		{
+			courseList[i] = makeCourseLite(cat.getCourseByIndex(i));
+		}
+		
+		return courseList;
 	}
 	
-	private void viewAllCoursesCatalogue() {
-		System.out.println(cat);
-	}
-	
-	private void viewAllStudents() {
-		db.printAllStudents();
-	}
-	
-	//////////////////// GETTERS ////////////////////////
-	private CourseOffering getCourseOffering() throws Exception{
-		Course c = getCourse();
-		System.out.println("Enter the lecture section you are searching for:");
-		return c.getCourseOfferingByNum(scan.nextInt()-1);
-	}
-	
-	private Course getCourse() throws Exception{
-		return cat.searchCatalogue(scanCourseName(), scanCourseNumber());
-	}
-	
-	private Student getStudent() {
-		Student s = db.getStudent(scanStudentName());
-		if(s==null) {
-			System.err.println("The student you searched for does not exist");
-			System.exit(1);
+	/**
+	 * Finds the course corresponding to the given name and number, returns null if course cant be found
+	 * @param courseName
+	 * @param courseNumber
+	 * @return the course lite class
+	 */
+	public CourseLite findCourse(String courseName, int courseNumber)
+	{
+		Course c;
+		
+		//Try and get the course
+		try 
+		{
+			c = getCourse(courseName, courseNumber);
+		}
+		
+		//If course can't be found return a null course
+		catch (Exception e)
+		{
 			return null;
 		}
-		return s;
+		
+		//Make a course lite and return it
+		return makeCourseLite(c);
 	}
 	
-	
-	///////////////////// SCANNERS //////////////////////
-	private String scanStudentName() {
-		System.out.println("Please enter the name of the student:");
-		return scan.nextLine();
+	/**
+	 * Makes a course lite object and returns it
+	 * @param c the course
+	 * @return the courseLite
+	 */
+	private CourseLite makeCourseLite(Course c)
+	{
+		CourseLite newCourse = new CourseLite(c.getCourseName(),c.getCourseNum(),c.getNumOfferings());
+		
+		for (int i = 0; i < c.getNumOfferings(); i++)
+		{
+			try
+			{
+				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).studentList().length(), c.getCourseOfferingByIndex(i).getSecCap());
+			}
+			catch (Exception e)
+			{
+				System.err.println("Error getting course offerings: " + e.getMessage());
+			}
+		}
+		
+		return newCourse;
 	}
-	private String scanCourseName() {
-		System.out.println("Please enter the name of the course: (e.g. ENSF)");
-		return scan.nextLine().trim().toUpperCase();
-	}
 	
-	private int scanCourseNumber() {
-		System.out.println("Please enter the number of the course: (e.g. 409)");
-		return scan.nextInt();
-	}
-	
-	public static void main (String [] args) {
-		RegistrationApp theApp = new RegistrationApp();
-		theApp.menu();		
+	/**
+	 * Finds a student by ID and checks if their password is correct
+	 * @param id
+	 * @param password
+	 * @return true if success, false if fail
+	 */
+	public Boolean validateStudent(int id, String password) {
+		selectedStudent = db.getStudent(id);
+		if(selectedStudent==null) { 
+			return false;
+		}
+		else
+		{
+			if (selectedStudent.checkPassword(password))
+			{
+				return true;
+			}
+			else
+			{
+				selectedStudent = null;
+				return false;
+			}
+		}
 	}
 
 }

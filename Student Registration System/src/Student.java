@@ -1,9 +1,15 @@
 import java.util.ArrayList;
 
+/**
+ * Class created for each student to keep track of registrations
+ * @author Joel Happ + Jerome Gobeil
+ *
+ */
 public class Student {
 	
 	private String studentName;
 	private int studentId;
+	private String password;
 	private ArrayList<Registration> studentRegList;
 	private final int MAXCOURSENUMBER = 6;
 	
@@ -11,18 +17,30 @@ public class Student {
 	 * Returns number of courses the student has registered in.
 	 * @return Number of registrations.
 	 */
-	private int numberOfRegistrations() {
+	public int numberOfRegistrations() {
 		return studentRegList.size();
+	}
+	
+	/**
+	 * Get the registered offering based on the given index
+	 * @param index
+	 * @return the offering
+	 */
+	public CourseOffering getOfferingByIndex(int index)
+	{
+		return studentRegList.get(index).getTheOffering();
 	}
 	
 	/**
 	 * Constructs a student with the given name and id.
 	 * @param studentName Name of student
 	 * @param studentId Student's id number
+	 * @param password
 	 */
-	public Student (String studentName, int studentId) {
+	public Student (String studentName, int studentId, String password) {
 		this.setStudentName(studentName);
 		this.setStudentId(studentId);
+		this.password = password;
 		studentRegList = new ArrayList<Registration>();
 	}
 	
@@ -112,6 +130,18 @@ public class Student {
 	 */
 	public void removeRegistration(Registration registration) {
 		studentRegList.remove(registration);
+	}
+	
+	/**
+	 * Checks the students password, returns true if correct
+	 * @param password
+	 * @return true if correct, false if not
+	 */
+	public Boolean checkPassword(String password)
+	{
+		if (this.password.equals(password))
+			return true;
+		return false;
 	}
 
 }
