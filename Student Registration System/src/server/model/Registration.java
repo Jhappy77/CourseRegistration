@@ -1,3 +1,4 @@
+package server.model;
 
 /**
  * A class that holds the information of an individual's registration in a course.

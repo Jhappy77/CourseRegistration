@@ -1,6 +1,10 @@
+package server.controller;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+
+import server.model.CourseCatalogue;
+import server.model.DBManager;
 
 /**
  * Class to directly deal with the client

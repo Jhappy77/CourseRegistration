@@ -1,3 +1,4 @@
+package server.model;
 import java.util.ArrayList;
 
 //This class is simulating a database for our
@@ -100,15 +101,19 @@ public class DBManager {
 			i++;
 			
 			if(st.getStudentName().contentEquals("Taylor Noel"))
-				new Registration(st, cat.searchCatalogue("SUCCOLOGY", 69).getCourseOfferingBySecNum(1));
+				new Registration(st, cat.searchCatalogue("SUCC", 69).getCourseOfferingBySecNum(1));
 		}
 	}
 	
+	/**
+	 * Runs a sample database test
+	 * @param cat Catalogue to sync with
+	 */
 	public void sampleDBTest(CourseCatalogue cat) {
 		readFromDataBase();
 		fillStudentArrayList();
 		try {
-			//addSampleCoursesToStudents(cat);
+			addSampleCoursesToStudents(cat);
 		}catch(Exception e) {
 			System.out.println("You failed miserably");
 		}

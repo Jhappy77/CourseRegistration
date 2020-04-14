@@ -1,8 +1,13 @@
+package server.controller;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+
+import server.model.CourseCatalogue;
+import server.model.DBManager;
 
 /**
  * Class will create and monitor a port. When a new client joins it will create a server app instance for them
@@ -89,7 +94,7 @@ public class Server {
 	 */
 	public static void main (String [] args)
 	{
-		Server s = new Server(9090);
+		Server s = new Server(8007);
 		s.monitorSocket();
 	}
 	

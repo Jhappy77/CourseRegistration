@@ -1,13 +1,27 @@
+package client.controller;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import client.view.MyGUI;
+import javafx.application.Application;
+import server.controller.CourseLite;
+import server.controller.Package;
+import server.controller.PackageType;
+
 /**
- * Communicates through the port to the server app
- * @author Jerome Gobeil
- *
+ * Communicates through the port to the server app.
+ * This should be renamed to Client Port
+ * @author Jerome Gobeil + Joel Happ
+ * 
+ * 
+ * We will be rewriting this class to change its relationship with Controller.
+ * In the future, it will no longer have an association relationship with controller,
+ * and the dealWithPackage function will be split into separate functions.
  */
+
+
 public class ClientApp {
 
 	//The socket
@@ -16,6 +30,8 @@ public class ClientApp {
 	//Input and output stream
 	ObjectInputStream serverIn;
 	ObjectOutputStream serverOut;
+	
+	Controller control;	
 	
 	//While true the client will communicate with server
 	Boolean keepCommunicating;
@@ -26,8 +42,9 @@ public class ClientApp {
 	 * Create a new client app and connect to the port
 	 * @param portNumber
 	 */
-	public ClientApp(String serverName, int portNumber)
+	public ClientApp(String serverName, int portNumber, Controller c)
 	{
+		control =c;
 		
 		keepCommunicating = true;
 		
@@ -46,23 +63,62 @@ public class ClientApp {
 			System.err.println("Error connecting to the server: " + e.getMessage());
 		}
 		
-		//TESTING FUNCTIONALITY, REMOVE LATER
-		sendMessage("Im in dude");
-		attemptLogin(300769, "6969");
-		attemptLogin(300769, "1234");
-		findCourse("NotReal", 42069);
-		findCourse("ENGG", 202);
-		addCourse("ENGG", 202, 1);
-		addCourse("PHYS", 259, 2);
-		removeCourse("ENGG", 202);
-		requestCatalogue();
+//		//TESTING FUNCTIONALITY, REMOVE LATER
+//		sendMessage("Im in dude");
+//		attemptLogin(300769, "6969");
+//		attemptLogin(300769, "1234");
+//		findCourse("NotReal", 42069);
+//		findCourse("ENGG", 202);
+//		addCourse("ENGG", 202, 1);
+//		addCourse("PHYS", 259, 2);
+//		removeCourse("ENGG", 202);
+//		requestCatalogue();
 
+	}
+	
+	/**
+	 * Listens for a single response from the server, and responds accordingly.
+	 */
+	public void communicateOnce() {
+		try
+		{
+			//Listen for info from the server
+			Package<?> pac = (Package<?>)serverIn.readObject();
+			
+			//Deal with the package
+			dealWithPackage(pac);
+		}
+		catch (Exception e)
+		{
+			System.err.println("Error comunicating with server: " + e.getMessage());
+			closeAll();
+		}
+	}
+	
+	/**
+	 * Attempts to close everything.
+	 */
+	private void closeAll() {
+		//Deal with ending the communication
+		System.out.println("Ended comunication with server");
+		
+		//Close everything
+		try 
+		{
+			serverIn.close();
+			serverOut.close();
+			socket.close();
+		}
+		catch (IOException e)
+		{
+			System.err.println("Error closing socket: " + e.getMessage());
+		}
 	}
 	
 	/**
 	 * Class that communicates with the server and deals with anything it receives
 	 */
-	private void comunicate()
+	void communicate()
 	{
 		while(keepCommunicating)
 		{
@@ -80,21 +136,8 @@ public class ClientApp {
 				break;
 			}
 		}
-		
-		//Deal with ending the communication
-		System.out.println("Ended comunication with server");
-		
-		//Close everything
-		try 
-		{
-			serverIn.close();
-			serverOut.close();
-			socket.close();
-		}
-		catch (IOException e)
-		{
-			System.err.println("Error closing socket: " + e.getMessage());
-		}
+		// Ends communication with Server
+		closeAll();
 		
 	}
 	
@@ -122,7 +165,7 @@ public class ClientApp {
 				//pac.getData() is a Boolean, true if login success (correct username/password) and false if incorrect
 				//When correct username and password inputed the student is automatically selected
 				
-				//TESTING
+				control.loginAttempt((Boolean)pac.getData());
 				System.out.println("Result from trying to login: " + pac.getData());
 				
 				break;
@@ -141,7 +184,7 @@ public class ClientApp {
 				else
 					System.out.println("Schedule length is: " + schedule.length);
 				
-				//Update the GUI from here
+				control.showSchedule(schedule);
 				
 				break;
 				
@@ -158,13 +201,15 @@ public class ClientApp {
 				else
 					System.out.println("Catalogue contains " + catalogue.length + " courses");
 				
+				control.updateCatalogue(catalogue);
+				
 				break;
 				
 			case COURSE:
 				
 				CourseLite course = (CourseLite)pac.getData();
 				//Update GUI or whatever the fuck you want really
-				
+				control.setSelectedCourse(course);
 				//Pac data is a single courseLite object, contains all the info about the course and its offerings
 				//Check out courseLite class for the getters
 				
@@ -247,6 +292,7 @@ public class ClientApp {
 		
 		//Send message
 		sendPackage(pac);
+		
 	}
 	
 	/**
@@ -301,13 +347,5 @@ public class ClientApp {
 		keepCommunicating = false;
 	}
 
-	/**
-	 * Simply starts the client and makes it comunicate with the server
-	 * @param args
-	 */
-	public static void main (String [] args) {
-		ClientApp client = new ClientApp("localhost", 9090);
-		client.comunicate();
-	}
 	
 }

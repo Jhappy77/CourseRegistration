@@ -1,3 +1,5 @@
+package server.controller;
+
 
 /**
  * Enum to say what kind of package has been passed

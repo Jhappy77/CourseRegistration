@@ -1,4 +1,11 @@
+package server.controller;
 import java.util.Scanner;
+
+import server.model.Course;
+import server.model.CourseCatalogue;
+import server.model.CourseOffering;
+import server.model.DBManager;
+import server.model.Student;
 
 
 /**

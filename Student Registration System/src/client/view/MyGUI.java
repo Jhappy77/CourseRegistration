@@ -1,4 +1,14 @@
+package client.view;
 import java.util.Optional;
+import java.util.ResourceBundle.Control;
+
+//CLASS IMPORTS
+import client.controller.Controller;
+import server.controller.CourseLite;
+import server.model.Course;
+
+// JAVAFX IMPORTS
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,6 +28,14 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+// HOW TO MAKE JAVAFX ACCESSIBLE
+/*right-click on the project and bring up the project properties dialog. Select "Build Path" in the left pane, and select the "Libraries" tab. You will see a "JRE System Library" entry. Expand that entry, and you will see an "Access Rules" subentry:
+
+Select the "Access Rules" entry and click "Edit". Click "Add".
+
+Under "Resolution", choose "Accessible", and under "Rule Pattern", enter javafx/** */
+
+
 /**
  * Right now there is a bug when searching for courses, after you have 
  * searched for one course and the information is displayed, is you try searching for another 
@@ -27,12 +45,13 @@ import javafx.stage.Stage;
  * 2. once you confirm they are a student, reading their information about their schedule and name
  * 3. adding/removing new courses to their schedule once the button enroll/unenroll is clicked then updating the courseList to display
  * 4. adding information to the course catalogue
- * @author taylo
+ * @author Taylor
  *
  */
 
 
 public class MyGUI extends Application{
+	
 	
 	Stage window;
 	Scene login, studentScene, adminScene, studentMenu;
@@ -48,8 +67,22 @@ public class MyGUI extends Application{
 		launch(args);
 	}
 	
+	private Controller control;
+	
 	@Override 
 	public void start(Stage primaryStage) {
+		
+		
+		System.out.println("Client Started");
+		
+		
+		// Creates new reference to ClientApp (Controller)
+		control = new Controller(this);
+		
+		
+		System.out.println("Building stage");
+		
+		
 		window = primaryStage;
 		window.setTitle("Login");
 		course = new Label();
@@ -72,6 +105,10 @@ public class MyGUI extends Application{
 		window.setScene(login);
 		window.show();
 	}
+	
+///////////////////////////GRID PANES ////////////////////////////////////////
+	
+	
 	/**
 	 * Sets up the general layout of each window by setting 
 	 * the padding, vertical gap, and horizontal gap
@@ -134,11 +171,17 @@ public class MyGUI extends Application{
 		GridPane.setConstraints(passwordLabel, 16, 10);
 		TextField passwordText = new TextField();
 		GridPane.setConstraints(passwordText, 18, 10);
+		
+		//Login Response Label
+		Label loginResponse = new Label("");
+		GridPane.setConstraints(loginResponse, 18, 16);
 			
 		//Login Button
 		Button loginButton = new Button();
 		loginButton.setText("Login");
-		loginButton.setOnAction(e -> sendStudent(idText, passwordText));
+		loginButton.setOnAction(e -> {
+			loginStudent(idText, passwordText, loginResponse);
+			});
 		GridPane.setConstraints(loginButton, 18, 14);
 		
 		//Go Back Button
@@ -147,8 +190,9 @@ public class MyGUI extends Application{
 		goBack1.setOnAction(e -> window.setScene(login));
 		GridPane.setConstraints(goBack1, 0, 0);
 		
+		
 		//Adding all the components to the layout
-		layout.getChildren().addAll(idLabel, idText, passwordLabel, passwordText, goBack1, loginButton);
+		layout.getChildren().addAll(idLabel, idText, passwordLabel, passwordText, goBack1, loginButton, loginResponse);
 		
 		return layout;
 	}
@@ -162,7 +206,7 @@ public class MyGUI extends Application{
 		layout4 = makeLayout();
 				
 		//Welcome label
-		Label welcome = new Label("Welcome"); // Add name of student
+		Label welcome = new Label("Welcome"); // Later, add name of student here
 		GridPane.setConstraints(welcome, 0, 0);
 				
 		//Log Out Button
@@ -178,7 +222,7 @@ public class MyGUI extends Application{
 		GridPane.setConstraints(browse, 23, 13);
 				
 		//View Courses search
-		Label course = new Label("View Course"); // Add name of student
+		Label course = new Label("View Course"); // later, add name of student here
 		GridPane.setConstraints(course, 1, 3);
 		TextField searchTag = new TextField("search for a course");
 		GridPane.setConstraints(searchTag, 1, 5);
@@ -197,6 +241,8 @@ public class MyGUI extends Application{
 		return layout4;
 		
 	}
+	
+	
 	/**
 	 * Creates the main window for the users which displays their schedule and
 	 * prompts the user to search for and enroll in courses
@@ -236,18 +282,69 @@ public class MyGUI extends Application{
 	}
 	
 	
-	private void sendStudent(TextField inputID, TextField inputPass) {
+	
+	
+	
+	/////////// END OF GRID PANES //////////////////////////////////
+	
+	
+	
+	
+	
+	/**
+	 * Gets what the student has entered into log-in field, logs in student
+	 * @param inputID The textfield to input ID
+	 * @param inputPass The textfield to input Password
+	 */
+	private void loginStudent(TextField inputID, TextField inputPass, Label responseLabel) {
 		try {
 			int id = Integer.parseInt(inputID.getText());
 			String password = inputPass.getText();
-			//CALL FUNCTION TO SEND ID AND PASSWORD
-			window.setScene(studentMenu);
+			control.login(id, password);
+			System.out.println("Passed control");
+			//window.setScene(studentMenu);
 		}catch(NumberFormatException e) {
-			
+			responseLabel.setText("Invalid username entered! Please enter a student ID!");
+		}catch(Exception e) {
+			// Sets the response label to an appropriate message based on issue
+			// Note: incomplete
+			responseLabel.setText(e.getMessage());
 		}
 	}
 	
+	public void setStudentMenu() {
+		window.setScene(studentMenu);
+	}
+	
+	/**
+	 * Splits course name from string
+	 * @param courseName
+	 * @return
+	 */
+	private String splitCName(String courseName) {
+		return courseName.split(" ")[0];
+	}
+	
+	/**
+	 * Splits course number from string
+	 * @param courseName
+	 * @return course number
+	 */
+	private int splitCNumber(String courseName) {
+		return Integer.parseInt(courseName.split(" ")[1]);
+	}
+	
+	/**
+	 * Shows the course display of a certain course
+	 * @param courseName Name of the course
+	 */
 	private void courseDisplay(TextField courseName) {
+		
+		String input = courseName.getText();
+		control.selectCourse(splitCName(input), splitCNumber(input));
+		
+		
+		
 		//Lecture Drop-Down
 		ChoiceBox<String> lectures = new ChoiceBox<>();
 		lectures.getItems().add("Lecture 1");
@@ -256,13 +353,13 @@ public class MyGUI extends Application{
 		lectures.setValue("Lecture 1"); // default value
 		
 		//Course Name Label
-		Label course = new Label(courseName.getText());
+		Label course = new Label(control.getSelectedCourseName());
 		//course.setText(courseName.getText());
 		//course.textProperty().bind(courseName.textProperty());//FIX
 		GridPane.setConstraints(course, 1, 8);
 		
 		//Spots Available
-		Label spots = new Label("Spots: ");
+		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
 		GridPane.setConstraints(spots, 1, 10);
 		
 		//Course Pre-Requisites
@@ -277,29 +374,25 @@ public class MyGUI extends Application{
 		Button enroll = new Button();
 		enroll.setText("Enroll/Unenroll");
 		GridPane.setConstraints(enroll, 1, 13);
-		enroll.setOnAction(e -> changeCourseEnrollment(courseName, lectures));
+		enroll.setOnAction(e -> changeCourseEnrollment());
 		
 		layout4.getChildren().addAll(course, enroll, lectures, spots, preReqs, other);
 	}
-	/**
-	 * 
-	 * @param course
-	 * @param lecture
-	 */
-	private void changeCourseEnrollment(TextField course, ChoiceBox<String> lecture) {
-		String lec = lecture.getValue();
-		String name = course.getText();
-		updateSchedule(lec, name);
+	
+	
+	private void changeCourseEnrollment() {
+		control.enroll();
 	}
-	//Updates the student's schedule that is displayed on the right hand side of the 
-	//window
-	private void updateSchedule(String lecture, String name) {
+	
+	
+	public void updateSchedule(CourseLite[] schedule) {
 		courseList = new ListView<>();
 		courseList.setMaxWidth(100);
-		courseList.getItems().add(name);
+		for(CourseLite c: schedule) {
+			courseList.getItems().add(c.getName() + c.getNumber());
+		}
 		GridPane.setConstraints(courseList, 15, 5);
 		layout4.getChildren().add(courseList);
-		
 	}
 	
 	/**
@@ -314,17 +407,18 @@ public class MyGUI extends Application{
 		
 		VBox layout = new VBox();
 		
-		ObservableList<Course> courses = FXCollections.observableArrayList();
-		courses.add(new Course("ENGG", 200));
-		courses.add(new Course("ENGG", 201));
-		courses.add(new Course("ENGG", 225));
+		ObservableList<CourseLite> courses = FXCollections.observableArrayList();
 		
-		TableView<Course> table;
+		for(CourseLite c: control.getCatalogue()) {
+		courses.add(c);
+		}
 		
-		TableColumn<Course, String> nameCol = new TableColumn<>("Course");
+		TableView<CourseLite> table;
+		
+		TableColumn<CourseLite, String> nameCol = new TableColumn<>("Course");
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
 		
-		TableColumn<Course, String> numberCol = new TableColumn<>("Number");
+		TableColumn<CourseLite, String> numberCol = new TableColumn<>("Number");
 		numberCol.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
 		
 		table = new TableView<>();

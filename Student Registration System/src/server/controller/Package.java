@@ -1,7 +1,9 @@
+package server.controller;
+
 import java.io.Serializable;
 
 /**
- * Class meant to be sent between server and client
+ * Represents a message meant to be sent between server and client
  * @author Jerome Gobeil
  *
  */

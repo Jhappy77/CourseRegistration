@@ -1,3 +1,4 @@
+package server.controller;
 import java.io.Serializable;
 
 /**

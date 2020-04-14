@@ -1,3 +1,4 @@
+package server.model;
 import java.util.ArrayList;
 
 public class Course implements Comparable<Course>{
