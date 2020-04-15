@@ -12,7 +12,6 @@ import server.controller.PackageType;
 
 /**
  * Communicates through the port to the server app.
- * This should be renamed to Client Port
  * @author Jerome Gobeil + Joel Happ
  * 
  * 
@@ -22,7 +21,7 @@ import server.controller.PackageType;
  */
 
 
-public class ClientApp {
+public class ClientPort {
 
 	//The socket
 	Socket socket;
@@ -30,8 +29,6 @@ public class ClientApp {
 	//Input and output stream
 	ObjectInputStream serverIn;
 	ObjectOutputStream serverOut;
-	
-	Controller control;	
 	
 	//While true the client will communicate with server
 	Boolean keepCommunicating;
@@ -42,9 +39,8 @@ public class ClientApp {
 	 * Create a new client app and connect to the port
 	 * @param portNumber
 	 */
-	public ClientApp(String serverName, int portNumber, Controller c)
+	public ClientPort(String serverName, int portNumber)
 	{
-		control =c;
 		
 		keepCommunicating = true;
 		
@@ -79,20 +75,22 @@ public class ClientApp {
 	/**
 	 * Listens for a single response from the server, and responds accordingly.
 	 */
-	public void communicateOnce() {
+	public Package readResponse() {
 		try
 		{
 			//Listen for info from the server
 			Package<?> pac = (Package<?>)serverIn.readObject();
 			
 			//Deal with the package
-			dealWithPackage(pac);
+			return pac;
 		}
 		catch (Exception e)
 		{
 			System.err.println("Error comunicating with server: " + e.getMessage());
 			closeAll();
 		}
+		// !! We may want to change this? Needed to include it to satisfy Java
+		return null;
 	}
 	
 	/**
@@ -128,7 +126,7 @@ public class ClientApp {
 				Package<?> pac = (Package<?>)serverIn.readObject();
 				
 				//Deal with the package
-				dealWithPackage(pac);
+				//dealWithPackage(pac);
 			}
 			catch (Exception e)
 			{
@@ -146,9 +144,12 @@ public class ClientApp {
 	//IF creating new packages or getting errors from them check out the PackageType enum to see what the data contains
 	
 	/**
+	 * (DEPRECATED) - DELETE EVENTUALLY
+	 * We most likely won't need this class anymore but I left it in case
+	 * 
 	 * Deals with the given package
 	 * @param pac
-	 */
+	 *//*
 	private void dealWithPackage(Package pac)
 	{
 		switch(pac.getType())
@@ -165,7 +166,6 @@ public class ClientApp {
 				//pac.getData() is a Boolean, true if login success (correct username/password) and false if incorrect
 				//When correct username and password inputed the student is automatically selected
 				
-				control.loginAttempt((Boolean)pac.getData());
 				System.out.println("Result from trying to login: " + pac.getData());
 				
 				break;
@@ -184,8 +184,6 @@ public class ClientApp {
 				else
 					System.out.println("Schedule length is: " + schedule.length);
 				
-				control.showSchedule(schedule);
-				
 				break;
 				
 			case CATALOGUE:
@@ -201,59 +199,80 @@ public class ClientApp {
 				else
 					System.out.println("Catalogue contains " + catalogue.length + " courses");
 				
-				control.updateCatalogue(catalogue);
 				
 				break;
 				
 			case COURSE:
 				
-				CourseLite course = (CourseLite)pac.getData();
-				//Update GUI or whatever the fuck you want really
-				control.setSelectedCourse(course);
 				//Pac data is a single courseLite object, contains all the info about the course and its offerings
 				//Check out courseLite class for the getters
 				
 				//TESTING
-				if (course == null)
-					System.out.println("Course does not exist");
-				else
-					System.out.println("Course has " + course.getOfferingCount() + " Offerings");
-				
+
 				break;
 
 		}
-	}
+	}*/
 	
 	/**
-	 * Sends a request for the catalogue to be sent
+	 * Sends a request for the catalog to be sent
 	 */
-	public void requestCatalogue()
+	public CourseLite[] requestCatalogue() throws Exception
 	{
 		//Make package
 		Package pac = new Package(PackageType.REQUESTCOURSECATALOGUE, null);
 				
 		//Send package
 		sendPackage(pac);
+		
+		// Gets package
+		Package<?> resp = readResponse();
+		
+		// Deals with response
+		switch(resp.getType()) {
+		case CATALOGUE:
+			CourseLite[] catalogue = (CourseLite[])pac.getData();
+			if(catalogue==null)
+				throw new Exception("The catalogue is empty.");
+			return catalogue;
+		default:
+			throw new Exception("Error communicating with server- unexpected type.");
+	}
 	}
 	
 	/**
 	 * Sends a request for the schedule to be sent
 	 */
-	public void requestSchedule()
+	public CourseLite[] requestSchedule() throws Exception
 	{
 		//Make package
 		Package pac = new Package(PackageType.REQUESTSCHEDULE, null);
 		
 		//Send package
 		sendPackage(pac);
+		
+		//Reads response
+		Package<?> resp = readResponse();
+		
+		switch(resp.getType()) {
+			case SCHEDULE:
+				CourseLite[] schedule = (CourseLite[])resp.getData();
+				if(schedule==null)
+					throw new Exception("Your schedule is empty.");
+				return schedule;
+			default:
+				throw new Exception("Error communicating with server- unexpected type");
+		}
+
 	}
 	
 	/**
-	 * Sends a login request with id and password
-	 * @param id
-	 * @param password
+	 * Sends a login request with id and password. 
+	 * Throws an exception with a relevant message if login wasn't successful.
+	 * @param id Entered student's ID to check
+	 * @param password Entered password to check
 	 */
-	public void attemptLogin(int id, String password)
+	public void attemptLogin(int id, String password) throws Exception
 	{
 		//Make package
 		String[] info = {Integer.toString(id),password};
@@ -261,6 +280,24 @@ public class ClientApp {
 				
 		//Send message
 		sendPackage(pac);
+		
+		//Reads response
+		Package<?> resp = readResponse();
+		
+		// !! Need to update this to get proper exception message,
+		// !! based on the error with logon. (Wrong password,
+		// !! (account doesn't exist)
+		
+		switch(resp.getType()) {
+		case LOGINRESULT:
+			if((Boolean)resp.getData())
+				return;
+			else
+				throw new Exception("Login attempt unsuccessful");
+		default:
+			throw new Exception("Error communicating with server, login unsuccessful");
+		}
+		
 	}
 	
 	/**
@@ -276,6 +313,10 @@ public class ClientApp {
 		
 		//Send message
 		sendPackage(pac);
+		
+		// !! Add functionality to get confirmation of success
+		// !! as well as error messages if necessary
+		
 	}
 	
 	/**
@@ -293,14 +334,17 @@ public class ClientApp {
 		//Send message
 		sendPackage(pac);
 		
+		// !! Add functionality to get confirmation of success
+		// !! as well as error messages if necessary
 	}
 	
 	/**
 	 * Sends a message to the server to try and find a certain course
 	 * @param courseName
 	 * @param courseNumber
+	 * @exception If the course couldn't be found
 	 */
-	public void findCourse(String courseName, int courseNumber)
+	public CourseLite findCourse(String courseName, int courseNumber) throws Exception
 	{
 		//Make package
 		String[] info = {courseName,Integer.toString(courseNumber)};
@@ -308,6 +352,23 @@ public class ClientApp {
 		
 		//Send message
 		sendPackage(pac);
+		
+		//Get response
+		Package<?> resp = readResponse();
+		
+		
+		switch(resp.getType()) {
+		case COURSE:
+			CourseLite course = (CourseLite)resp.getData();
+			if(course==null)
+				throw new Exception("No course found!");
+			return course;
+		default:
+			throw new Exception("Error communicating with server, unexpected type");
+		}
+		
+		// !! I'm not sure if there are any other possible exception cases
+		// !! that we need to be aware of.
 	}
 	
 	/**
