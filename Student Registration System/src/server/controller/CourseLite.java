@@ -22,6 +22,10 @@ public class CourseLite implements Serializable{
 	 * Offering section number
 	 */
 	int[] offeringSecNum;
+	/**
+	 * Number of offerings
+	 */
+	int offeringCount;
 	
 	/**
 	 * Offering taken spots and max spots
@@ -40,7 +44,9 @@ public class CourseLite implements Serializable{
 		this.number = number;
 		offeringSecNum = new int[offeringCount];
 		offeringSpots = new int[offeringCount][2];
+		this.offeringCount = offeringCount;
 	}
+	
 	
 	/**
 	 * Set the values for the offering
@@ -80,7 +86,7 @@ public class CourseLite implements Serializable{
 	 */
 	public int getOfferingCount()
 	{
-		return offeringSecNum.length;
+		return offeringCount;
 	}
 	
 	/**

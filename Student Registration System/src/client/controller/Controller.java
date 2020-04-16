@@ -38,7 +38,6 @@ public class Controller {
 			// Code to perform to complete login
 			model = new Model();
 			view.setStudentMenu();
-			updateSchedule();
 		}catch(Exception e){
 			// Throws exception to tell GUI to display exception message.
 			throw new Exception(e.getMessage());
@@ -84,19 +83,23 @@ public class Controller {
 	}
 	
 	
-	/**
-	 * Gets student's schedule from server, updates it in view.
-	 */
-	private void updateSchedule() {
-		try {
-		view.updateSchedule(clientPort.requestSchedule());
-		} catch(Exception e) {
-			// !! Add functionality so it can display error message on GUI
-			// !! And delete this line:
-			System.err.println("Error in enroll function" + e.getMessage());
-		}
+	public int getSelectedCourseOfferings() {
+		return model.getSelectedCourse().getOfferingCount();
 	}
 	
+	public CourseLite getSelectedCourse() {
+		return model.getSelectedCourse();
+	}
+	
+	public CourseLite[] getSchedule() {
+		try {
+			return clientPort.requestSchedule();
+		}catch(Exception e) {
+			System.err.println("Error getting schedule");
+		}
+		return null;
+	}
+
 	
 	/**
 	 * Enrolls the student in the selected course, updates the student's schedule
@@ -109,7 +112,6 @@ public class Controller {
 			// !! Should display a relevant exception message to GUI, instead of here
 			System.err.println("Error in enroll function" + e.getMessage());
 		}
-		updateSchedule();
 	}
 	
 	
@@ -125,7 +127,6 @@ public class Controller {
 			// !! Should display a relevant message to GUI instead of this
 			System.err.println("Error in enroll function" + e.getMessage());
 		}
-		updateSchedule();
 	}
 	
 	/**
@@ -137,7 +138,7 @@ public class Controller {
 	public CourseLite[] getCatalogue() {
 		// 
 		try {
-		model.setCatalogue(clientPort.requestCatalogue());
+			model.setCatalogue(clientPort.requestCatalogue());
 		}catch(Exception e) {
 			System.err.println("Error getting catalogue." + e.getMessage());
 		}

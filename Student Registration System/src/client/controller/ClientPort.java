@@ -231,7 +231,7 @@ public class ClientPort {
 		// Deals with response
 		switch(resp.getType()) {
 		case CATALOGUE:
-			CourseLite[] catalogue = (CourseLite[])pac.getData();
+			CourseLite[] catalogue = (CourseLite[])resp.getData();
 			if(catalogue==null)
 				throw new Exception("The catalogue is empty.");
 			return catalogue;
