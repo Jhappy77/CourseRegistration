@@ -49,6 +49,13 @@ public enum PackageType {
 	CATALOGUE,
 	//Data is CourseLite[], null if no courses exist
 	
+	LOGOUT,
+	//Makes the server deselect the current student
+	//Data is null
+	
+	ERROR,
+	//Data is String to be printed/displayed on GUI
+	
 	MESSAGE
 	//Data is string
 	//Message to be printed when received

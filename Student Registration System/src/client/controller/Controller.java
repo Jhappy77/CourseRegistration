@@ -95,7 +95,8 @@ public class Controller {
 		try {
 			return clientPort.requestSchedule();
 		}catch(Exception e) {
-			System.err.println("Error getting schedule");
+      // !! May want to make this display an error in a better way? Low priority though
+			System.err.println("Error getting schedule + e.getMessage()");
 		}
 		return null;
 	}

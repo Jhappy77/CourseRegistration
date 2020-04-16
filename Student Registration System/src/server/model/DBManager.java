@@ -72,7 +72,7 @@ public class DBManager {
 		for(Student st:studentList) {
 			
 			if(true) {
-			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(i%3);
+			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(1);
 			if(co!=null) {
 				new Registration(st, co);
 			}}
@@ -85,14 +85,14 @@ public class DBManager {
 			}
 			
 			if(i%3==0) {
-				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(0);
+				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
 			
 			if(i%4==0) {
-				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(0);
+				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
@@ -111,11 +111,13 @@ public class DBManager {
 	 */
 	public void sampleDBTest(CourseCatalogue cat) {
 		readFromDataBase();
+		System.out.println("Courses loaded: " + courseList.size());
 		fillStudentArrayList();
+		System.out.println("Students loaded: " + studentList.size());
 		try {
 			addSampleCoursesToStudents(cat);
 		}catch(Exception e) {
-			System.out.println("You failed miserably");
+			System.out.println("Error registering students in courses");
 		}
 	}
 	
