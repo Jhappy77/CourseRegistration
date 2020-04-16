@@ -13,6 +13,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -24,6 +25,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -57,9 +59,7 @@ public class MyGUI extends Application{
 	Scene login, studentScene, adminScene, studentMenu;
 	int width = 700;
 	int height = 300;
-	GridPane layout4;
-	ListView<String> courseList;
-	Label course;
+	VBox rightPanel;
 	
 
 
@@ -85,8 +85,7 @@ public class MyGUI extends Application{
 		
 		window = primaryStage;
 		window.setTitle("Login");
-		course = new Label();
-	
+		
 		//Layout 1 - Main window where user chooses between 
 		//			 Student and Admin
 		login = new Scene(optionScene(), width, height);
@@ -100,7 +99,7 @@ public class MyGUI extends Application{
 		
 		//Layout 4 - Student's main window with course search,
 		// 			 their schedule, and where they can enroll in courses
-		studentMenu = new Scene(studentMenu(), width, height);
+		//studentMenu = new Scene(studentMenu(), width, height);
 
 		window.setScene(login);
 		window.show();
@@ -114,12 +113,9 @@ public class MyGUI extends Application{
 	 * the padding, vertical gap, and horizontal gap
 	 * @return general layout 
 	 */
-	private GridPane makeLayout() {
-		GridPane layout = new GridPane();
-		layout.setPadding(new Insets(10,10,10,10));
-		layout.setVgap(8);
-		layout.setHgap(10);
-		
+	private VBox makeLayout() {
+		VBox layout = new VBox();
+		layout.setPadding(new Insets(10,10,10,10));	
 		return layout;
 	}
 	/**
@@ -127,27 +123,32 @@ public class MyGUI extends Application{
 	 * user to pick the student route or the admin one
 	 * @return layout for the window
 	 */
-	private GridPane optionScene() {
-		GridPane layout = makeLayout();
+	private VBox optionScene() {
+		VBox layout = makeLayout();
+		layout.setSpacing(10);
+		layout.setAlignment(Pos.CENTER);
 		
 		//University of Calgary Title
 		Label title = new Label("University of Calgary");
-		GridPane.setConstraints(title, 22, 5);
-				
+		
 		//Student Button
 		Button student = new Button();
 		student.setText("Sign In");
 		student.setOnAction(e -> window.setScene(studentScene));
-		GridPane.setConstraints(student, 18, 10);
 		
 		//Admin Button
 		Button admin = new Button();
 		admin.setText("Admin");
 		admin.setOnAction(e -> window.setScene(adminScene));
-		GridPane.setConstraints(admin, 26, 10);
+		
+		//HBox for the buttons so they are on the same line
+		HBox buttons = new HBox();
+		buttons.setSpacing(100);
+		buttons.getChildren().addAll(student, admin);
+		buttons.setAlignment(Pos.CENTER);
 		
 		//Adding all the components to the layout
-		layout.getChildren().addAll(title, student, admin);
+		layout.getChildren().addAll(title, buttons);
 		
 		return layout;
 	}
@@ -157,24 +158,32 @@ public class MyGUI extends Application{
 	 * prompt the user to enter their id and password
 	 * @return layout for the window
 	 */
-	private GridPane studentLogin() {
-		GridPane layout = makeLayout();
+	private VBox studentLogin() {
+		VBox layout = makeLayout();
+		layout.setSpacing(50);
+		HBox topPanel = new HBox();
+		VBox centrePanel = new VBox();
+		centrePanel.setSpacing(10);
+		centrePanel.setAlignment(Pos.CENTER);
 		
 		//Student Id Block
+		HBox idBlock = new HBox();
+		idBlock.setSpacing(10);
+		idBlock.setAlignment(Pos.CENTER);
 		Label idLabel = new Label("Student ID");
-		GridPane.setConstraints(idLabel, 16, 8);
 		TextField idText = new TextField();
-		GridPane.setConstraints(idText, 18, 8);
+		idBlock.getChildren().addAll(idLabel,idText);
 		
 		//Student Password Block
+		HBox passwordBlock = new HBox();
+		passwordBlock.setSpacing(10);
+		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		GridPane.setConstraints(passwordLabel, 16, 10);
 		TextField passwordText = new TextField();
-		GridPane.setConstraints(passwordText, 18, 10);
+		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
 		
 		//Login Response Label
 		Label loginResponse = new Label("");
-		GridPane.setConstraints(loginResponse, 18, 16);
 			
 		//Login Button
 		Button loginButton = new Button();
@@ -182,17 +191,17 @@ public class MyGUI extends Application{
 		loginButton.setOnAction(e -> {
 			loginStudent(idText, passwordText, loginResponse);
 			});
-		GridPane.setConstraints(loginButton, 18, 14);
 		
 		//Go Back Button
 		Button goBack1 = new Button();
 		goBack1.setText("Go Back");
 		goBack1.setOnAction(e -> window.setScene(login));
-		GridPane.setConstraints(goBack1, 0, 0);
+		topPanel.getChildren().add(goBack1);
 		
+		centrePanel.getChildren().addAll(idBlock, passwordBlock, loginButton, loginResponse);
 		
 		//Adding all the components to the layout
-		layout.getChildren().addAll(idLabel, idText, passwordLabel, passwordText, goBack1, loginButton, loginResponse);
+		layout.getChildren().addAll(topPanel, centrePanel);
 		
 		return layout;
 	}
@@ -202,43 +211,59 @@ public class MyGUI extends Application{
 	 * prompt the user to enter their username and password
 	 * @return layout for the window
 	 */
-	private GridPane studentMenu() {
-		layout4 = makeLayout();
+	private VBox studentMenu() {
+		VBox layout = makeLayout();
+		layout.setSpacing(15);
+		HBox title = new HBox();
+		title.setSpacing(220);
+		HBox panels = new HBox();
+		
+		panels.setSpacing(200);
+		VBox leftPanel = new VBox();
+		leftPanel.setSpacing(10);
+		rightPanel = new VBox();
+		rightPanel.setSpacing(10);
+		panels.getChildren().addAll(leftPanel, rightPanel);
+		
+		//Schedule List
+		ListView<String> courseList = new ListView<>();
+		fillCourses(courseList);
 				
 		//Welcome label
 		Label welcome = new Label("Welcome"); // Later, add name of student here
-		GridPane.setConstraints(welcome, 0, 0);
 				
 		//Log Out Button
 		Button logoutButton = new Button();
 		logoutButton.setText("Log Out");
 		logoutButton.setOnAction(e -> window.setScene(login));
-		GridPane.setConstraints(logoutButton, 23, 0);
 		
 		//Browse Catalogue Button
 		Button browse = new Button();
-		browse.setText("Browse");
+		browse.setText("Browse Catalogue");
 		browse.setOnAction(e -> browseCatalogue());
-		GridPane.setConstraints(browse, 23, 13);
+		title.getChildren().addAll(welcome, browse, logoutButton);
+		title.setAlignment(Pos.CENTER);
 				
 		//View Courses search
-		Label course = new Label("View Course"); // later, add name of student here
-		GridPane.setConstraints(course, 1, 3);
+		Label courseLabel = new Label("View Course"); // later, add name of student here
+		
+		HBox searchPanel = new HBox();
+		searchPanel.setSpacing(10);
 		TextField searchTag = new TextField("search for a course");
-		GridPane.setConstraints(searchTag, 1, 5);
 		Button search = new Button();
 		search.setText("Search");
-		search.setOnAction(e -> courseDisplay(searchTag));
-		GridPane.setConstraints(search, 2, 5);
+		search.setOnAction(e -> courseDisplay(searchTag, leftPanel));
+		searchPanel.getChildren().addAll(searchTag, search);
+		leftPanel.getChildren().addAll(courseLabel, searchPanel);
 				
 		//Schedule Display
 		Label schedule = new Label("Your Schedule");
-		GridPane.setConstraints(schedule, 15, 3);
+		rightPanel.getChildren().addAll(schedule, courseList);
 		
 		//Adding all the components to the layout
-		layout4.getChildren().addAll(browse, searchTag, schedule, welcome, logoutButton, course, search);
+		layout.getChildren().addAll(title, panels);
 		
-		return layout4;
+		return layout;
 		
 	}
 	
@@ -248,35 +273,50 @@ public class MyGUI extends Application{
 	 * prompts the user to search for and enroll in courses
 	 * @return layout for the window
 	 */
-	private GridPane adminLogin() {
-		GridPane layout = makeLayout();
+	private VBox adminLogin() {
+		VBox layout = makeLayout();
+		layout.setSpacing(50);
+		HBox topPanel = new HBox();
+		VBox centrePanel = new VBox();
+		centrePanel.setSpacing(10);
+		centrePanel.setAlignment(Pos.CENTER);
 		
-		//Username Block
+		//Student Id Block
+		HBox idBlock = new HBox();
+		idBlock.setSpacing(10);
+		idBlock.setAlignment(Pos.CENTER);
 		Label idLabel = new Label("Username");
-		GridPane.setConstraints(idLabel, 16, 8);
 		TextField idText = new TextField();
-		GridPane.setConstraints(idText, 18, 8);
+		idBlock.getChildren().addAll(idLabel,idText);
 		
 		//Student Password Block
+		HBox passwordBlock = new HBox();
+		passwordBlock.setSpacing(10);
+		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		GridPane.setConstraints(passwordLabel, 16, 10);
 		TextField passwordText = new TextField();
-		GridPane.setConstraints(passwordText, 18, 10);
+		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
+		
+		//Login Response Label
+		Label loginResponse = new Label("");
 			
 		//Login Button
 		Button loginButton = new Button();
 		loginButton.setText("Login");
-		loginButton.setOnAction(e -> window.setScene(login));//FIX
-		GridPane.setConstraints(loginButton, 18, 14);
+		loginButton.setOnAction(e -> {
+			loginStudent(idText, passwordText, loginResponse);
+			});
 		
 		//Go Back Button
-		Button goBack2 = new Button();
-		goBack2.setText("Go Back");
-		goBack2.setOnAction(e -> window.setScene(login));
-		GridPane.setConstraints(goBack2, 0, 0);
+		Button goBack1 = new Button();
+		goBack1.setText("Go Back");
+		goBack1.setOnAction(e -> window.setScene(login));
+		topPanel.getChildren().add(goBack1);
+		
+		centrePanel.getChildren().addAll(idBlock, passwordBlock, loginButton, loginResponse);
 		
 		//Adding all the components to the layout
-		layout.getChildren().addAll(goBack2, loginButton, passwordLabel, passwordText, idLabel, idText);
+		layout.getChildren().addAll(topPanel, centrePanel);
 		
 		return layout;
 	}
@@ -300,9 +340,11 @@ public class MyGUI extends Application{
 		try {
 			int id = Integer.parseInt(inputID.getText());
 			String password = inputPass.getText();
+			inputID.clear();
+			inputPass.clear();
 			control.login(id, password);
 			System.out.println("Passed control");
-			//window.setScene(studentMenu);
+			
 		}catch(NumberFormatException e) {
 			responseLabel.setText("Invalid username entered! Please enter a student ID!");
 		}catch(Exception e) {
@@ -313,7 +355,7 @@ public class MyGUI extends Application{
 	}
 	
 	public void setStudentMenu() {
-		window.setScene(studentMenu);
+		window.setScene(new Scene (studentMenu(), width, height));
 	}
 	
 	/**
@@ -338,65 +380,89 @@ public class MyGUI extends Application{
 	 * Shows the course display of a certain course
 	 * @param courseName Name of the course
 	 */
-	private void courseDisplay(TextField courseName) {
+	private void courseDisplay(TextField courseName, VBox leftPanel) {
 		
 		String input = courseName.getText();
 		control.selectCourse(splitCName(input), splitCNumber(input));
 		
-		
+		HBox courseInfo = new HBox();
+		courseInfo.setSpacing(10);
 		
 		//Lecture Drop-Down
 		ChoiceBox<String> lectures = new ChoiceBox<>();
-		lectures.getItems().add("Lecture 1");
-		lectures.getItems().add("Lecture 2");
-		GridPane.setConstraints(lectures, 2, 8);
+		for(int i = 0; i < control.getSelectedCourseOfferings();)
+			lectures.getItems().add("Lecture " + (++i));
+		
 		lectures.setValue("Lecture 1"); // default value
 		
 		//Course Name Label
 		Label course = new Label(control.getSelectedCourseName());
-		//course.setText(courseName.getText());
-		//course.textProperty().bind(courseName.textProperty());//FIX
-		GridPane.setConstraints(course, 1, 8);
+		
+		courseInfo.getChildren().addAll(course, lectures);
 		
 		//Spots Available
 		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
-		GridPane.setConstraints(spots, 1, 10);
 		
 		//Course Pre-Requisites
 		Label preReqs = new Label("Pre-Requisites: ");
-		GridPane.setConstraints(preReqs, 1, 11);
 		
 		//Other Available
 		Label other = new Label("Other: ");
-		GridPane.setConstraints(other, 1, 12);
+		
+		HBox buttons = new HBox();
+		buttons.setSpacing(15);
 		
 		//Enroll/Unenroll 
 		Button enroll = new Button();
 		enroll.setText("Enroll/Unenroll");
-		GridPane.setConstraints(enroll, 1, 13);
 		enroll.setOnAction(e -> changeCourseEnrollment());
 		
-		layout4.getChildren().addAll(course, enroll, lectures, spots, preReqs, other);
+		//Search new Course
+		Button searchNew = new Button();
+		searchNew.setText("Search New Course");
+		searchNew.setOnAction(e -> window.setScene(new Scene(studentMenu(), width, height)));
+		
+		buttons.getChildren().addAll(enroll, searchNew);
+		
+		leftPanel.getChildren().addAll(courseInfo, spots, preReqs, buttons);
 	}
 	
+	private Boolean checkUnenrollment() {
+		CourseLite [] courses = control.getSchedule();
+		if(courses != null) {
+		for(int i = 0; i < courses.length; i++) {
+			if(courses[i] == control.getSelectedCourse()) {
+				control.unenroll();
+				System.out.println("UNENROLLED");
+				return true;
+			}
+		}}
+		return false;
+	}
 	
 	private void changeCourseEnrollment() {
-		control.enroll();
+		Boolean check = checkUnenrollment();
+		if(check == false)
+			control.enroll();
+		window.setScene(new Scene (studentMenu(), width, height));
 	}
-	
-	
-	public void updateSchedule(CourseLite[] schedule) {
-		courseList = new ListView<>();
-		courseList.setMaxWidth(100);
-		for(CourseLite c: schedule) {
-			courseList.getItems().add(c.getName() + c.getNumber());
+	/**
+	 * Gets the student's schedule from the controller and then fills a ListView in order
+	 * to display the information
+	 * @param courseList Component used to display the student's schedule
+	 */
+	private void fillCourses(ListView<String> courseList){
+		CourseLite [] courses = control.getSchedule();
+		if(courses != null) {
+			for(int i = 0; i < courses.length; i++) {
+				courseList.getItems().add(courses[i].getName() + " " + courses[i].getNumber());
+			}
 		}
-		GridPane.setConstraints(courseList, 15, 5);
-		layout4.getChildren().add(courseList);
 	}
+
 	
 	/**
-	 * MAY NOT BE NEEDED IF WE DELETE THE POP UP WINDOW FOR COURSE CATALOGUE
+	 * Window to display the course catalogue
 	 */
 	public void browseCatalogue() {
 		Stage catalogue = new Stage();
@@ -408,22 +474,25 @@ public class MyGUI extends Application{
 		VBox layout = new VBox();
 		
 		ObservableList<CourseLite> courses = FXCollections.observableArrayList();
-		
-		for(CourseLite c: control.getCatalogue()) {
-		courses.add(c);
+		if(control.getCatalogue() != null) {
+			for(CourseLite c: control.getCatalogue()) {
+				courses.add(c);
+			}
 		}
-		
 		TableView<CourseLite> table;
 		
 		TableColumn<CourseLite, String> nameCol = new TableColumn<>("Course");
-		nameCol.setCellValueFactory(new PropertyValueFactory<>("courseName"));
+		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
 		
-		TableColumn<CourseLite, String> numberCol = new TableColumn<>("Number");
-		numberCol.setCellValueFactory(new PropertyValueFactory<>("courseNum"));
+		TableColumn<CourseLite, Integer> numberCol = new TableColumn<>("Number");
+		numberCol.setCellValueFactory(new PropertyValueFactory<>("number"));
+		
+		TableColumn<CourseLite, Integer> offeringsCol = new TableColumn<>("Number of Offerings");
+		offeringsCol.setCellValueFactory(new PropertyValueFactory<>("offeringCount"));
 		
 		table = new TableView<>();
 		table.setItems(courses);
-		table.getColumns().addAll(nameCol, numberCol);
+		table.getColumns().addAll(nameCol, numberCol, offeringsCol);
 		
 		layout.getChildren().addAll(table);
 		

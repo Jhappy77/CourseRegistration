@@ -42,4 +42,8 @@ public class Model {
 	public CourseLite[] getCatalogue() {
 		return catalogue;
 	}
+	
+	public CourseLite getSelectedCourse() {
+		return selectedCourse;
+	}
 }
