@@ -93,7 +93,7 @@ public class Controller {
 		} catch(Exception e) {
 			// !! Add functionality so it can display error message on GUI
 			// !! And delete this line:
-			System.err.println("Error in enroll function" + e.getMessage());
+			System.err.println("Error updating schedule " + e.getMessage());
 		}
 	}
 	

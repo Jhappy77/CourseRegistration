@@ -231,10 +231,16 @@ public class ClientPort {
 		// Deals with response
 		switch(resp.getType()) {
 		case CATALOGUE:
-			CourseLite[] catalogue = (CourseLite[])pac.getData();
+			CourseLite[] catalogue = (CourseLite[])resp.getData();
+			
 			if(catalogue==null)
 				throw new Exception("The catalogue is empty.");
 			return catalogue;
+		
+		//If theres an error return what kind of error it is
+		case ERROR:
+			throw new Exception((String)resp.getData());
+		
 		default:
 			throw new Exception("Error communicating with server- unexpected type.");
 	}
@@ -260,6 +266,11 @@ public class ClientPort {
 				if(schedule==null)
 					throw new Exception("Your schedule is empty.");
 				return schedule;
+			
+			//If theres an error return what kind of error it is
+			case ERROR:
+				throw new Exception((String)resp.getData());
+				
 			default:
 				throw new Exception("Error communicating with server- unexpected type");
 		}
@@ -289,11 +300,17 @@ public class ClientPort {
 		// !! (account doesn't exist)
 		
 		switch(resp.getType()) {
+		
 		case LOGINRESULT:
 			if((Boolean)resp.getData())
 				return;
 			else
 				throw new Exception("Login attempt unsuccessful");
+		
+		//If theres an error return what kind of error it is
+		case ERROR:
+			throw new Exception((String)resp.getData());
+		
 		default:
 			throw new Exception("Error communicating with server, login unsuccessful");
 		}
@@ -363,12 +380,33 @@ public class ClientPort {
 			if(course==null)
 				throw new Exception("No course found!");
 			return course;
+		
+		//If there is a error return the message
+		case ERROR:
+			throw new Exception((String)resp.getData());
+			
 		default:
 			throw new Exception("Error communicating with server, unexpected type");
 		}
 		
 		// !! I'm not sure if there are any other possible exception cases
 		// !! that we need to be aware of.
+	}
+	
+	/**
+	 * Sends logout package to the server
+	 */
+	public void logout()
+	{
+		//Make package
+		Package pac = new Package(PackageType.LOGOUT, null);
+				
+		//Send message
+		sendPackage(pac);
+				
+		// !! Add functionality to get confirmation of success
+		// !! as well as error messages if necessary
+		
 	}
 	
 	/**
@@ -399,14 +437,4 @@ public class ClientPort {
 			System.err.println("Error sending package to server: " + e.getMessage());
 		}
 	}
-	
-	/**
-	 * Ends communication with the server
-	 */
-	public void logout()
-	{
-		keepCommunicating = false;
-	}
-
-	
 }

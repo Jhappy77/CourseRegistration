@@ -56,7 +56,7 @@ public class CourseCatalogue {
 				return c;
 			}	
 		}
-		throw new Exception ("The course that was searched for was not found.");
+		throw new Exception ("Course could not be found");
 	}
 	
 	/**

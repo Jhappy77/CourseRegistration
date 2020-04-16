@@ -89,13 +89,13 @@ public class RegistrationApp {
 	 * Returns a list of all the students registrations
 	 * @return CourseLite[] of the courses the student is in
 	 */
-	public CourseLite[] getSchedule()
+	public CourseLite[] getSchedule() throws Exception
 	{
 		if (selectedStudent != null)
 		{
-			//If no registrations return null
+			//If no registrations send a message
 			if (selectedStudent.numberOfRegistrations() == 0)
-				return null;
+				throw new Exception("Not Registered in any courses");
 			
 			//Make a list for the courses
 			CourseLite[] courseList = new CourseLite[selectedStudent.numberOfRegistrations()];
@@ -112,20 +112,19 @@ public class RegistrationApp {
 			return courseList;
 		}
 		else
-			System.err.println("Trying to get schedule when no student selected");
+			throw new Exception("Student is not currently selected");
 		
-		return null;
 	}
 	
 	/**
 	 * Makes a array of courseLite for every single course in the catalogue
 	 * @return the array of course lite
 	 */
-	public CourseLite[] getEntireCourseList()
+	public CourseLite[] getEntireCourseList() throws Exception
 	{
 		//If there aren't any course just return null
 		if (cat.getCourseCount() == 0)
-			return null;
+			throw new Exception("No Courses in Catalogue");
 		
 		CourseLite[] courseList = new CourseLite[cat.getCourseCount()];
 		
@@ -144,21 +143,12 @@ public class RegistrationApp {
 	 * @param courseNumber
 	 * @return the course lite class
 	 */
-	public CourseLite findCourse(String courseName, int courseNumber)
+	public CourseLite findCourse(String courseName, int courseNumber) throws Exception
 	{
+		
+		//Find course
 		Course c;
-		
-		//Try and get the course
-		try 
-		{
-			c = getCourse(courseName, courseNumber);
-		}
-		
-		//If course can't be found return a null course
-		catch (Exception e)
-		{
-			return null;
-		}
+		c = getCourse(courseName, courseNumber);
 		
 		//Make a course lite and return it
 		return makeCourseLite(c);
@@ -194,23 +184,36 @@ public class RegistrationApp {
 	 * @param password
 	 * @return true if success, false if fail
 	 */
-	public Boolean validateStudent(int id, String password) {
+	public Boolean validateStudent(int id, String password) throws Exception{
 		selectedStudent = db.getStudent(id);
+		
+		//If invalid Id send that back
 		if(selectedStudent==null) { 
-			return false;
+			throw new Exception("Invalid Username");
 		}
 		else
 		{
+			//If good just return true
 			if (selectedStudent.checkPassword(password))
 			{
 				return true;
 			}
+			
+			//If wrong send that back
 			else
 			{
 				selectedStudent = null;
-				return false;
+				throw new Exception("Wrong Password");
 			}
 		}
+	}
+	
+	/**
+	 * Removes the selected student
+	 */
+	public void deselectStudent()
+	{
+		selectedStudent = null;
 	}
 
 }
