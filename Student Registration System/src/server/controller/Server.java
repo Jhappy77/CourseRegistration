@@ -51,10 +51,11 @@ public class Server {
 		
 		//Make the course catalogue and the database
 		db = new DBManager();
-		catalogue = new CourseCatalogue(db);
+		catalogue = new CourseCatalogue();
+		catalogue.loadFromDataBase(db);
 		
 		
-		//Fill the catalogue with test courses
+		//Fill the catalogue with students???
 		db.sampleDBTest(catalogue);
 	}
 	

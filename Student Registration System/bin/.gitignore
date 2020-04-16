@@ -13,8 +13,5 @@
 /ClientApp.class
 /CourseLite.class
 /MyGUI.class
-/Server/
-/server/
-/controller/
-/model/
 /client/
+/server/

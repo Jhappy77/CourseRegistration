@@ -10,8 +10,8 @@ public class CourseCatalogue {
 	
 	private ArrayList <Course> courseList;
 	
-	public CourseCatalogue (DBManager db) {
-		loadFromDataBase (db);
+	public CourseCatalogue () {
+
 	}
 	
 	/**
@@ -37,7 +37,7 @@ public class CourseCatalogue {
 	 * Creates a new DBManager, and sets the course list to be the result of
 	 * reading from the database.
 	 */
-	private void loadFromDataBase(DBManager db) {
+	public void loadFromDataBase(DBManager db) {
 		setCourseList(db.readFromDataBase());
 	}
 	

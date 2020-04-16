@@ -110,7 +110,6 @@ public class DBManager {
 	 * @param cat Catalogue to sync with
 	 */
 	public void sampleDBTest(CourseCatalogue cat) {
-		readFromDataBase();
 		System.out.println("Courses loaded: " + courseList.size());
 		fillStudentArrayList();
 		System.out.println("Students loaded: " + studentList.size());
