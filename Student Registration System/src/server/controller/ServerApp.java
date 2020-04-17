@@ -157,6 +157,14 @@ public class ServerApp implements Runnable{
 				
 				sendCatalogue();
 				break;
+				
+			//Make a new course
+			case NEWCOURSE:
+				System.out.println("Client " + clientNumber + ": Received Make New Course");
+				
+				//Make a new course and send back result
+				makeNewCourse((String[])pac.getData());
+				break;
 			
 			//Just logout the student
 			case LOGOUT:
@@ -166,6 +174,35 @@ public class ServerApp implements Runnable{
 				break;
 				
 		}
+	}
+	
+	/**
+	 * Remove the course from the selected student
+	 * @param r
+	 */
+	synchronized private void makeNewCourse(String[] m)
+	{
+		Package ret;
+		
+		//Make the course
+		try
+		{
+			//Make a new course the course
+			reg.makeNewCourse(m[0], Integer.parseInt(m[1]), Integer.parseInt(m[2]), Integer.parseInt(m[3]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Made Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Making Course");
+		}
+		
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error making course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
 	}
 	
 	/**
@@ -310,8 +347,9 @@ public class ServerApp implements Runnable{
 		Package pac;
 		try
 		{
-			pac = new Package(PackageType.LOGINRESULT, reg.validateStudent(Integer.parseInt(input[0]),input[1]));
-			System.out.println("Client " + clientNumber + ": Sending Login Success");
+			String name = reg.validateStudent(Integer.parseInt(input[0]),input[1]);
+			pac = new Package(PackageType.LOGINRESULT, name);
+			System.out.println("Client " + clientNumber + ": Success loging in as: " + name);
 		}
 		catch (Exception e)
 		{

@@ -34,8 +34,12 @@ public class Controller {
 	public void login(int id, String password) throws Exception {
 		try{
 			// If this doesn't throw an exception, login is successful.
-			clientPort.attemptLogin(id, password);
+			String name = clientPort.attemptLogin(id, password);
 			// Code to perform to complete login
+			
+			// !! Name should be displayed somewhere on GUI
+			System.out.println("Logged in as: " + name);
+			
 			model = new Model();
 			view.setStudentMenu();
 		}catch(Exception e){
@@ -95,8 +99,11 @@ public class Controller {
 		try {
 			return clientPort.requestSchedule();
 		}catch(Exception e) {
-      // !! May want to make this display an error in a better way? Low priority though
-			System.err.println("Error getting schedule + e.getMessage()");
+			
+			// !! May want to make this display an error in a better way? Low priority though
+			// !! This returns and error is the schedule is empty, could be good to say that
+			System.err.println("Error getting schedule: " + e.getMessage());
+		
 		}
 		return null;
 	}
@@ -109,14 +116,15 @@ public class Controller {
 		try {
 			String message = clientPort.addCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber(), model.getSecNumber());
 			
-			// !! This should be displayed on the GUI somewhere
+			// !! This should be displayed on the GUI somewhere, just says that it was succesfull enrolling in course
 			System.out.println(message);
 		
 		}catch(Exception e) {
 			
-			// !! Should display a relevant exception message to GUI, instead of here
+			// !! Should display a relevant exception message to GUI
+			// !! Message is either cant find course, student already in course or something similar
 			
-			System.err.println("Error in enroll function" + e.getMessage());
+			System.err.println("Error enrolling: " + e.getMessage());
 		}
 	}
 	
@@ -137,7 +145,28 @@ public class Controller {
 			
 			// !! Should display a relevant message to GUI instead of this
 			
-			System.err.println("Error in enroll function" + e.getMessage());
+			System.err.println("Error unenrolling: " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Makes a new course
+	 */
+	public void makeCourse() {
+		try {
+			
+			// !! Needs to have actual data put in
+			String message = clientPort.makeCourse("Temp",666, 2, 666);
+			
+			// !! This should be displayed on the GUI somewhere
+			System.out.println(message);
+		
+		}catch(Exception e) {
+			
+			// !! Should display a relevant exception message to GUI, instead of here
+			// !! Message is course already exists or other reason it didn't work
+			
+			System.err.println("Error making course: " + e.getMessage());
 		}
 	}
 	

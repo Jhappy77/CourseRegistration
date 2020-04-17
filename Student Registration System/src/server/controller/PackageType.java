@@ -39,7 +39,7 @@ public enum PackageType {
 	
 	COURSECHANGED,
 	//Data is String message
-	//Sent when a course has been successfully added or removed
+	//Sent when a course has been successfully added, removed or created
 	
 	FINDCOURSE,
 	//Data is string[]
@@ -55,6 +55,14 @@ public enum PackageType {
 	LOGOUT,
 	//Makes the server deselect the current student
 	//Data is null
+	
+	NEWCOURSE,
+	//Makes a new course
+	//Data is a string[]
+	//First element is course name
+	//Second is course number (int)
+	//Third is the number of sections (int)
+	//Fourth is the maximum spots for each section
 	
 	ERROR,
 	//Data is String to be printed/displayed on GUI

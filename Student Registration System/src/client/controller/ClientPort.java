@@ -420,12 +420,47 @@ public class ClientPort {
 			throw new Exception("Error communicating with server, unexpected type");
 		}
 		
-		// !! I'm not sure if there are any other possible exception cases
-		// !! that we need to be aware of.
+	}
+	
+	/**
+	 * Sends a message to the server to make a course
+	 * @param courseName
+	 * @param courseNumber
+	 * @param numberOfOfferings
+	 * @param maxStudentsPerOffering
+	 */
+	public String makeCourse(String courseName, int courseNumber, int numberOfOfferings, int maxStudentsPerOffering) throws Exception
+	{
+		//Make package
+		String[] info = {courseName,Integer.toString(courseNumber),Integer.toString(numberOfOfferings),Integer.toString(maxStudentsPerOffering)};
+		Package pac = new Package(PackageType.NEWCOURSE, info);
+		
+		//Send message
+		sendPackage(pac);
+		
+		//Get response
+		Package<?> resp = readResponse();
+		
+		switch(resp.getType()) {
+		
+		case COURSECHANGED:
+			
+			if(resp.getData() != null)
+				return (String)resp.getData();
+			else
+				throw new Exception("Error making course");
+		
+		//If theres an error return what kind of error it is
+		case ERROR:
+			throw new Exception((String)resp.getData());
+		
+		default:
+			throw new Exception("Error communicating with server, unexpected type");
+		}
+		
 	}
 	
 	// !! This needs to be called by the GUI when loging out so the server is notified
-	
 	/**
 	 * Sends logout package to the server
 	 */

@@ -42,8 +42,8 @@ public class RegistrationApp {
 	/**
 	 * Adds the passed offering to the selected student
 	 */
-	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) throws Exception{
-		
+	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) throws Exception
+	{
 		//Check if student is selected
 		if (selectedStudent != null)
 		{
@@ -51,8 +51,19 @@ public class RegistrationApp {
 		}
 		else
 			throw new Exception("No Student Selected");
-			
-		
+	}
+	
+	/**
+	 * Makes a new course with the given name and course number
+	 * @param courseName
+	 * @param courseNumber
+	 * @param numberOfOfferings
+	 * @param maxInOffering
+	 * @throws Exception
+	 */
+	public void makeNewCourse(String courseName, int courseNumber, int numberOfOfferings, int maxInOffering) throws Exception
+	{
+		cat.addNewCourse(courseName, courseNumber, numberOfOfferings, maxInOffering);
 	}
 	
 	/**

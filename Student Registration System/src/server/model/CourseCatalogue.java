@@ -60,6 +60,41 @@ public class CourseCatalogue {
 	}
 	
 	/**
+	 * Adds a new course with the given name and number
+	 * @param courseName
+	 * @param courseNum
+	 * @param sectionCount
+	 * @param maxPerOffering
+	 * @throws Exception
+	 */
+	public void addNewCourse(String courseName, int courseNum, int sectionCount, int maxPerOffering) throws Exception
+	{
+		
+		//Check if a course exists with the same name and number
+		try
+		{
+			searchCatalogue(courseName, courseNum);
+		}
+		//If course doesnt exist make a new course
+		catch (Exception e)
+		{
+			Course newCourse = new Course(courseName.trim().toUpperCase(), courseNum);
+			
+			for (int i = 0; i < sectionCount; i++)
+			{
+				newCourse.addOffering(new CourseOffering(i+1, maxPerOffering));
+			}
+			
+			//Add new course to the list
+			courseList.add(newCourse);
+			
+			return;
+		}
+		
+		throw new Exception("Could not make new course, course already exists");
+	}
+	
+	/**
 	 * Returns the list of courses.
 	 * @return An arraylist of courses.
 	 */
