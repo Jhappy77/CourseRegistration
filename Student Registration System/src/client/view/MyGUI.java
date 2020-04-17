@@ -154,7 +154,7 @@ public class MyGUI extends Application{
 	}
 	
 	/**
-	 * Creates the first student scene which has the textfields to 
+	 * Creates the first student scene which has the text fields to 
 	 * prompt the user to enter their id and password
 	 * @return layout for the window
 	 */

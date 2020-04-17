@@ -19,6 +19,16 @@ public class CourseLite implements Serializable{
 	int number;
 	
 	/**
+	 * Enrolled course Section number
+	 */
+	int enrolledSectionNum;
+	
+	/**
+	 * True if the student is enrolled in a course
+	 */
+	Boolean enrolledInCourse;
+	
+	/**
 	 * Offering section number
 	 */
 	int[] offeringSecNum;
@@ -38,10 +48,12 @@ public class CourseLite implements Serializable{
 	 * @param number
 	 * @param offeringCount
 	 */
-	public CourseLite(String name, int number, int offeringCount)
+	public CourseLite(String name, int number, int offeringCount, int enrolledSectionNum, Boolean enrolled)
 	{
 		this.name = name;
 		this.number = number;
+		this.enrolledInCourse = enrolled;
+		this.enrolledSectionNum = enrolledSectionNum;
 		offeringSecNum = new int[offeringCount];
 		offeringSpots = new int[offeringCount][2];
 		this.offeringCount = offeringCount;
@@ -117,6 +129,24 @@ public class CourseLite implements Serializable{
 	public int getOfferingTakenSpots(int index)
 	{
 		return offeringSpots[index][0];
+	}
+	
+	/**
+	 * Returns true if the currently selected student is enrolled in the course
+	 * @return Boolean
+	 */
+	public Boolean isStudentEnrolled()
+	{
+		return enrolledInCourse;
+	}
+	
+	/**
+	 * Returns the section number the student number is enrolled in
+	 * @return int
+	 */
+	public int getEnrolledSectionNumber()
+	{
+		return enrolledSectionNum;
 	}
 	
 }

@@ -134,6 +134,21 @@ public class Student {
 	}
 	
 	/**
+	 * Checks if the student is enrolled in the passed course
+	 * @param c the course to check for
+	 * @return -1 if not enrolled, else it returns the section number of the student
+	 */
+	public int checkEnrolled(Course c)
+	{
+		for(Registration r : studentRegList)
+		{
+			if (r.getTheOffering().getTheCourse() == c)
+				return r.getTheOffering().getSecNum();
+		}
+		return -1;
+	}
+	
+	/**
 	 * Checks the students password, returns true if correct
 	 * @param password
 	 * @return true if correct, false if not

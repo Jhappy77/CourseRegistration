@@ -281,8 +281,9 @@ public class ClientPort {
 	 * Throws an exception with a relevant message if login wasn't successful.
 	 * @param id Entered student's ID to check
 	 * @param password Entered password to check
+	 * @return the students name if successfull
 	 */
-	public void attemptLogin(int id, String password) throws Exception
+	public String attemptLogin(int id, String password) throws Exception
 	{
 		//Make package
 		String[] info = {Integer.toString(id),password};
@@ -301,8 +302,9 @@ public class ClientPort {
 		switch(resp.getType()) {
 		
 		case LOGINRESULT:
-			if((Boolean)resp.getData())
-				return;
+			
+			if(resp.getData() != null)
+				return (String)resp.getData();
 			else
 				throw new Exception("Login attempt unsuccessful");
 		

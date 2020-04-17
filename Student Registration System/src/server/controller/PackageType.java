@@ -13,8 +13,8 @@ public enum PackageType {
 	//second element = password (String)
 	
 	LOGINRESULT, 
-	//Data is boolean: 
-	//true is success, false if failure
+	//Data is String: 
+	//String is the students name
 	
 	ADDCOURSE, 
 	//Data is string[]: 
@@ -29,8 +29,7 @@ public enum PackageType {
 	
 	SCHEDULE,
 	//Data is CourseLite[], null if no registrations
-	//CourseLite only has one offering which is the one the student is registered in
-	//CourseLite is used to reduce the number of classes that both client and server must have
+	//CourseLite[] is the list of currently enrolled courses
 	
 	REQUESTSCHEDULE,
 	//Data is empty

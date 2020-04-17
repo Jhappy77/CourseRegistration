@@ -100,13 +100,11 @@ public class RegistrationApp {
 			//Make a list for the courses
 			CourseLite[] courseList = new CourseLite[selectedStudent.numberOfRegistrations()];
 			
-			//For each course make a CourseLite for it and add registered section
+			//For each course make a CourseLite
 			for (int i = 0; i < selectedStudent.numberOfRegistrations(); i++)
 			{
 				CourseOffering off = selectedStudent.getOfferingByIndex(i);
-				
-				courseList[i] = new CourseLite(off.getTheCourse().getCourseName(),off.getTheCourse().getCourseNum(),1);
-				courseList[i].setOffering(0, off.getSecNum(), off.getSecCap(), off.studentList().length());
+				courseList[i] = makeCourseLite(off.getTheCourse());
 			}
 			
 			return courseList;
@@ -114,6 +112,15 @@ public class RegistrationApp {
 		else
 			throw new Exception("Student is not currently selected");
 		
+	}
+	
+	/**
+	 * Gets the currently selected students name
+	 * @return the students name
+	 */
+	public String getStudentName()
+	{
+		return selectedStudent.getStudentName();
 	}
 	
 	/**
@@ -161,8 +168,17 @@ public class RegistrationApp {
 	 */
 	private CourseLite makeCourseLite(Course c)
 	{
-		CourseLite newCourse = new CourseLite(c.getCourseName(),c.getCourseNum(),c.getNumOfferings());
 		
+		//Check if the selected student is in this course
+		int secNum = selectedStudent.checkEnrolled(c);
+		Boolean enrolled = false;
+		if (secNum != -1)
+			enrolled = true;
+		
+		//Make course lite
+		CourseLite newCourse = new CourseLite(c.getCourseName(),c.getCourseNum(),c.getNumOfferings(),secNum,enrolled);
+		
+		//add the offerings to the course
 		for (int i = 0; i < c.getNumOfferings(); i++)
 		{
 			try
@@ -184,7 +200,7 @@ public class RegistrationApp {
 	 * @param password
 	 * @return true if success, false if fail
 	 */
-	public Boolean validateStudent(int id, String password) throws Exception{
+	public String validateStudent(int id, String password) throws Exception{
 		selectedStudent = db.getStudent(id);
 		
 		//If invalid Id send that back
@@ -196,7 +212,7 @@ public class RegistrationApp {
 			//If good just return true
 			if (selectedStudent.checkPassword(password))
 			{
-				return true;
+				return selectedStudent.getStudentName();
 			}
 			
 			//If wrong send that back
