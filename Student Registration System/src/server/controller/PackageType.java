@@ -37,6 +37,10 @@ public enum PackageType {
 	COURSE,
 	//Data is CourseLite, null if course not found
 	
+	COURSECHANGED,
+	//Data is String message
+	//Sent when a course has been successfully added or removed
+	
 	FINDCOURSE,
 	//Data is string[]
 	//first = course name

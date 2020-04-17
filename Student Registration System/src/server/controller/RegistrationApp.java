@@ -29,37 +29,29 @@ public class RegistrationApp {
 	 * Remove selected course from the selected student
 	 * @param student
 	 */
-	public void removeCourseFromStudent(String courseName, int courseNumber) {
+	public void removeCourseFromStudent(String courseName, int courseNumber) throws Exception {
 		if (selectedStudent != null)
 		{
-			try {
-				selectedStudent.removeCourse(getCourse(courseName, courseNumber));
-			} catch(Exception e) {
-				System.err.println("Error removing course from student: " + e.getMessage());
-			}
+			selectedStudent.removeCourse(getCourse(courseName, courseNumber));
 		}
 		else
-			System.err.println("Trying to remove course from null student");
+			throw new Exception("No student selected");
 	}
 
 
 	/**
 	 * Adds the passed offering to the selected student
 	 */
-	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) {
+	public void addCourseToStudent(String courseName, int courseNumber, int offeringSecNumber) throws Exception{
 		
 		//Check if student is selected
 		if (selectedStudent != null)
 		{
-			try {
-				//Find course and add it to the student
-				selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, offeringSecNumber));
-			}catch(Exception e) {
-				System.err.println("Error trying to add course " + e.getMessage());
-			}
+			selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, offeringSecNumber));
 		}
 		else
-			System.err.println("Trying to add a course when no student selected");
+			throw new Exception("No Student Selected");
+			
 		
 	}
 	

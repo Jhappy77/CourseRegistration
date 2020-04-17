@@ -115,11 +115,11 @@ public class ServerApp {
 			case ADDCOURSE:
 				System.out.println("Client " + clientNumber + ": Received Add Course");
 				
-				//Get Data
+				//Get data
 				String[] a = (String[]) pac.getData();
-					
-				//Add the course to the student
-				reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
+				
+				//Register for course and send answer back
+				addCourse(a);
 				
 				break;
 
@@ -130,8 +130,8 @@ public class ServerApp {
 				//Get Data
 				String[] r = (String[]) pac.getData();
 				
-				//Remove the course
-				reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
+				//Remove the course and send answer back
+				removeCourse(r);
 
 				break;
 				
@@ -169,23 +169,79 @@ public class ServerApp {
 	}
 	
 	/**
+	 * Remove the course from the selected student
+	 * @param r
+	 */
+	private void removeCourse(String[] r)
+	{
+		Package ret;
+		
+		//Remove the course
+		try
+		{
+			//Remove the course
+			reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Removed Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Removing Course");
+		}
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error removing course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
+	}
+	
+	/**
+	 * Register the selected student for a course and send a error if it cant
+	 * @param a
+	 */
+	private void addCourse(String[] a)
+	{
+		Package ret;
+		
+		//Add the course to the student
+		try
+		{
+			reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Added Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Adding Course");
+		}
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error adding course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
+	}
+	
+	/**
 	 * Send the Catalogue to the client
 	 */
 	private void sendCatalogue()
 	{
-		System.out.println("Client " + clientNumber + ": Sending Catalogue");
+		
 		Package pac;
 		
 		//Make the package
 		try
 		{
 			 pac = new Package(PackageType.CATALOGUE, reg.getEntireCourseList());
+			 System.out.println("Client " + clientNumber + ": Sending Catalogue");
 		}
 		
 		//If an error occurs such as now courses send appropriate error to the Client
 		catch (Exception e)
 		{
-			System.out.println("CLient " + clientNumber +": Error sending catalogue: " + e.getMessage());
+			System.out.println("Client " + clientNumber +": Error sending catalogue: " + e.getMessage());
 			pac = new Package(PackageType.ERROR, e.getMessage());
 		}
 		
@@ -199,13 +255,12 @@ public class ServerApp {
 	 */
 	private void sendCourse(String[] f)
 	{
-		System.out.println("Client " + clientNumber + ": Sending Course");
-		
 		Package pac;
 		
 		try
 		{
 			pac = new Package(PackageType.COURSE, reg.findCourse(f[0],Integer.parseInt(f[1])));
+			System.out.println("Client " + clientNumber + ": Sending Course");
 		}
 		
 		//If a error occurs send a appropriate message to the client
@@ -224,13 +279,13 @@ public class ServerApp {
 	 */
 	private void sendSchedule()
 	{
-		System.out.println("Client " + clientNumber + ": Sending Schedule");
-		
+
 		//Make the package
 		Package pac;
 		try
 		{
 			pac = new Package(PackageType.SCHEDULE, reg.getSchedule());
+			System.out.println("Client " + clientNumber + ": Sending Schedule");
 		}
 		
 		//If a error occurs send a appropriate response
@@ -250,13 +305,13 @@ public class ServerApp {
 	 */
 	private void sendLoginResult(String[] input)
 	{
-		System.out.println("Client " + clientNumber + ": Sending Login Result");
-		
+
 		//Make package
 		Package pac;
 		try
 		{
 			pac = new Package(PackageType.LOGINRESULT, reg.validateStudent(Integer.parseInt(input[0]),input[1]));
+			System.out.println("Client " + clientNumber + ": Sending Login Success");
 		}
 		catch (Exception e)
 		{

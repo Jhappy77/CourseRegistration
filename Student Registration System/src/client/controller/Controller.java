@@ -107,10 +107,15 @@ public class Controller {
 	 */
 	public void enroll() {
 		try {
-		clientPort.addCourse(model.getSelectedCourseCode(),
-				model.getSelectedCourseNumber(), model.getSecNumber());
+			String message = clientPort.addCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber(), model.getSecNumber());
+			
+			// !! This should be displayed on the GUI somewhere
+			System.out.println(message);
+		
 		}catch(Exception e) {
+			
 			// !! Should display a relevant exception message to GUI, instead of here
+			
 			System.err.println("Error in enroll function" + e.getMessage());
 		}
 	}
@@ -122,10 +127,16 @@ public class Controller {
 	 */
 	public void unenroll() {
 		try {
-		clientPort.removeCourse(model.getSelectedCourseCode(),
-				model.getSelectedCourseNumber());
+			String message = clientPort.removeCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber());
+			
+			// !! Should be displayed on the GUI somehows
+			
+			System.out.println(message);
+			
 		}catch(Exception e) {
+			
 			// !! Should display a relevant message to GUI instead of this
+			
 			System.err.println("Error in enroll function" + e.getMessage());
 		}
 	}

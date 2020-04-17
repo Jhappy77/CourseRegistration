@@ -63,22 +63,26 @@ public class Student {
 	 * @param c The course whose registration is being searched for.
 	 * @return The registration matching the course, or null if there is none.
 	 */
-	public Registration getRegistrationByCourse(Course c) {
+	public Registration getRegistrationByCourse(Course c) throws Exception{
 		for(Registration r:studentRegList) {
 			if(r.isForCourse(c))
 				return r;
 		}
-		return null;
+		throw new Exception("Student not registered in course");
 	}
 	
 	/**
 	 * Registers a student in a course, if the student is able to.
 	 * @param co Course Offering to register the student in.
-	 * @throws Exception If the maximum number of registrations for this student has been reached
+	 * @throws Exception If the maximum number of registrations for this student has been reached or if student is already in course
 	 */
 	public void addCourseOffering(CourseOffering co) throws Exception {
+		
+		//Check if the student is already in the course
+		if(checkEnrolled(co.getTheCourse()) != -1)
+			throw new Exception("Student already registered in course");
+		
 		if(numberOfRegistrations()>=MAXCOURSENUMBER) {
-			// IMPORTANT! We need to change how this message is displayed.
 			throw new Exception("Cannot register in course offering - maximum number of registrations has been reached."
 					+ "\n To register in this course offering, you must drop out from another course.");
 		}
@@ -86,12 +90,11 @@ public class Student {
 	}
 	
 	
-	//IMPORTANT! We may want to change how this function works.
 	/**
-	 * Removes a course from the 
+	 * Removes a course from the student
 	 * @param c Course to remove
 	 */
-	public void removeCourse(Course c) {
+	public void removeCourse(Course c) throws Exception{
 		getRegistrationByCourse(c).removeRegistration();
 	}
 

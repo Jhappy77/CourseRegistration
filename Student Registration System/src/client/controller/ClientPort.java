@@ -295,10 +295,6 @@ public class ClientPort {
 		//Reads response
 		Package<?> resp = readResponse();
 		
-		// !! Need to update this to get proper exception message,
-		// !! based on the error with logon. (Wrong password,
-		// !! (account doesn't exist)
-		
 		switch(resp.getType()) {
 		
 		case LOGINRESULT:
@@ -323,7 +319,7 @@ public class ClientPort {
 	 * @param courseName
 	 * @param courseNumber
 	 */
-	public void removeCourse(String courseName, int courseNumber)
+	public String removeCourse(String courseName, int courseNumber) throws Exception
 	{
 		//Make package
 		String[] info = {courseName,Integer.toString(courseNumber)};
@@ -332,8 +328,25 @@ public class ClientPort {
 		//Send message
 		sendPackage(pac);
 		
-		// !! Add functionality to get confirmation of success
-		// !! as well as error messages if necessary
+		//Get response
+		Package<?> resp = readResponse();
+		
+		switch(resp.getType()) {
+		
+		case COURSECHANGED:
+			
+			if(resp.getData() != null)
+				return (String)resp.getData();
+			else
+				throw new Exception("Error Removing course");
+		
+		//If theres an error return what kind of error it is
+		case ERROR:
+			throw new Exception((String)resp.getData());
+		
+		default:
+			throw new Exception("Error communicating with server, unexpected type");
+		}
 		
 	}
 	
@@ -343,7 +356,7 @@ public class ClientPort {
 	 * @param courseNumber
 	 * @param offeringSecNumber
 	 */
-	public void addCourse(String courseName, int courseNumber, int offeringSecNumber)
+	public String addCourse(String courseName, int courseNumber, int offeringSecNumber) throws Exception
 	{
 		//Make package
 		String[] info = {courseName,Integer.toString(courseNumber), Integer.toString(offeringSecNumber)};
@@ -352,8 +365,25 @@ public class ClientPort {
 		//Send message
 		sendPackage(pac);
 		
-		// !! Add functionality to get confirmation of success
-		// !! as well as error messages if necessary
+		//Get response
+				Package<?> resp = readResponse();
+				
+				switch(resp.getType()) {
+				
+				case COURSECHANGED:
+					
+					if(resp.getData() != null)
+						return (String)resp.getData();
+					else
+						throw new Exception("Error Adding course");
+				
+				//If theres an error return what kind of error it is
+				case ERROR:
+					throw new Exception((String)resp.getData());
+				
+				default:
+					throw new Exception("Error communicating with server, unexpected type");
+				}
 	}
 	
 	/**
@@ -393,6 +423,8 @@ public class ClientPort {
 		// !! I'm not sure if there are any other possible exception cases
 		// !! that we need to be aware of.
 	}
+	
+	// !! This needs to be called by the GUI when loging out so the server is notified
 	
 	/**
 	 * Sends logout package to the server
