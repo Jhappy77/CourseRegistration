@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import server.model.CourseCatalogue;
 import server.model.DBManager;
@@ -28,13 +30,19 @@ public class Server {
 	//The number of connections
 	int clientCount;
 	
+	//Pool of threads
+	ExecutorService pool;
+	
 	/**
 	 * Makes a server with the passed port Number
 	 * @param portNumber 
 	 */
-	public Server(int portNumber)
+	public Server(int portNumber, int threadCount)
 	{
 		clientCount = 0;
+		
+		//Make the thread pool
+		pool = Executors.newFixedThreadPool(2);
 		
 		//Start the server socket
 		try
@@ -79,7 +87,7 @@ public class Server {
 				ServerApp serverApp = new ServerApp(clientCount,clientInput,clientOutput,catalogue,db);
 				
 				//Start the thread for the server
-				//Beep boop
+				pool.execute(serverApp);
 				
 			}
 			catch (IOException e)
@@ -95,7 +103,8 @@ public class Server {
 	 */
 	public static void main (String [] args)
 	{
-		Server s = new Server(8007);
+		//Create a server to monitor port 8007 with 2 threads
+		Server s = new Server(8007, 2);
 		s.monitorSocket();
 	}
 	

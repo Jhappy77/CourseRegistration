@@ -11,7 +11,7 @@ import server.model.DBManager;
  * @author Jerome Gobeil
  *
  */
-public class ServerApp {
+public class ServerApp implements Runnable{
 
 	//Input for the client
 	ObjectInputStream clientIn;
@@ -43,12 +43,12 @@ public class ServerApp {
 		
 		System.out.println("Client " + clientNumber + ": Connected");
 		
-		//For testing purposes, should be run from a thread
-		Execute();
+		// !! For testing purposes, should be run from a thread
+		//Execute();
 	}
 	
 	//Monitors the input and deals with anything that comes up
-	public void Execute()
+	public void run()
 	{
 		//Wait for a package to come in
 		while (true)
@@ -172,7 +172,7 @@ public class ServerApp {
 	 * Remove the course from the selected student
 	 * @param r
 	 */
-	private void removeCourse(String[] r)
+	synchronized private void removeCourse(String[] r)
 	{
 		Package ret;
 		
@@ -200,7 +200,7 @@ public class ServerApp {
 	 * Register the selected student for a course and send a error if it cant
 	 * @param a
 	 */
-	private void addCourse(String[] a)
+	synchronized private void addCourse(String[] a)
 	{
 		Package ret;
 		
@@ -226,7 +226,7 @@ public class ServerApp {
 	/**
 	 * Send the Catalogue to the client
 	 */
-	private void sendCatalogue()
+	synchronized private void sendCatalogue()
 	{
 		
 		Package pac;
@@ -253,7 +253,7 @@ public class ServerApp {
 	 * Sends a courseLite object to the client for display
 	 * @param f is the data from the find course packet
 	 */
-	private void sendCourse(String[] f)
+	synchronized private void sendCourse(String[] f)
 	{
 		Package pac;
 		
@@ -277,7 +277,7 @@ public class ServerApp {
 	/**
 	 * Sends the students schedule
 	 */
-	private void sendSchedule()
+	synchronized private void sendSchedule()
 	{
 
 		//Make the package
@@ -303,7 +303,7 @@ public class ServerApp {
 	 * Sends a message to the client with the result of the login attempt
 	 * @param result
 	 */
-	private void sendLoginResult(String[] input)
+	synchronized private void sendLoginResult(String[] input)
 	{
 
 		//Make package
