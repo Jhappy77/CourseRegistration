@@ -1,17 +1,31 @@
 package server.model;
 import java.util.ArrayList;
 
+/**
+ * Class to keep track of each course
+ * @author Joel Happ
+ *
+ */
 public class Course implements Comparable<Course>{
 
+	/**
+	 * Name of the course
+	 */
 	private String courseName;
+	
+	/**
+	 * Number for the course
+	 */
 	private int courseNum;
 	
-	// The preReq list keeps track of all the courses that are pre-requisites for this
-	// course.
+	/**
+	 * List of pre requisites for the course
+	 */
 	private ArrayList<Course> preReq;
 	
-	// The offering list keeps track of all the students in a particular offering
-	// of the course.
+	/**
+	 * List of all the offerings for the course
+	 */
 	private ArrayList<CourseOffering> offeringList;
 
 	
@@ -66,27 +80,50 @@ public class Course implements Comparable<Course>{
 		return courseName + " " + Integer.toString(courseNum);
 	}
 	
-	
+	/**
+	 * Getter for the course name
+	 * @return the name
+	 */
 	public String getCourseName() {
 		return courseName;
 	}
 	
+	/**
+	 * Getter for the number of offerings
+	 * @return the count of offerings
+	 */
 	public int getNumOfferings()
 	{
 		return offeringList.size();
 	}
 
+	/**
+	 * Setter for the course name
+	 * @param courseName
+	 */
 	public void setCourseName(String courseName) {
 		this.courseName = courseName;
 	}
 
+	/**
+	 * Getter for the course number
+	 * @return the course number
+	 */
 	public int getCourseNum() {
 		return courseNum;
 	}
 
+	/**
+	 * Setter for the course number
+	 * @param courseNum
+	 */
 	public void setCourseNum(int courseNum) {
 		this.courseNum = courseNum;
 	}
+	
+	/**
+	 * To string override to print out the course
+	 */
 	@Override
 	public String toString () {
 		String st = "\n";

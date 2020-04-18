@@ -45,28 +45,60 @@ public class Registration {
 	 * @return True if this registration is for the same course, false if it isn't
 	 */
 	public boolean isForCourse(Course c) {
-		return theOffering.isCourse(c);
+		return theOffering.getTheCourse() == c;
 	}
 	
+	/**
+	 * Getter for the student
+	 * @return the student
+	 */
 	public Student getTheStudent() {
 		return theStudent;
 	}
+	
+	/**
+	 * Setter for the student
+	 * @param theStudent
+	 */
 	public void setTheStudent(Student theStudent) {
 		this.theStudent = theStudent;
 	}
+	
+	/**
+	 * Getter for the course offering
+	 * @return the offering 
+	 */
 	public CourseOffering getTheOffering() {
 		return theOffering;
 	}
+	
+	/**
+	 * Setter for the offering
+	 * @param theOffering
+	 */
 	public void setTheOffering(CourseOffering theOffering) {
 		this.theOffering = theOffering;
 	}
+	
+	/**
+	 * Getter for the grade
+	 * @return the grade
+	 */
 	public char getGrade() {
 		return grade;
 	}
+	
+	/**
+	 * Setter for the grade
+	 * @param grade
+	 */
 	public void setGrade(char grade) {
 		this.grade = grade;
 	}
 	
+	/**
+	 * Override to print the registration
+	 */
 	@Override
 	public String toString () {
 		String st = "\n";
@@ -75,8 +107,6 @@ public class Registration {
 		st += "Grade: " + getGrade();
 		st += "\n-----------\n";
 		return st;
-		
 	}
 	
-
 }

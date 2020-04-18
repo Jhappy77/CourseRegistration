@@ -18,19 +18,29 @@ import server.model.DBManager;
  */
 public class Server {
 
-	//The servers socket
+	/**
+	 * The socket for the server
+	 */
 	ServerSocket socket;
 	
-	//The course catalogue
+	/**
+	 * The catalogue of courses
+	 */
 	CourseCatalogue catalogue;
 	
-	//The database manager
+	/**
+	 * The database manager
+	 */
 	DBManager db;
 	
-	//The number of connections
+	/**
+	 * The number of clients
+	 */
 	int clientCount;
 	
-	//Pool of threads
+	/**
+	 * The pool of threads
+	 */
 	ExecutorService pool;
 	
 	/**
