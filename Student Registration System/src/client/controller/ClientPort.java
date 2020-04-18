@@ -142,78 +142,7 @@ public class ClientPort {
 	
 	////////////////////////////////////////////////////////////INTERACTION WITH GUI STARTS HERE////////////////////////////////////////////////
 	//IF creating new packages or getting errors from them check out the PackageType enum to see what the data contains
-	
-	/**
-	 * (DEPRECATED) - DELETE EVENTUALLY
-	 * We most likely won't need this class anymore but I left it in case
-	 * 
-	 * Deals with the given package
-	 * @param pac
-	 *//*
-	private void dealWithPackage(Package pac)
-	{
-		switch(pac.getType())
-		{
-		
-			//Just prints a message if received, mostly for testing purposes (Could be used for errors with a pop up window?);
-			case MESSAGE:
-				System.out.println(pac.getData());
-				break;
 
-			//Get the result from trying to login
-			case LOGINRESULT:
-					
-				//pac.getData() is a Boolean, true if login success (correct username/password) and false if incorrect
-				//When correct username and password inputed the student is automatically selected
-				
-				System.out.println("Result from trying to login: " + pac.getData());
-				
-				break;
-			
-			//Get a new schedule
-			case SCHEDULE:
-				
-				CourseLite[] schedule = (CourseLite[])pac.getData();
-				
-				//pac data is a array of courseLite objects, the courseLite objects will only have one offering which is the one the student is registered in
-				//To access the offerings data/info just use functions getOfferingTotalSpots(0), getOfferingSecNum(0), etc (Check out courseLite class for details)
-				
-				//TESTING
-				if (schedule == null)
-					System.out.println("Schedule empty");
-				else
-					System.out.println("Schedule length is: " + schedule.length);
-				
-				break;
-				
-			case CATALOGUE:
-				
-				CourseLite[] catalogue = (CourseLite[])pac.getData();
-				
-				//Pac data contains a array of course lite objects, the courseLite object contains all the info about the course including a list of all the offerings
-				//Check out the courseLite class to find all the getters
-				
-				//TESTING
-				if (catalogue == null)
-					System.out.println("Catalogue is empty");
-				else
-					System.out.println("Catalogue contains " + catalogue.length + " courses");
-				
-				
-				break;
-				
-			case COURSE:
-				
-				//Pac data is a single courseLite object, contains all the info about the course and its offerings
-				//Check out courseLite class for the getters
-				
-				//TESTING
-
-				break;
-
-		}
-	}*/
-	
 	/**
 	 * Sends a request for the catalog to be sent
 	 */
@@ -313,6 +242,7 @@ public class ClientPort {
 		}
 		
 	}
+	
 	
 	/**
 	 * Sends a message to the server to remove a certain course from student

@@ -11,6 +11,7 @@ public class DBManager {
 	public DBManager () {
 		courseList = new ArrayList<Course>();
 		studentList = new ArrayList<Student>();
+		studentList.add(new Student("Administration", 0, "300"));
 	}
 
 	public ArrayList<Course> readFromDataBase() {
@@ -138,5 +139,5 @@ public class DBManager {
 			System.out.println(s);
 		}
 	}
-
+	
 }

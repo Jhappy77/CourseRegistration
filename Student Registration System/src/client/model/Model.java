@@ -6,13 +6,17 @@ public class Model {
 
 	
 	CourseLite selectedCourse;
-	int selectedOffering;
+	int selectedOffering = 1;
 	
 	CourseLite[] catalogue;
 	
 	public void setSelectedCourse(CourseLite c){
-		selectedCourse = c;
-		selectedOffering = c.getOfferingSecNumber(0);	
+		selectedCourse = c;	
+	}
+	
+	public void setSelectedOffering(int num) {
+		selectedOffering = num;
+		//System.out.println("Course offering is: " + selectedOffering + " with " + selectedCourse.getOfferingTotalSpots(selectedOffering-1) + " spots");
 	}
 	
 	public String getSelectedCourseName(){
@@ -32,7 +36,7 @@ public class Model {
 	}
 	
 	public String getSelectedCourseSpots() {
-		return selectedCourse.getOfferingTakenSpots(selectedOffering) + "/" + selectedCourse.getOfferingTotalSpots(selectedOffering);
+		return selectedCourse.getOfferingTakenSpots(selectedOffering-1) + "/" + selectedCourse.getOfferingTotalSpots(selectedOffering-1);
 	}
 	
 	public void setCatalogue(CourseLite[] catalogue) {

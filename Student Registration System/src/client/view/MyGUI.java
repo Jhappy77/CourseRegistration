@@ -1,4 +1,5 @@
 package client.view;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle.Control;
 
@@ -10,6 +11,7 @@ import server.model.Course;
 // JAVAFX IMPORTS
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -43,10 +45,11 @@ Under "Resolution", choose "Accessible", and under "Rule Pattern", enter javafx/
  * searched for one course and the information is displayed, is you try searching for another 
  * it just writes the label on top of the first one rather than replacing it.
  * Main things that need to be added are:
- * 1. Sending the student information to the server and checking whether or not it is valid
- * 2. once you confirm they are a student, reading their information about their schedule and name
- * 3. adding/removing new courses to their schedule once the button enroll/unenroll is clicked then updating the courseList to display
- * 4. adding information to the course catalogue
+ * 
+ * 
+ * ADMIN
+ * 3. allow admin to create a new courses (# of offerings, spots per offering, prerequisites) // EVERYTHING WORKING EXCEPT ADDING PREREQS
+ * 
  * @author Taylor
  *
  */
@@ -116,6 +119,7 @@ public class MyGUI extends Application{
 	private VBox makeLayout() {
 		VBox layout = new VBox();
 		layout.setPadding(new Insets(10,10,10,10));	
+		layout.setSpacing(15);
 		return layout;
 	}
 	/**
@@ -213,58 +217,68 @@ public class MyGUI extends Application{
 	 */
 	private VBox studentMenu() {
 		VBox layout = makeLayout();
-		layout.setSpacing(15);
-		HBox title = new HBox();
-		title.setSpacing(220);
-		HBox panels = new HBox();
 		
-		panels.setSpacing(200);
-		VBox leftPanel = new VBox();
-		leftPanel.setSpacing(10);
-		rightPanel = new VBox();
-		rightPanel.setSpacing(10);
-		panels.getChildren().addAll(leftPanel, rightPanel);
-		
-		//Schedule List
-		ListView<String> courseList = new ListView<>();
-		fillCourses(courseList);
-				
-		//Welcome label
-		Label welcome = new Label("Welcome"); // Later, add name of student here
-				
-		//Log Out Button
-		Button logoutButton = new Button();
-		logoutButton.setText("Log Out");
-		logoutButton.setOnAction(e -> window.setScene(login));
-		
-		//Browse Catalogue Button
-		Button browse = new Button();
-		browse.setText("Browse Catalogue");
-		browse.setOnAction(e -> browseCatalogue());
-		title.getChildren().addAll(welcome, browse, logoutButton);
-		title.setAlignment(Pos.CENTER);
-				
-		//View Courses search
-		Label courseLabel = new Label("View Course"); // later, add name of student here
-		
-		HBox searchPanel = new HBox();
-		searchPanel.setSpacing(10);
-		TextField searchTag = new TextField("search for a course");
-		Button search = new Button();
-		search.setText("Search");
-		search.setOnAction(e -> courseDisplay(searchTag, leftPanel));
-		searchPanel.getChildren().addAll(searchTag, search);
-		leftPanel.getChildren().addAll(courseLabel, searchPanel);
-				
-		//Schedule Display
-		Label schedule = new Label("Your Schedule");
-		rightPanel.getChildren().addAll(schedule, courseList);
+		HBox title = setTitle();
+		HBox panels = setPanels(setLeftPanel(), setRightPanel());
 		
 		//Adding all the components to the layout
 		layout.getChildren().addAll(title, panels);
 		
 		return layout;
 		
+	}
+	
+	/**
+	 * Shows the course display of a certain course
+	 * @param courseName Name of the course
+	 */
+	private VBox courseDisplay(TextField courseName, int num) {
+		VBox layout = makeLayout();
+		HBox title = setTitle();
+	
+		VBox leftPanel = setLeftPanel();
+		
+		HBox panels = setPanels(leftPanel, setRightPanel());
+		
+		String input = courseName.getText();
+		control.selectCourse(splitCName(input), splitCNumber(input));
+		
+		HBox courseInfo = new HBox();
+		courseInfo.setSpacing(10);
+		
+		//Lecture Drop-Down
+		ChoiceBox<String> lectures = new ChoiceBox<>();
+		for(int i = 0; i < control.getSelectedCourseOfferings();)
+			lectures.getItems().add("Lecture " + (++i));
+		
+		lectures.setValue("Lecture " + num); // default value
+		
+		//Listen for selection changes
+		lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
+		
+		//Course Name Label
+		Label course = new Label(control.getSelectedCourseName());
+		
+		courseInfo.getChildren().addAll(course, lectures);
+		
+		//Spots Available
+		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
+		
+		HBox buttons = new HBox();
+		buttons.setSpacing(15);
+		
+		//Enroll/Unenroll 
+		Button enroll = new Button();
+		enroll.setText("Enroll/Unenroll");
+		enroll.setOnAction(e -> changeCourseEnrollment());
+		
+		buttons.getChildren().add(enroll);
+		
+		leftPanel.getChildren().addAll(courseInfo, spots, buttons);
+		
+		layout.getChildren().addAll(title, panels);
+		
+		return layout;
 	}
 	
 	
@@ -281,15 +295,7 @@ public class MyGUI extends Application{
 		centrePanel.setSpacing(10);
 		centrePanel.setAlignment(Pos.CENTER);
 		
-		//Student Id Block
-		HBox idBlock = new HBox();
-		idBlock.setSpacing(10);
-		idBlock.setAlignment(Pos.CENTER);
-		Label idLabel = new Label("Username");
-		TextField idText = new TextField();
-		idBlock.getChildren().addAll(idLabel,idText);
-		
-		//Student Password Block
+		// Password Block
 		HBox passwordBlock = new HBox();
 		passwordBlock.setSpacing(10);
 		passwordBlock.setAlignment(Pos.CENTER);
@@ -304,7 +310,7 @@ public class MyGUI extends Application{
 		Button loginButton = new Button();
 		loginButton.setText("Login");
 		loginButton.setOnAction(e -> {
-			loginStudent(idText, passwordText, loginResponse);
+			loginAdmin(passwordText, loginResponse); //!! MAKE FUNCTION
 			});
 		
 		//Go Back Button
@@ -313,13 +319,59 @@ public class MyGUI extends Application{
 		goBack1.setOnAction(e -> window.setScene(login));
 		topPanel.getChildren().add(goBack1);
 		
-		centrePanel.getChildren().addAll(idBlock, passwordBlock, loginButton, loginResponse);
+		centrePanel.getChildren().addAll(passwordBlock, loginButton, loginResponse);
 		
 		//Adding all the components to the layout
 		layout.getChildren().addAll(topPanel, centrePanel);
 		
 		return layout;
 	}
+
+	/**
+	 * ADMIN main menu
+	 */
+	private VBox adminMenu() {
+		VBox layout = makeLayout();
+		
+		HBox title = new HBox();
+		title.setSpacing(450);
+		
+		//Welcome label
+		Label welcome = new Label("Welcome, " + control.getStudentName());
+						
+		//Log Out Button
+		Button logoutButton = new Button();
+		logoutButton.setText("Log Out");
+		logoutButton.setOnAction(e -> window.setScene(login));
+		
+		title.getChildren().addAll(welcome, logoutButton);
+		
+		HBox panels = new HBox();
+		panels.setSpacing(200);
+		panels.setPadding(new Insets(0,50,0,50));
+		VBox left = new VBox();
+		left.setAlignment(Pos.CENTER);
+		VBox right = new VBox();
+		panels.getChildren().addAll(left, right);
+		
+		//Course Catalogue Label
+		Label catalogue = new Label();
+		catalogue.setText("Course Catalogue");
+		right.getChildren().addAll(catalogue, buildTable());
+		
+		//Add a new course 
+		Button newCourse = new Button("Add New Course");
+		newCourse.setOnAction(e -> addCourseWindow());
+		
+		left.getChildren().addAll(newCourse);
+		
+		//Adding all the components to the layout
+		layout.getChildren().addAll(title, panels);
+		
+		return layout;
+		
+	}
+
 	
 	
 	
@@ -327,8 +379,87 @@ public class MyGUI extends Application{
 	
 	/////////// END OF GRID PANES //////////////////////////////////
 	
-	
-	
+	/**
+	 * add the welcome, logout button and browse button to the top panel
+	 */
+	private HBox setTitle() {
+		HBox title = new HBox();
+		title.setSpacing(200);
+		
+		//Welcome label
+		Label welcome = new Label("Welcome, " + control.getStudentName());
+						
+		//Log Out Button
+		Button logoutButton = new Button();
+		logoutButton.setText("Log Out");
+		logoutButton.setOnAction(e -> window.setScene(login));
+				
+		//Browse Catalogue Button
+		Button browse = new Button();
+		browse.setText("Browse Catalogue");
+		browse.setOnAction(e -> browseCatalogue());
+		title.getChildren().addAll(welcome, browse, logoutButton);
+		title.setAlignment(Pos.CENTER);
+		
+		return title;
+	}
+	/**
+	 * add the course search to the left panel
+	 * @return
+	 */
+	private VBox setLeftPanel() {
+		VBox leftPanel = new VBox();
+		leftPanel.setSpacing(10);
+		
+		//View Courses search
+		Label courseLabel = new Label("View Course"); // later, add name of student here
+				
+		HBox searchPanel = new HBox();
+		searchPanel.setSpacing(10);
+		TextField searchTag = new TextField("search for a course");
+		Button search = new Button();
+		search.setText("Search");
+		search.setOnAction(e -> activateSearch(searchTag));
+		searchPanel.getChildren().addAll(searchTag, search);
+		leftPanel.getChildren().addAll(courseLabel, searchPanel);
+				
+		return leftPanel;
+	}
+	/**
+	 * add the schedule to the right panel
+	 * @return
+	 */
+	private VBox setRightPanel() {
+		VBox rightPanel = new VBox();
+		rightPanel.setSpacing(10);
+		
+		//Schedule List
+		ListView<String> courseList = new ListView<>();
+		fillCourses(courseList);
+		courseList.setMaxWidth(150);
+		courseList.setMaxHeight(142);
+			
+						
+		//Schedule Display
+		Label schedule = new Label("Your Schedule");
+		rightPanel.getChildren().addAll(schedule, courseList);
+				
+		return rightPanel;
+	}
+	/**
+	 * add the left and right panel to the centre panel
+	 * @param leftPanel
+	 * @param rightPanel
+	 * @return
+	 */
+	private HBox setPanels(VBox leftPanel, VBox rightPanel) {
+		HBox panels = new HBox();
+		panels.setPadding(new Insets(10,10,10,10));
+		panels.setSpacing(200);
+		panels.getChildren().addAll(leftPanel, rightPanel);
+		
+		return panels;
+	}
 	
 	
 	/**
@@ -353,7 +484,9 @@ public class MyGUI extends Application{
 			responseLabel.setText(e.getMessage());
 		}
 	}
-	
+	/**
+	 * change the window to the student menu
+	 */
 	public void setStudentMenu() {
 		window.setScene(new Scene (studentMenu(), width, height));
 	}
@@ -377,72 +510,21 @@ public class MyGUI extends Application{
 	}
 	
 	/**
-	 * Shows the course display of a certain course
-	 * @param courseName Name of the course
+	 * Splits course offering from string
+	 * @param courseName
+	 * @return course number
 	 */
-	private void courseDisplay(TextField courseName, VBox leftPanel) {
-		
-		String input = courseName.getText();
-		control.selectCourse(splitCName(input), splitCNumber(input));
-		
-		HBox courseInfo = new HBox();
-		courseInfo.setSpacing(10);
-		
-		//Lecture Drop-Down
-		ChoiceBox<String> lectures = new ChoiceBox<>();
-		for(int i = 0; i < control.getSelectedCourseOfferings();)
-			lectures.getItems().add("Lecture " + (++i));
-		
-		lectures.setValue("Lecture 1"); // default value
-		
-		//Course Name Label
-		Label course = new Label(control.getSelectedCourseName());
-		
-		courseInfo.getChildren().addAll(course, lectures);
-		
-		//Spots Available
-		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
-		
-		//Course Pre-Requisites
-		Label preReqs = new Label("Pre-Requisites: ");
-		
-		//Other Available
-		Label other = new Label("Other: ");
-		
-		HBox buttons = new HBox();
-		buttons.setSpacing(15);
-		
-		//Enroll/Unenroll 
-		Button enroll = new Button();
-		enroll.setText("Enroll/Unenroll");
-		enroll.setOnAction(e -> changeCourseEnrollment());
-		
-		//Search new Course
-		Button searchNew = new Button();
-		searchNew.setText("Search New Course");
-		searchNew.setOnAction(e -> window.setScene(new Scene(studentMenu(), width, height)));
-		
-		buttons.getChildren().addAll(enroll, searchNew);
-		
-		leftPanel.getChildren().addAll(courseInfo, spots, preReqs, buttons);
+	private int splitCOffering(String courseName) {
+		return Integer.parseInt(courseName.split(" ")[3]);
 	}
-	
-	private Boolean checkUnenrollment() {
-		CourseLite [] courses = control.getSchedule();
-		if(courses != null) {
-		for(int i = 0; i < courses.length; i++) {
-			if(courses[i] == control.getSelectedCourse()) {
-				control.unenroll();
-				System.out.println("UNENROLLED");
-				return true;
-			}
-		}}
-		return false;
-	}
-	
+
+	/**
+	 * Checks to see if the student is enrolled and unenrolls is they are, otherwise enrolls them in the course.
+	 */
 	private void changeCourseEnrollment() {
-		Boolean check = checkUnenrollment();
-		if(check == false)
+		if(control.checkEnrolment())
+			control.unenroll();
+		else
 			control.enroll();
 		window.setScene(new Scene (studentMenu(), width, height));
 	}
@@ -455,9 +537,25 @@ public class MyGUI extends Application{
 		CourseLite [] courses = control.getSchedule();
 		if(courses != null) {
 			for(int i = 0; i < courses.length; i++) {
-				courseList.getItems().add(courses[i].getName() + " " + courses[i].getNumber());
+				courseList.getItems().add(courses[i].getName() + " " + courses[i].getNumber() + " Section: " + courses[i].getEnrolledSectionNumber());
 			}
 		}
+		courseList.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeView(newValue));
+	}
+	
+	/**
+	 * based on clicking a course in your schedule, change the left side of the screen to display the information
+	 * @param value
+	 */
+	private void changeView(String value) {
+		String courseName = splitCName(value);
+		int courseNum = splitCNumber(value);
+		TextField course = new TextField();
+		course.setText(courseName + " " + courseNum);
+		int num = splitCOffering(value);
+		control.setOffering(num);
+		
+		window.setScene(new Scene(courseDisplay(course, num), width, height));
 	}
 
 	
@@ -473,12 +571,26 @@ public class MyGUI extends Application{
 		
 		VBox layout = new VBox();
 		
+		layout.getChildren().addAll(buildTable());
+		
+		Scene scene = new Scene(layout);
+		catalogue.setScene(scene);
+		catalogue.showAndWait();
+		
+		
+	}
+	/**
+	 * build the course catalogue table
+	 * @return
+	 */
+	private TableView<CourseLite> buildTable(){
 		ObservableList<CourseLite> courses = FXCollections.observableArrayList();
 		if(control.getCatalogue() != null) {
 			for(CourseLite c: control.getCatalogue()) {
 				courses.add(c);
 			}
 		}
+		
 		TableView<CourseLite> table;
 		
 		TableColumn<CourseLite, String> nameCol = new TableColumn<>("Course");
@@ -493,15 +605,125 @@ public class MyGUI extends Application{
 		table = new TableView<>();
 		table.setItems(courses);
 		table.getColumns().addAll(nameCol, numberCol, offeringsCol);
+		return table;
+	}
+	/**
+	 * Change the offering based on lecture drop down
+	 * !! NEEDS TO BE FIXED
+	 * @param offering
+	 * @param courseName
+	 */
+	private void changeOffering(String offering, TextField courseName) {
+		int num = splitCNumber(offering);
+		control.setOffering(num);
 		
-		layout.getChildren().addAll(table);
-		
-		Scene scene = new Scene(layout);
-		catalogue.setScene(scene);
-		catalogue.showAndWait();
-		
+		window.setScene(new Scene(courseDisplay(courseName, num), width, height));
+	}
+	
+	/**
+	 * Log an admin in based on if the password is correct
+	 * @param inputPass Password inputted by user
+	 * @param responseLabel
+	 */
+	private void loginAdmin(TextField inputPass, Label responseLabel) {
+		try {
+			String password = inputPass.getText();
+			inputPass.clear();
+			control.login(0, password);
+			System.out.println("Passed control");
+			
+		}catch(NumberFormatException e) {
+			responseLabel.setText("Invalid username entered! Please enter a student ID!");
+		}catch(Exception e) {
+			// Sets the response label to an appropriate message based on issue
+			// Note: incomplete
+			responseLabel.setText(e.getMessage());
+		}
 		
 	}
+	/**
+	 * change the window to the administration menu
+	 */
+	public void setAdminMenu() {
+		window.setScene(new Scene(adminMenu(), width, height));
+	}
+	
+	/**
+	 * From admin, add course to the catalogue.
+	 * asks user for # of offerings, spots per offering, prerequisites
+	 * @return
+	 */
+	private void addCourseWindow() {
+		Stage newCourse = new Stage();
+		
+		newCourse.initModality((Modality.APPLICATION_MODAL));
+		newCourse.setTitle("Add New Course");
+		
+		VBox layout = new VBox();
+		layout.setPadding(new Insets(10,10,10,10));
+		layout.setSpacing(10);
+		layout.setAlignment(Pos.CENTER);
+		
+		//Course name
+		HBox codeBlock = new HBox();
+		codeBlock.setSpacing(10);
+		Label codeLabel = new Label("Course Code");
+		TextField codeText = new TextField();
+		codeBlock.getChildren().addAll(codeLabel, codeText);
+		
+		//number of offerings
+		HBox offeringsBlock = new HBox();
+		offeringsBlock.setSpacing(10);
+		Label offeringsLabel = new Label("Number of Offerings");
+		TextField offeringsText = new TextField();
+		offeringsBlock.getChildren().addAll(offeringsLabel, offeringsText);
+		
+		//number of spots per offering
+		HBox spotsBlock = new HBox();
+		spotsBlock.setSpacing(10);
+		Label spotsLabel = new Label("Number of Spots");
+		TextField spotsText = new TextField();
+		spotsBlock.getChildren().addAll(spotsLabel, spotsText);
 
+		
+		HBox first = new HBox();
+		first.setSpacing(10);
+		first.setAlignment(Pos.CENTER);
+		first.getChildren().add(codeBlock);
+		
+		HBox second = new HBox();
+		second.setSpacing(10);
+		second.setAlignment(Pos.CENTER);
+		second.getChildren().addAll(offeringsBlock, spotsBlock);
+		
+		Button commit = new Button("Commit");
+		commit.setOnAction(e -> addCourse(codeText, offeringsText, spotsText, newCourse));
+		
+		
+		layout.getChildren().addAll(first, second, commit);
+		
+		Scene scene = new Scene(layout);
+		newCourse.setScene(scene);
+		newCourse.showAndWait();
+		
+	}
+	/**
+	 * commit the new course to the catalogue
+	 */
+	private void addCourse(TextField course, TextField offering, TextField spot, Stage win) {
+		control.makeCourse(splitCName(course.getText()), splitCNumber(course.getText()), Integer.parseInt(offering.getText()), Integer.parseInt(spot.getText()));
+		window.setScene(new Scene(adminMenu(), width, height));
+		win.close();
+		
+	}
+	
+	/**
+	 * change the screen based on searching for a new course
+	 * @param searchTag
+	 */
+	public void activateSearch(TextField searchTag) {
+		control.setOffering(1);
+		window.setScene(new Scene(courseDisplay(searchTag, 1), width, height));
+	}
 
 }

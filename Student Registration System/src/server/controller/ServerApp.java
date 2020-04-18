@@ -109,8 +109,7 @@ public class ServerApp implements Runnable{
 				//Check if valid and return the result
 				sendLoginResult(l);
 				break;
-
-				
+			
 			//Add a course to the student
 			case ADDCOURSE:
 				System.out.println("Client " + clientNumber + ": Received Add Course");

@@ -226,6 +226,7 @@ public class RegistrationApp {
 			}
 		}
 	}
+
 	
 	/**
 	 * Removes the selected student

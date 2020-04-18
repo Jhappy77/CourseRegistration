@@ -12,6 +12,7 @@ import client.model.Model;
 public class Controller {
 
 	private MyGUI view;
+	private String studentName;
 	private Model model;
 	private ClientPort clientPort;
 	
@@ -34,20 +35,29 @@ public class Controller {
 	public void login(int id, String password) throws Exception {
 		try{
 			// If this doesn't throw an exception, login is successful.
-			String name = clientPort.attemptLogin(id, password);
+			studentName = clientPort.attemptLogin(id, password);
 			// Code to perform to complete login
 			
 			// !! Name should be displayed somewhere on GUI
-			System.out.println("Logged in as: " + name);
+			System.out.println("Logged in as: " + studentName);
 			
 			model = new Model();
-			view.setStudentMenu();
+			if(studentName.equals("Administration")){
+				view.setAdminMenu();
+			}else
+				view.setStudentMenu();
 		}catch(Exception e){
 			// Throws exception to tell GUI to display exception message.
 			throw new Exception(e.getMessage());
 		}
 	}
-	
+
+	/**
+	 * Returns the name of the student who is logged in
+	 */
+	public String getStudentName() {
+		return studentName;
+	}
 	
 	/**
 	 * Tells client port to try to find a course. Sets it to
@@ -152,11 +162,11 @@ public class Controller {
 	/**
 	 * Makes a new course
 	 */
-	public void makeCourse() {
+	public void makeCourse(String name, int num, int offerings, int spots) {
 		try {
 			
 			// !! Needs to have actual data put in
-			String message = clientPort.makeCourse("Temp",666, 2, 666);
+			String message = clientPort.makeCourse(name, num, offerings, spots);
 			
 			// !! This should be displayed on the GUI somewhere
 			System.out.println(message);
@@ -186,5 +196,20 @@ public class Controller {
 		return model.getCatalogue();
 	}
 	
+	
+	/**
+	 * Set the offering based on the drop down selection
+	 */
+	public void setOffering(int num) {
+		model.setSelectedOffering(num);
+	}
+	/**
+	 * Check whether or not the student is enrolled in the course
+	 * @return
+	 */
+	public boolean checkEnrolment() {
+		// TODO Auto-generated method stub
+		return model.getSelectedCourse().isStudentEnrolled();
+	}
 	
 }
