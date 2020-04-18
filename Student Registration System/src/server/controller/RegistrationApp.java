@@ -15,11 +15,26 @@ import server.model.Student;
  */
 public class RegistrationApp {
 
+	/**
+	 * Reference to the global course catalogue
+	 */
 	private CourseCatalogue cat;
+	
+	/**
+	 * Reference to the database
+	 */
 	private DBManager db;
 	
+	/**
+	 * The selected student (Who logged in)
+	 */
 	Student selectedStudent;
 	
+	/**
+	 * Contructor for the registration app
+	 * @param cat The catalogue
+	 * @param db the Database Manager
+	 */
 	public RegistrationApp(CourseCatalogue cat, DBManager db) {
 		this.cat = cat;
 		this.db = db;

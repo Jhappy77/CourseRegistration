@@ -1,18 +1,35 @@
 package server.model;
 import java.util.ArrayList;
 
-//This class is simulating a database for our
-//program
+/**
+ * Manager for the database
+ * @author Joel Happ
+ *
+ */
 public class DBManager {
 	
+	/**
+	 * The list of courses
+	 */
 	private ArrayList <Course> courseList;
+	
+	/**
+	 * The list of students
+	 */
 	private ArrayList <Student> studentList;
 
+	/**
+	 * Basic constructor for the database
+	 */
 	public DBManager () {
 		courseList = new ArrayList<Course>();
 		studentList = new ArrayList<Student>();
 	}
 
+	/**
+	 * Simulates reading from a database and loading courses
+	 * @return a list of courses
+	 */
 	public ArrayList<Course> readFromDataBase() {
 		Course c = new Course ("ENGG", 233);
 		c.addOffering(new CourseOffering(1, 200));
@@ -49,7 +66,9 @@ public class DBManager {
 		return courseList;
 	}
 	
-	
+	/**
+	 * Simulates loading several students from a database
+	 */
 	public void fillStudentArrayList() {
 		studentList.add(new Student("Timothy", 300769, "1234"));
 		studentList.add(new Student("Petrune", 300669, "1234"));
@@ -133,6 +152,9 @@ public class DBManager {
 		return null;
 	}
 	
+	/**
+	 * Print a list of all the students
+	 */
 	public void printAllStudents() {
 		for(Student s:studentList) {
 			System.out.println(s);

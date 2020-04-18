@@ -110,7 +110,9 @@ public class CourseCatalogue {
 		this.courseList = courseList;
 	}
 	
-	
+	/**
+	 * Override to be able to print the catalogue
+	 */
 	@Override
 	public String toString () {
 		String st = "All courses in the catalogue: \n";

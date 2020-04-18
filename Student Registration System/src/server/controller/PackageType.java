@@ -2,7 +2,7 @@ package server.controller;
 
 
 /**
- * Enum to say what kind of package has been passed
+ * Enum to states what kind of package has been passed
  * @author Jerome Gobeil
  *
  */

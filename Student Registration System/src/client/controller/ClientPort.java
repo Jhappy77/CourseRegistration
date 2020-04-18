@@ -13,27 +13,23 @@ import server.controller.PackageType;
 /**
  * Communicates through the port to the server app.
  * @author Jerome Gobeil + Joel Happ
- * 
- * 
- * We will be rewriting this class to change its relationship with Controller.
- * In the future, it will no longer have an association relationship with controller,
- * and the dealWithPackage function will be split into separate functions.
  */
-
-
 public class ClientPort {
 
-	//The socket
+	/**
+	 * The socket connected to the server
+	 */
 	Socket socket;
 	
-	//Input and output stream
+	/**
+	 * Server input to the port
+	 */
 	ObjectInputStream serverIn;
+	
+	/**
+	 * Server output to the port
+	 */
 	ObjectOutputStream serverOut;
-	
-	//While true the client will communicate with server
-	Boolean keepCommunicating;
-	
-	//Connection to the GUI?
 	
 	/**
 	 * Create a new client app and connect to the port
@@ -41,9 +37,6 @@ public class ClientPort {
 	 */
 	public ClientPort(String serverName, int portNumber)
 	{
-		
-		keepCommunicating = true;
-		
 		//Connect to the server
 		try
 		{
@@ -58,17 +51,6 @@ public class ClientPort {
 		{
 			System.err.println("Error connecting to the server: " + e.getMessage());
 		}
-		
-//		//TESTING FUNCTIONALITY, REMOVE LATER
-//		sendMessage("Im in dude");
-//		attemptLogin(300769, "6969");
-//		attemptLogin(300769, "1234");
-//		findCourse("NotReal", 42069);
-//		findCourse("ENGG", 202);
-//		addCourse("ENGG", 202, 1);
-//		addCourse("PHYS", 259, 2);
-//		removeCourse("ENGG", 202);
-//		requestCatalogue();
 
 	}
 	
@@ -112,107 +94,6 @@ public class ClientPort {
 			System.err.println("Error closing socket: " + e.getMessage());
 		}
 	}
-	
-	/**
-	 * Class that communicates with the server and deals with anything it receives
-	 */
-	void communicate()
-	{
-		while(keepCommunicating)
-		{
-			try
-			{
-				//Listen for info from the server
-				Package<?> pac = (Package<?>)serverIn.readObject();
-				
-				//Deal with the package
-				//dealWithPackage(pac);
-			}
-			catch (Exception e)
-			{
-				System.err.println("Error comunicating with server: " + e.getMessage());
-				break;
-			}
-		}
-		// Ends communication with Server
-		closeAll();
-		
-	}
-	
-	
-	////////////////////////////////////////////////////////////INTERACTION WITH GUI STARTS HERE////////////////////////////////////////////////
-	//IF creating new packages or getting errors from them check out the PackageType enum to see what the data contains
-	
-	/**
-	 * (DEPRECATED) - DELETE EVENTUALLY
-	 * We most likely won't need this class anymore but I left it in case
-	 * 
-	 * Deals with the given package
-	 * @param pac
-	 *//*
-	private void dealWithPackage(Package pac)
-	{
-		switch(pac.getType())
-		{
-		
-			//Just prints a message if received, mostly for testing purposes (Could be used for errors with a pop up window?);
-			case MESSAGE:
-				System.out.println(pac.getData());
-				break;
-
-			//Get the result from trying to login
-			case LOGINRESULT:
-					
-				//pac.getData() is a Boolean, true if login success (correct username/password) and false if incorrect
-				//When correct username and password inputed the student is automatically selected
-				
-				System.out.println("Result from trying to login: " + pac.getData());
-				
-				break;
-			
-			//Get a new schedule
-			case SCHEDULE:
-				
-				CourseLite[] schedule = (CourseLite[])pac.getData();
-				
-				//pac data is a array of courseLite objects, the courseLite objects will only have one offering which is the one the student is registered in
-				//To access the offerings data/info just use functions getOfferingTotalSpots(0), getOfferingSecNum(0), etc (Check out courseLite class for details)
-				
-				//TESTING
-				if (schedule == null)
-					System.out.println("Schedule empty");
-				else
-					System.out.println("Schedule length is: " + schedule.length);
-				
-				break;
-				
-			case CATALOGUE:
-				
-				CourseLite[] catalogue = (CourseLite[])pac.getData();
-				
-				//Pac data contains a array of course lite objects, the courseLite object contains all the info about the course including a list of all the offerings
-				//Check out the courseLite class to find all the getters
-				
-				//TESTING
-				if (catalogue == null)
-					System.out.println("Catalogue is empty");
-				else
-					System.out.println("Catalogue contains " + catalogue.length + " courses");
-				
-				
-				break;
-				
-			case COURSE:
-				
-				//Pac data is a single courseLite object, contains all the info about the course and its offerings
-				//Check out courseLite class for the getters
-				
-				//TESTING
-
-				break;
-
-		}
-	}*/
 	
 	/**
 	 * Sends a request for the catalog to be sent
@@ -460,7 +341,7 @@ public class ClientPort {
 		
 	}
 	
-	// !! This needs to be called by the GUI when loging out so the server is notified
+	// !! This needs to be called by the GUI when logging out so the server is notified
 	/**
 	 * Sends logout package to the server
 	 */
