@@ -45,7 +45,7 @@ public class Registration {
 	 * @return True if this registration is for the same course, false if it isn't
 	 */
 	public boolean isForCourse(Course c) {
-		return theOffering.isCourse(c);
+		return theOffering.getTheCourse() == c;
 	}
 	
 	/**
