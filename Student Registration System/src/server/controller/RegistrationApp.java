@@ -201,7 +201,7 @@ public class RegistrationApp {
 		{
 			try
 			{
-				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).studentList().length(), c.getCourseOfferingByIndex(i).getSecCap());
+				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).numberOfRegs(), c.getCourseOfferingByIndex(i).getSecCap());
 			}
 			catch (Exception e)
 			{

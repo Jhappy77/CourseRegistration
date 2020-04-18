@@ -20,7 +20,7 @@ public class CourseOffering {
 	 * Returns the number of people registered in the course.
 	 * @return An integer representing the number of people registered.
 	 */
-	private int numberOfRegs() {
+	public int numberOfRegs() {
 		return offeringRegList.size();
 	}
 	
