@@ -25,6 +25,15 @@ public class CourseOffering {
 	}
 	
 	/**
+	 * Returns the number of remaining spots in the offering
+	 * @return
+	 */
+	public int remainingSpots()
+	{
+		return secCap - offeringRegList.size();
+	}
+	
+	/**
 	 * Returns the course's name.
 	 * @return A string representing the name of the course.
 	 */
@@ -118,7 +127,8 @@ public class CourseOffering {
 	 * Adds a registration to the course.
 	 * @param registration Registration to be added
 	 */
-	public void addRegistration(Registration registration) {
+	public void addRegistration(Registration registration){
+		
 		offeringRegList.add(registration);
 	}
 	

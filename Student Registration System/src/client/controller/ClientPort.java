@@ -342,7 +342,7 @@ public class ClientPort {
 
 	}
 
-	// !! This needs to be called by the GUI when logging out so the server is notified
+
 	/**
 	 * Sends logout package to the server
 	 */

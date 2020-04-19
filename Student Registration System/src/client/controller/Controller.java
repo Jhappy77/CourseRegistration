@@ -65,18 +65,10 @@ public class Controller {
 	 * @param courseName Course code for the course
 	 * @param courseNum Course number to search for
 	 */
-	public void selectCourse(String courseName, int courseNum) {
-		
-		try {
-			model.setSelectedCourse(
-					clientPort.findCourse(courseName, courseNum)
-					);
-		} catch (Exception e) {
-			// !! Need better error handling, to show
-			// !! GUI that course was not found.
-			System.err.println("Error in select course:" + e.getMessage());
-		}
-		
+	public void selectCourse(String courseName, int courseNum) throws Exception {
+
+		model.setSelectedCourse(clientPort.findCourse(courseName, courseNum));
+
 	}
 	
 	/**
@@ -105,37 +97,29 @@ public class Controller {
 		return model.getSelectedCourse();
 	}
 	
-	public CourseLite[] getSchedule() {
-		try {
-			return clientPort.requestSchedule();
-		}catch(Exception e) {
-			
-			// !! May want to make this display an error in a better way? Low priority though
-			// !! This returns and error is the schedule is empty, could be good to say that
-			System.err.println("Error getting schedule: " + e.getMessage());
-		
-		}
-		return null;
-	}
+	public CourseLite[] getSchedule() throws Exception{
 
+		return clientPort.requestSchedule();
+
+	}
+	
+	/**
+	 * Logs out the current student
+	 */
+	public void logout()
+	{
+		clientPort.logout();
+	}
 	
 	/**
 	 * Enrolls the student in the selected course, updates the student's schedule
 	 */
-	public void enroll() {
-		try {
-			String message = clientPort.addCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber(), model.getSecNumber());
-			
-			// !! This should be displayed on the GUI somewhere, just says that it was succesfull enrolling in course
-			System.out.println(message);
+	public String enroll() throws Exception{
 		
-		}catch(Exception e) {
+		String message = clientPort.addCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber(), model.getSecNumber());
 			
-			// !! Should display a relevant exception message to GUI
-			// !! Message is either cant find course, student already in course or something similar
-			
-			System.err.println("Error enrolling: " + e.getMessage());
-		}
+		return message;
+		
 	}
 	
 	
@@ -143,41 +127,20 @@ public class Controller {
 	 * Unenrolls student from selected course, 
 	 * updates the student's schedule.
 	 */
-	public void unenroll() {
-		try {
-			String message = clientPort.removeCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber());
+	public String unenroll() throws Exception {
+		String message = clientPort.removeCourse(model.getSelectedCourseCode(),model.getSelectedCourseNumber());
 			
-			// !! Should be displayed on the GUI somehows
-			
-			System.out.println(message);
-			
-		}catch(Exception e) {
-			
-			// !! Should display a relevant message to GUI instead of this
-			
-			System.err.println("Error unenrolling: " + e.getMessage());
-		}
+		return message;
 	}
 	
 	/**
 	 * Makes a new course
 	 */
-	public void makeCourse(String name, int num, int offerings, int spots) {
-		try {
+	public String makeCourse(String name, int num, int offerings, int spots) throws Exception{
 			
-			// !! Needs to have actual data put in
 			String message = clientPort.makeCourse(name, num, offerings, spots);
-			
-			// !! This should be displayed on the GUI somewhere
-			System.out.println(message);
+			return message;
 		
-		}catch(Exception e) {
-			
-			// !! Should display a relevant exception message to GUI, instead of here
-			// !! Message is course already exists or other reason it didn't work
-			
-			System.err.println("Error making course: " + e.getMessage());
-		}
 	}
 	
 	/**
@@ -186,13 +149,8 @@ public class Controller {
 	 * Then, returns the catalogue from the model.
 	 * @return The full course catalogue (an array of CourseLites)
 	 */
-	public CourseLite[] getCatalogue() {
-		// 
-		try {
+	public CourseLite[] getCatalogue() throws Exception{
 			model.setCatalogue(clientPort.requestCatalogue());
-		}catch(Exception e) {
-			System.err.println("Error getting catalogue." + e.getMessage());
-		}
 		return model.getCatalogue();
 	}
 	

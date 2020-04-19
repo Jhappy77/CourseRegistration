@@ -102,8 +102,7 @@ public class Student {
 			throw new Exception("Student already registered in course");
 		
 		if(numberOfRegistrations()>=MAXCOURSENUMBER) {
-			throw new Exception("Cannot register in course offering - maximum number of registrations has been reached."
-					+ "\n To register in this course offering, you must drop out from another course.");
+			throw new Exception("Maximum number of registrations reached");
 		}
 		new Registration(this, co);
 	}

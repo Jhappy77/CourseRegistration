@@ -62,7 +62,15 @@ public class RegistrationApp {
 		//Check if student is selected
 		if (selectedStudent != null)
 		{
-			selectedStudent.addCourseOffering(getCourseOffering(courseName, courseNumber, offeringSecNumber));
+			//Get offering and check if its full
+			CourseOffering off = getCourseOffering(courseName,courseNumber,offeringSecNumber);
+			
+			//Check if offering full
+			if (off.remainingSpots() <= 0)
+				throw new Exception("No spots left in this offering");
+			
+			//Add the offering
+			selectedStudent.addCourseOffering(off);
 		}
 		else
 			throw new Exception("No Student Selected");

@@ -28,8 +28,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 // HOW TO MAKE JAVAFX ACCESSIBLE
@@ -241,44 +243,54 @@ public class MyGUI extends Application{
 		HBox panels = setPanels(leftPanel, setRightPanel());
 		
 		String input = courseName.getText();
-		control.selectCourse(splitCName(input), splitCNumber(input));
+		try
+		{
+			control.selectCourse(splitCName(input), splitCNumber(input));
+			
+			HBox courseInfo = new HBox();
+			courseInfo.setSpacing(10);
+			
+			//Lecture Drop-Down
+			ChoiceBox<String> lectures = new ChoiceBox<>();
+			for(int i = 0; i < control.getSelectedCourseOfferings();)
+				lectures.getItems().add("Lecture " + (++i));
+			
+			lectures.setValue("Lecture " + num); // default value
+			
+			//Listen for selection changes
+			lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
+			
+			//Course Name Label
+			Label course = new Label(control.getSelectedCourseName());
+			
+			courseInfo.getChildren().addAll(course, lectures);
+			
+			//Spots Available
+			Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
+			
+			HBox buttons = new HBox();
+			buttons.setSpacing(15);
+			
+			//Enroll/Unenroll 
+			Button enroll = new Button();
+			enroll.setText("Enroll/Unenroll");
+			enroll.setOnAction(e -> changeCourseEnrollment());
+			
+			buttons.getChildren().add(enroll);
+			
+			leftPanel.getChildren().addAll(courseInfo, spots, buttons);
+			
+			layout.getChildren().addAll(title, panels);
+			
+		}
 		
-		HBox courseInfo = new HBox();
-		courseInfo.setSpacing(10);
-		
-		//Lecture Drop-Down
-		ChoiceBox<String> lectures = new ChoiceBox<>();
-		for(int i = 0; i < control.getSelectedCourseOfferings();)
-			lectures.getItems().add("Lecture " + (++i));
-		
-		lectures.setValue("Lecture " + num); // default value
-		
-		//Listen for selection changes
-		lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
-		
-		//Course Name Label
-		Label course = new Label(control.getSelectedCourseName());
-		
-		courseInfo.getChildren().addAll(course, lectures);
-		
-		//Spots Available
-		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
-		
-		HBox buttons = new HBox();
-		buttons.setSpacing(15);
-		
-		//Enroll/Unenroll 
-		Button enroll = new Button();
-		enroll.setText("Enroll/Unenroll");
-		enroll.setOnAction(e -> changeCourseEnrollment());
-		
-		buttons.getChildren().add(enroll);
-		
-		leftPanel.getChildren().addAll(courseInfo, spots, buttons);
-		
-		layout.getChildren().addAll(title, panels);
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
 		
 		return layout;
+		
 	}
 	
 	
@@ -342,7 +354,7 @@ public class MyGUI extends Application{
 		//Log Out Button
 		Button logoutButton = new Button();
 		logoutButton.setText("Log Out");
-		logoutButton.setOnAction(e -> window.setScene(login));
+		logoutButton.setOnAction(e -> logout());
 		
 		title.getChildren().addAll(welcome, logoutButton);
 		
@@ -372,7 +384,14 @@ public class MyGUI extends Application{
 		
 	}
 
-	
+	/**
+	 * Logout logic
+	 */
+	private void logout()
+	{
+		control.logout();
+		window.setScene(login);
+	}
 	
 	
 	
@@ -392,7 +411,7 @@ public class MyGUI extends Application{
 		//Log Out Button
 		Button logoutButton = new Button();
 		logoutButton.setText("Log Out");
-		logoutButton.setOnAction(e -> window.setScene(login));
+		logoutButton.setOnAction(e -> logout());
 				
 		//Browse Catalogue Button
 		Button browse = new Button();
@@ -522,10 +541,39 @@ public class MyGUI extends Application{
 	 * Checks to see if the student is enrolled and unenrolls is they are, otherwise enrolls them in the course.
 	 */
 	private void changeCourseEnrollment() {
+		
 		if(control.checkEnrolment())
-			control.unenroll();
+		{
+			//Try un enrolling from the course
+			try
+			{
+				String text = control.unenroll();
+				makePopup("Success", text);
+			}
+			catch (Exception e)
+			{
+				//Make popup
+				makePopup("Error", e.getMessage());
+			}	
+		}
+			
 		else
-			control.enroll();
+		{
+			//Try enrolling for the course
+			try
+			{
+				String text = control.enroll();
+				makePopup("Success",text);
+			}
+			catch (Exception e)
+			{
+				//Make a popup
+				makePopup("Error",e.getMessage());
+			}
+		}
+		
+		
+			
 		window.setScene(new Scene (studentMenu(), width, height));
 	}
 	/**
@@ -534,13 +582,21 @@ public class MyGUI extends Application{
 	 * @param courseList Component used to display the student's schedule
 	 */
 	private void fillCourses(ListView<String> courseList){
-		CourseLite [] courses = control.getSchedule();
-		if(courses != null) {
-			for(int i = 0; i < courses.length; i++) {
-				courseList.getItems().add(courses[i].getName() + " " + courses[i].getNumber() + " Section: " + courses[i].getEnrolledSectionNumber());
+		try
+		{
+			CourseLite [] courses = control.getSchedule();
+			if(courses != null) {
+				for(int i = 0; i < courses.length; i++) {
+					courseList.getItems().add(courses[i].getName() + " " + courses[i].getNumber() + " Section: " + courses[i].getEnrolledSectionNumber());
+				}
 			}
+			courseList.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeView(newValue));
 		}
-		courseList.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeView(newValue));
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
+		
 	}
 	
 	/**
@@ -580,16 +636,26 @@ public class MyGUI extends Application{
 		
 	}
 	/**
-	 * build the course catalogue table
+	 * Build the course catalogue table
 	 * @return
 	 */
 	private TableView<CourseLite> buildTable(){
 		ObservableList<CourseLite> courses = FXCollections.observableArrayList();
-		if(control.getCatalogue() != null) {
-			for(CourseLite c: control.getCatalogue()) {
-				courses.add(c);
+		try
+		{
+			CourseLite[] list = control.getCatalogue();
+			if(list != null) {
+				for(CourseLite c: list) {
+					courses.add(c);
+				}
 			}
 		}
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
+			
+		
 		
 		TableView<CourseLite> table;
 		
@@ -607,9 +673,9 @@ public class MyGUI extends Application{
 		table.getColumns().addAll(nameCol, numberCol, offeringsCol);
 		return table;
 	}
+	
 	/**
 	 * Change the offering based on lecture drop down
-	 * !! NEEDS TO BE FIXED
 	 * @param offering
 	 * @param courseName
 	 */
@@ -708,10 +774,20 @@ public class MyGUI extends Application{
 		
 	}
 	/**
-	 * commit the new course to the catalogue
+	 * Commit the new course to the catalogue
 	 */
 	private void addCourse(TextField course, TextField offering, TextField spot, Stage win) {
-		control.makeCourse(splitCName(course.getText()), splitCNumber(course.getText()), Integer.parseInt(offering.getText()), Integer.parseInt(spot.getText()));
+		
+		try
+		{
+			String message = control.makeCourse(splitCName(course.getText()), splitCNumber(course.getText()), Integer.parseInt(offering.getText()), Integer.parseInt(spot.getText()));
+			makePopup("Success", message);
+		}
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
+		
 		window.setScene(new Scene(adminMenu(), width, height));
 		win.close();
 		
@@ -724,6 +800,41 @@ public class MyGUI extends Application{
 	public void activateSearch(TextField searchTag) {
 		control.setOffering(1);
 		window.setScene(new Scene(courseDisplay(searchTag, 1), width, height));
+	}
+	
+	/**
+	 * Makes a popup window
+	 * @param name
+	 * @param text
+	 */
+	private void makePopup(String name, String text)
+	{
+		
+		Stage popUp = new Stage();
+		
+		//Male window
+		popUp.initModality(Modality.APPLICATION_MODAL);
+		popUp.setTitle(name);
+		popUp.setMinWidth(350);
+		popUp.setMinHeight(150);
+		
+		//Make the text label
+		Label label = new Label();
+		label.setText(text);
+		
+		//Make close button
+		Button closeButton = new Button("Close");
+		closeButton.setOnAction(e -> popUp.close());
+		
+		//Add to layout
+		VBox layout = new VBox(30);
+		layout.getChildren().addAll(label, closeButton);
+		layout.setAlignment(Pos.CENTER);
+		
+		//Make window
+		Scene scene = new Scene(layout);
+		popUp.setScene(scene);
+		popUp.showAndWait();
 	}
 
 }
