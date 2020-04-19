@@ -243,51 +243,53 @@ public class MyGUI extends Application{
 		HBox panels = setPanels(leftPanel, setRightPanel());
 		
 		String input = courseName.getText();
+		
+		//Try and find the course
 		try
 		{
 			control.selectCourse(splitCName(input), splitCNumber(input));
-			
-			HBox courseInfo = new HBox();
-			courseInfo.setSpacing(10);
-			
-			//Lecture Drop-Down
-			ChoiceBox<String> lectures = new ChoiceBox<>();
-			for(int i = 0; i < control.getSelectedCourseOfferings();)
-				lectures.getItems().add("Lecture " + (++i));
-			
-			lectures.setValue("Lecture " + num); // default value
-			
-			//Listen for selection changes
-			lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
-			
-			//Course Name Label
-			Label course = new Label(control.getSelectedCourseName());
-			
-			courseInfo.getChildren().addAll(course, lectures);
-			
-			//Spots Available
-			Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
-			
-			HBox buttons = new HBox();
-			buttons.setSpacing(15);
-			
-			//Enroll/Unenroll 
-			Button enroll = new Button();
-			enroll.setText("Enroll/Unenroll");
-			enroll.setOnAction(e -> changeCourseEnrollment());
-			
-			buttons.getChildren().add(enroll);
-			
-			leftPanel.getChildren().addAll(courseInfo, spots, buttons);
-			
-			layout.getChildren().addAll(title, panels);
-			
 		}
-		
 		catch (Exception e)
 		{
 			makePopup("Error", e.getMessage());
 		}
+		
+		HBox courseInfo = new HBox();
+		courseInfo.setSpacing(10);
+			
+		//Lecture Drop-Down
+		ChoiceBox<String> lectures = new ChoiceBox<>();
+		for(int i = 0; i < control.getSelectedCourseOfferings();)
+			lectures.getItems().add("Lecture " + (++i));
+			
+		lectures.setValue("Lecture " + num); // default value
+			
+		//Listen for selection changes
+		lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
+			
+		//Course Name Label
+		Label course = new Label(control.getSelectedCourseName());
+			
+		courseInfo.getChildren().addAll(course, lectures);
+			
+		//Spots Available
+		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
+			
+		HBox buttons = new HBox();
+		buttons.setSpacing(15);
+			
+		//Enroll/Unenroll  
+		Button enroll = new Button();
+		enroll.setText("Enroll/Unenroll");
+		enroll.setOnAction(e -> changeCourseEnrollment());
+		
+		buttons.getChildren().add(enroll);
+			
+		leftPanel.getChildren().addAll(courseInfo, spots, buttons);
+			
+		layout.getChildren().addAll(title, panels);
+			
+		
 		
 		return layout;
 		
@@ -515,8 +517,15 @@ public class MyGUI extends Application{
 	 * @param courseName
 	 * @return
 	 */
-	private String splitCName(String courseName) {
-		return courseName.split(" ")[0];
+	private String splitCName(String courseName) throws Exception{
+		try
+		{
+			return courseName.split(" ")[0];
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Input in invalid format");
+		}
 	}
 	
 	/**
@@ -524,8 +533,15 @@ public class MyGUI extends Application{
 	 * @param courseName
 	 * @return course number
 	 */
-	private int splitCNumber(String courseName) {
-		return Integer.parseInt(courseName.split(" ")[1]);
+	private int splitCNumber(String courseName) throws Exception {
+		try
+		{
+			return Integer.parseInt(courseName.split(" ")[1]);
+		}
+		catch (Exception e)
+		{
+			throw new Exception("Input in invalid format");
+		}
 	}
 	
 	/**
@@ -604,8 +620,18 @@ public class MyGUI extends Application{
 	 * @param value
 	 */
 	private void changeView(String value) {
-		String courseName = splitCName(value);
-		int courseNum = splitCNumber(value);
+		String courseName = " ";
+		int courseNum = 0;
+		try
+		{
+			courseName = splitCName(value);
+			courseNum = splitCNumber(value);
+		}
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
+		
 		TextField course = new TextField();
 		course.setText(courseName + " " + courseNum);
 		int num = splitCOffering(value);
@@ -680,7 +706,16 @@ public class MyGUI extends Application{
 	 * @param courseName
 	 */
 	private void changeOffering(String offering, TextField courseName) {
-		int num = splitCNumber(offering);
+		int num = 1;
+		try
+		{
+			num = splitCNumber(offering);
+		}
+		catch (Exception e)
+		{
+			makePopup("Error", e.getMessage());
+		}
+		
 		control.setOffering(num);
 		
 		window.setScene(new Scene(courseDisplay(courseName, num), width, height));
