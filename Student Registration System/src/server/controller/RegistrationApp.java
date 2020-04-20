@@ -15,11 +15,26 @@ import server.model.Student;
  */
 public class RegistrationApp {
 
+	/**
+	 * Reference to the global course catalogue
+	 */
 	private CourseCatalogue cat;
+	
+	/**
+	 * Reference to the database
+	 */
 	private DBManager db;
 	
+	/**
+	 * The selected student (Who logged in)
+	 */
 	Student selectedStudent;
 	
+	/**
+	 * Contructor for the registration app
+	 * @param cat The catalogue
+	 * @param db the Database Manager
+	 */
 	public RegistrationApp(CourseCatalogue cat, DBManager db) {
 		this.cat = cat;
 		this.db = db;
@@ -186,7 +201,7 @@ public class RegistrationApp {
 		{
 			try
 			{
-				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).studentList().length(), c.getCourseOfferingByIndex(i).getSecCap());
+				newCourse.setOffering(i,c.getCourseOfferingByIndex(i).getSecNum(), c.getCourseOfferingByIndex(i).numberOfRegs(), c.getCourseOfferingByIndex(i).getSecCap());
 			}
 			catch (Exception e)
 			{

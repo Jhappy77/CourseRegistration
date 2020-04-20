@@ -13,16 +13,24 @@ import server.model.DBManager;
  */
 public class ServerApp implements Runnable{
 
-	//Input for the client
+	/**
+	 * The input of the client port
+	 */
 	ObjectInputStream clientIn;
 	
-	//Output for the client
+	/**
+	 * The output of the client port
+	 */
 	ObjectOutputStream clientOut;
 	
-	//The client number to help keep track of the client when there's multiple connections
+	/**
+	 * The client number for the client connected to this server port
+	 */
 	int clientNumber;
 	
-	//Registration app for this client
+	/**
+	 * The registration app
+	 */
 	RegistrationApp reg;
 	
 	
@@ -47,7 +55,9 @@ public class ServerApp implements Runnable{
 		//Execute();
 	}
 	
-	//Monitors the input and deals with anything that comes up
+	/**
+	 * Monitors the port and then deals with any package it receives
+	 */
 	public void run()
 	{
 		//Wait for a package to come in

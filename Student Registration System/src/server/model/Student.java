@@ -8,10 +8,29 @@ import java.util.ArrayList;
  */
 public class Student {
 	
+	/**
+	 * The student's name
+	 */
 	private String studentName;
+	
+	/**
+	 * The student's Id number
+	 */
 	private int studentId;
+	
+	/**
+	 * The student's password
+	 */
 	private String password;
+	
+	/**
+	 * List of the students registrations
+	 */
 	private ArrayList<Registration> studentRegList;
+	
+	/**
+	 * Maximum number of courses a student can be in
+	 */
 	private final int MAXCOURSENUMBER = 6;
 	
 	/**
@@ -98,21 +117,41 @@ public class Student {
 		getRegistrationByCourse(c).removeRegistration();
 	}
 
+	/**
+	 * Getter for the student's name
+	 * @return the student's name
+	 */
 	public String getStudentName() {
 		return studentName;
 	}
 
+	/**
+	 * Setter for the students name
+	 * @param studentName
+	 */
 	public void setStudentName(String studentName) {
 		this.studentName = studentName;
 	}
 
+	/**
+	 * Getter for the students Id
+	 * @return the Id
+	 */
 	public int getStudentId() {
 		return studentId;
 	}
 
+	/**
+	 * Setter for the students Id
+	 * @param studentId
+	 */
 	public void setStudentId(int studentId) {
 		this.studentId = studentId;
 	}
+	
+	/**
+	 * Override to print the string
+	 */
 	@Override
 	public String toString () {
 		String st = "Student Name: " + getStudentName() + "\n" +
@@ -162,5 +201,4 @@ public class Student {
 			return true;
 		return false;
 	}
-
 }
