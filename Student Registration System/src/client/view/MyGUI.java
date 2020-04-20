@@ -885,7 +885,7 @@ public class MyGUI extends Application{
 		popUp.initModality(Modality.APPLICATION_MODAL);
 		popUp.setTitle(name);
 		popUp.setMinWidth(350);
-		popUp.setMinHeight(150);
+		popUp.setMinHeight(200);
 
 		//Make the text label
 		Label label = new Label();
