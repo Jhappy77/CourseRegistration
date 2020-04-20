@@ -18,12 +18,18 @@ public class PseudoDB implements DatabaseOperator{
 	 */
 	private ArrayList <Student> studentList;
 
+	/**
+	 * Constructor for the pseudo database
+	 */
 	public PseudoDB () {
 		courseList = new ArrayList<Course>();
 		studentList = new ArrayList<Student>();
 		studentList.add(new Student("Administration", 0, "300"));
 	}
 
+	/**
+	 * Loads the database and creates a course catalogue
+	 */
 	public CourseCatalogue loadDatabase() {
 		fillStudentArrayList();
 		CourseCatalogue c = new CourseCatalogue();
@@ -36,7 +42,10 @@ public class PseudoDB implements DatabaseOperator{
 		return c;
 	}
 
-
+	/**
+	 * Creates Several courses
+	 * @return a list of courses
+	 */
 	public ArrayList<Course> readCourses() {
 		Course c = new Course ("ENGG", 233);
 		c.addOffering(new CourseOffering(1, 200));

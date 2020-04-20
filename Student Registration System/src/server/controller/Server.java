@@ -30,7 +30,9 @@ public class Server {
 	 */
 	CourseCatalogue catalogue;
 
-	//The database manager
+	/**
+	 * The database Manager
+	 */
 	DatabaseOperator db;
 
 	/**

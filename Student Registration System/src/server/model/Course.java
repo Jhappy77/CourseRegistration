@@ -196,6 +196,10 @@ public class Course implements Comparable<Course>{
 		return courseName.compareTo(c.getCourseName());
 	}
 	
+	/**
+	 * Getter for the courses ID
+	 * @return the course ID
+	 */
 	public int getID() {
 		return courseID;
 	}

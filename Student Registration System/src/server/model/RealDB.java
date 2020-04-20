@@ -22,15 +22,29 @@ import com.mysql.cj.jdbc.Driver;
  */
 public class RealDB implements DBCredentials, DatabaseOperator{
 
-		// Local array lists
+		/**
+		 * List of students
+		 */
 		private ArrayList<Student> students;
+		
+		/**
+		 * List of courses
+		 */
 		private ArrayList<Course> courses;
-		
-		
-		// Attributes
+
+		/**
+		 * Connection
+		 */
 		private Connection conn;
+		
+		/**
+		 * Result set
+		 */
 		private ResultSet rs;
 		
+		/**
+		 * The constructor for the database
+		 */
 		public RealDB() {
 			students = new ArrayList<Student>();
 			courses = new ArrayList<Course>();
@@ -70,11 +84,14 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			return c;
 		}
 		
+		/**
+		 * Prints how many courses and students were loaded
+		 * @param c the catalogue
+		 */
 		private void printSuccessMessage(CourseCatalogue c) {
 			System.out.println("Added " + c.getCourseCount() + " courses and " +
 					students.size() + " students from database."); 
 		}
-
 
 		/**
 		 * Initializes the connection with the MySQL Server via JDBC
@@ -372,7 +389,6 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 			return null;
 		}
-		
 		
 		/**
 		 * Simulates registering students in a bunch of courses.

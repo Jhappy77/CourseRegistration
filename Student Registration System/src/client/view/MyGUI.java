@@ -56,24 +56,44 @@ Under "Resolution", choose "Accessible", and under "Rule Pattern", enter javafx/
  * @author Taylor
  *
  */
-
-
 public class MyGUI extends Application{
 
-
+	/**
+	 * The window
+	 */
 	Stage window;
+	
+	/**
+	 * Login, studentScene, adminScene, and studentMeny screens
+	 */
 	Scene login, studentScene, adminScene, studentMenu;
+	
+	/**
+	 * Default width
+	 */
 	int width = 1200;
+	
+	/**
+	 * Default height
+	 */
 	int height = 800;
+	
+	/**
+	 * The controller
+	 */
+	private Controller control;
 
-
-
+	/**
+	 * Main function to start up the program
+	 * @param args
+	 */
 	public static void main(String [] args) {
 		launch(args);
 	}
 
-	private Controller control;
-
+	/**
+	 * Start function for JavaFX
+	 */
 	@Override
 	public void start(Stage primaryStage) {
 
@@ -398,7 +418,7 @@ public class MyGUI extends Application{
 	/////////// END OF GRID PANES //////////////////////////////////
 
 	/**
-	 * add the welcome, logout button and browse button to the top panel
+	 * Add the welcome, logout button and browse button to the top panel
 	 */
 	private HBox setTitle() {
 		HBox title = new HBox();
@@ -421,9 +441,10 @@ public class MyGUI extends Application{
 
 		return title;
 	}
+	
 	/**
-	 * add the course search to the left panel
-	 * @return
+	 * Add the course search to the left panel.
+	 * @return the Vbox
 	 */
 	private VBox setLeftPanel() {
 		VBox leftPanel = panelSetUp();
@@ -442,9 +463,10 @@ public class MyGUI extends Application{
 
 		return leftPanel;
 	}
+	
 	/**
 	 * Set up that can be used for panels, such as the left and right ones in the courseDisplay
-	 * @return
+	 * @return the Vbox
 	 */
 	private VBox panelSetUp() {
 		VBox panel = new VBox();
@@ -456,8 +478,8 @@ public class MyGUI extends Application{
 	}
 
 	/**
-	 * add the schedule to the right panel
-	 * @return
+	 * Add the schedule to the right panel.
+	 * @return the VBox
 	 */
 	private VBox setRightPanel() {
 		VBox rightPanel = panelSetUp();
@@ -475,8 +497,9 @@ public class MyGUI extends Application{
 
 		return rightPanel;
 	}
+	
 	/**
-	 * add the left and right panel to the centre panel
+	 * Add the left and right panel to the centre panel
 	 * @param leftPanel
 	 * @param rightPanel
 	 * @return
@@ -513,7 +536,7 @@ public class MyGUI extends Application{
 		}
 	}
 	/**
-	 * change the window to the student menu
+	 * Change the window to the student menu.
 	 */
 	public void setStudentMenu() {
 		Scene scene = new Scene(studentMenu(), width, height);
@@ -523,7 +546,7 @@ public class MyGUI extends Application{
 	/**
 	 * Splits course name from string
 	 * @param courseName
-	 * @return
+	 * @return the name
 	 */
 	private String splitCName(String courseName) throws Exception{
 		try
@@ -601,6 +624,7 @@ public class MyGUI extends Application{
 		Scene scene = new Scene (studentMenu(), width, height);
 		styleAndSwitch(scene);
 	}
+	
 	/**
 	 * Gets the student's schedule from the controller and then fills a ListView in order
 	 * to display the information
@@ -650,7 +674,6 @@ public class MyGUI extends Application{
 		styleAndSwitch(scene);
 	}
 
-
 	/**
 	 * Window to display the course catalogue
 	 */
@@ -671,6 +694,7 @@ public class MyGUI extends Application{
 		catalogue.showAndWait();
 
 	}
+	
 	/**
 	 * Build the course catalogue table
 	 * @return
@@ -758,7 +782,7 @@ public class MyGUI extends Application{
 
 	}
 	/**
-	 * change the window to the administration menu
+	 * Change the window to the administration menu.
 	 */
 	public void setAdminMenu() {
 		Scene scene = new Scene(adminMenu(), width, height);

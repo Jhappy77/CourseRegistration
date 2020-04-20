@@ -1,7 +1,9 @@
 package server.model;
 
 /**
- * A class that holds the information of an individual's registration in a course.
+ * Class to link a student to a course offering
+ * @author Joel Happ
+ *
  */
 public class Registration {
 	private Student theStudent;

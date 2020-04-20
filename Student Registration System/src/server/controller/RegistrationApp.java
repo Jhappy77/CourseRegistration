@@ -18,6 +18,10 @@ public class RegistrationApp {
 	 * Reference to the global course catalogue
 	 */
 	private CourseCatalogue cat;
+	
+	/**
+	 * The database Manager
+	 */
 	private DatabaseOperator db;
 
 	/**
@@ -25,6 +29,11 @@ public class RegistrationApp {
 	 */
 	Student selectedStudent;
 
+	/**
+	 * Constructor for the Registration app
+	 * @param cat The course Catalogue
+	 * @param db The database manager
+	 */
 	public RegistrationApp(CourseCatalogue cat, DatabaseOperator db) {
 		this.cat = cat;
 		this.db = db;

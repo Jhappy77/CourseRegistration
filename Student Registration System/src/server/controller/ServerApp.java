@@ -9,7 +9,6 @@ import server.model.DatabaseOperator;
 /**
  * Class to directly deal with the client
  * @author Jerome Gobeil
- *
  */
 public class ServerApp implements Runnable{
 
@@ -187,7 +186,7 @@ public class ServerApp implements Runnable{
 	
 	/**
 	 * Remove the course from the selected student
-	 * @param r
+	 * @param r the data from the package
 	 */
 	synchronized private void makeNewCourse(String[] m)
 	{
@@ -216,7 +215,7 @@ public class ServerApp implements Runnable{
 	
 	/**
 	 * Remove the course from the selected student
-	 * @param r
+	 * @param r the data from the package
 	 */
 	synchronized private void removeCourse(String[] r)
 	{
@@ -244,7 +243,7 @@ public class ServerApp implements Runnable{
 	
 	/**
 	 * Register the selected student for a course and send a error if it cant
-	 * @param a
+	 * @param a the data from the package
 	 */
 	synchronized private void addCourse(String[] a)
 	{
