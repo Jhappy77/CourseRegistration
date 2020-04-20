@@ -1,0 +1,27 @@
+.root{
+  -fx-background-color: #383838;
+  -fx-font-size: 15pt;
+}
+.label{
+  -fx-text-fill: #E8E8E8;
+}
+.button{
+  -fx-background-color: linear-gradient(#DC9656, #AB4642);
+  -fx-text-fill: #FFFFFF;
+  -fx-background-radius: 4;
+}
+.choice-box>.label,{
+  -fx-text-fill: #000000;
+}
+.table-view .column-header .label {
+    -fx-text-fill: black;
+}
+
+#bold-label{
+  -fx-font-size: 20pt;
+  -fx-font-weight: bold;
+}
+#text-input{
+  -fx-font-size: 12pt;
+  -fx-text-fill: #000000;
+}

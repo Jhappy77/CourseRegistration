@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -60,9 +61,8 @@ public class MyGUI extends Application{
 	
 	Stage window;
 	Scene login, studentScene, adminScene, studentMenu;
-	int width = 700;
-	int height = 300;
-	VBox rightPanel;
+	int width = 1200;
+	int height = 800;
 	
 
 
@@ -92,17 +92,13 @@ public class MyGUI extends Application{
 		//Layout 1 - Main window where user chooses between 
 		//			 Student and Admin
 		login = new Scene(optionScene(), width, height);
+		login.getStylesheets().add("dinos.css");
 		
 		//Layout 2 - Main Login window for Students where they
 		//			 are prompted to input their id and password
 		studentScene = new Scene(studentLogin(), width, height);
+		studentScene.getStylesheets().add("dinos.css");
 		
-		//Layout 3 - Admin's main window (INCOMPLETE)
-		adminScene = new Scene(adminLogin(), width, height);
-		
-		//Layout 4 - Student's main window with course search,
-		// 			 their schedule, and where they can enroll in courses
-		//studentMenu = new Scene(studentMenu(), width, height);
 
 		window.setScene(login);
 		window.show();
@@ -134,7 +130,8 @@ public class MyGUI extends Application{
 		
 		//University of Calgary Title
 		Label title = new Label("University of Calgary");
-		
+		title.setId("bold-label");
+	
 		//Student Button
 		Button student = new Button();
 		student.setText("Sign In");
@@ -143,7 +140,7 @@ public class MyGUI extends Application{
 		//Admin Button
 		Button admin = new Button();
 		admin.setText("Admin");
-		admin.setOnAction(e -> window.setScene(adminScene));
+		admin.setOnAction(e -> adminScene());
 		
 		//HBox for the buttons so they are on the same line
 		HBox buttons = new HBox();
@@ -164,10 +161,10 @@ public class MyGUI extends Application{
 	 */
 	private VBox studentLogin() {
 		VBox layout = makeLayout();
-		layout.setSpacing(50);
 		HBox topPanel = new HBox();
 		VBox centrePanel = new VBox();
 		centrePanel.setSpacing(10);
+		centrePanel.setMinHeight(height);
 		centrePanel.setAlignment(Pos.CENTER);
 		
 		//Student Id Block
@@ -176,6 +173,7 @@ public class MyGUI extends Application{
 		idBlock.setAlignment(Pos.CENTER);
 		Label idLabel = new Label("Student ID");
 		TextField idText = new TextField();
+		idText.setId("text-input");
 		idBlock.getChildren().addAll(idLabel,idText);
 		
 		//Student Password Block
@@ -183,7 +181,8 @@ public class MyGUI extends Application{
 		passwordBlock.setSpacing(10);
 		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		TextField passwordText = new TextField();
+		PasswordField passwordText = new PasswordField();
+		passwordText.setId("text-input");
 		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
 		
 		//Login Response Label
@@ -244,13 +243,15 @@ public class MyGUI extends Application{
 		control.selectCourse(splitCName(input), splitCNumber(input));
 		
 		HBox courseInfo = new HBox();
+		courseInfo.setAlignment(Pos.CENTER);
 		courseInfo.setSpacing(10);
 		
 		//Lecture Drop-Down
 		ChoiceBox<String> lectures = new ChoiceBox<>();
-		for(int i = 0; i < control.getSelectedCourseOfferings();)
+		for(int i = 0; i < control.getSelectedCourseOfferings();) {
 			lectures.getItems().add("Lecture " + (++i));
-		
+		}
+			
 		lectures.setValue("Lecture " + num); // default value
 		
 		//Listen for selection changes
@@ -264,17 +265,13 @@ public class MyGUI extends Application{
 		//Spots Available
 		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
 		
-		HBox buttons = new HBox();
-		buttons.setSpacing(15);
-		
 		//Enroll/Unenroll 
 		Button enroll = new Button();
 		enroll.setText("Enroll/Unenroll");
+		enroll.setAlignment(Pos.CENTER);
 		enroll.setOnAction(e -> changeCourseEnrollment());
 		
-		buttons.getChildren().add(enroll);
-		
-		leftPanel.getChildren().addAll(courseInfo, spots, buttons);
+		leftPanel.getChildren().addAll(courseInfo, spots, enroll);
 		
 		layout.getChildren().addAll(title, panels);
 		
@@ -292,6 +289,7 @@ public class MyGUI extends Application{
 		layout.setSpacing(50);
 		HBox topPanel = new HBox();
 		VBox centrePanel = new VBox();
+		centrePanel.setMinHeight(height - 100);
 		centrePanel.setSpacing(10);
 		centrePanel.setAlignment(Pos.CENTER);
 		
@@ -300,7 +298,7 @@ public class MyGUI extends Application{
 		passwordBlock.setSpacing(10);
 		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		TextField passwordText = new TextField();
+		PasswordField passwordText = new PasswordField();
 		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
 		
 		//Login Response Label
@@ -334,7 +332,7 @@ public class MyGUI extends Application{
 		VBox layout = makeLayout();
 		
 		HBox title = new HBox();
-		title.setSpacing(450);
+		title.setSpacing(width*3/5);
 		
 		//Welcome label
 		Label welcome = new Label("Welcome, " + control.getStudentName());
@@ -346,14 +344,11 @@ public class MyGUI extends Application{
 		
 		title.getChildren().addAll(welcome, logoutButton);
 		
-		HBox panels = new HBox();
-		panels.setSpacing(200);
-		panels.setPadding(new Insets(0,50,0,50));
-		VBox left = new VBox();
-		left.setAlignment(Pos.CENTER);
-		VBox right = new VBox();
-		panels.getChildren().addAll(left, right);
 		
+		VBox left = panelSetUp();
+		VBox right = panelSetUp();
+		HBox panels = new HBox(left, right);
+	
 		//Course Catalogue Label
 		Label catalogue = new Label();
 		catalogue.setText("Course Catalogue");
@@ -408,17 +403,16 @@ public class MyGUI extends Application{
 	 * @return
 	 */
 	private VBox setLeftPanel() {
-		VBox leftPanel = new VBox();
-		leftPanel.setSpacing(10);
+		VBox leftPanel = panelSetUp();
 		
 		//View Courses search
-		Label courseLabel = new Label("View Course"); // later, add name of student here
+		Label courseLabel = new Label("View Course");
 				
 		HBox searchPanel = new HBox();
+		searchPanel.setAlignment(Pos.CENTER);
 		searchPanel.setSpacing(10);
 		TextField searchTag = new TextField("search for a course");
-		Button search = new Button();
-		search.setText("Search");
+		Button search = new Button("Search");
 		search.setOnAction(e -> activateSearch(searchTag));
 		searchPanel.getChildren().addAll(searchTag, search);
 		leftPanel.getChildren().addAll(courseLabel, searchPanel);
@@ -426,18 +420,30 @@ public class MyGUI extends Application{
 		return leftPanel;
 	}
 	/**
+	 * Set up that can be used for panels, such as the left and right ones in the courseDisplay
+	 * @return
+	 */
+	private VBox panelSetUp() {
+		VBox panel = new VBox();
+		panel.setSpacing(10);
+		panel.setMinWidth(width/2);
+		panel.setPadding(new Insets(20,20,20,20));
+		panel.setAlignment(Pos.TOP_CENTER);
+		return panel;
+	}
+	
+	/**
 	 * add the schedule to the right panel
 	 * @return
 	 */
 	private VBox setRightPanel() {
-		VBox rightPanel = new VBox();
-		rightPanel.setSpacing(10);
+		VBox rightPanel = panelSetUp();
 		
 		//Schedule List
 		ListView<String> courseList = new ListView<>();
 		fillCourses(courseList);
-		courseList.setMaxWidth(150);
-		courseList.setMaxHeight(142);
+		courseList.setMaxWidth(width/2 - 100);
+		courseList.setMaxHeight(250);
 			
 						
 		//Schedule Display
@@ -455,7 +461,6 @@ public class MyGUI extends Application{
 	private HBox setPanels(VBox leftPanel, VBox rightPanel) {
 		HBox panels = new HBox();
 		panels.setPadding(new Insets(10,10,10,10));
-		panels.setSpacing(200);
 		panels.getChildren().addAll(leftPanel, rightPanel);
 		
 		return panels;
@@ -488,7 +493,8 @@ public class MyGUI extends Application{
 	 * change the window to the student menu
 	 */
 	public void setStudentMenu() {
-		window.setScene(new Scene (studentMenu(), width, height));
+		Scene scene = new Scene(studentMenu(), width, height);
+		styleAndSwitch(scene);
 	}
 	
 	/**
@@ -526,7 +532,8 @@ public class MyGUI extends Application{
 			control.unenroll();
 		else
 			control.enroll();
-		window.setScene(new Scene (studentMenu(), width, height));
+		Scene scene = new Scene (studentMenu(), width, height);
+		styleAndSwitch(scene);
 	}
 	/**
 	 * Gets the student's schedule from the controller and then fills a ListView in order
@@ -555,7 +562,8 @@ public class MyGUI extends Application{
 		int num = splitCOffering(value);
 		control.setOffering(num);
 		
-		window.setScene(new Scene(courseDisplay(course, num), width, height));
+		Scene scene = new Scene(courseDisplay(course, num), width, height);
+		styleAndSwitch(scene);
 	}
 
 	
@@ -574,9 +582,9 @@ public class MyGUI extends Application{
 		layout.getChildren().addAll(buildTable());
 		
 		Scene scene = new Scene(layout);
+		scene.getStylesheets().add("dinos.css");
 		catalogue.setScene(scene);
 		catalogue.showAndWait();
-		
 		
 	}
 	/**
@@ -602,8 +610,12 @@ public class MyGUI extends Application{
 		TableColumn<CourseLite, Integer> offeringsCol = new TableColumn<>("Number of Offerings");
 		offeringsCol.setCellValueFactory(new PropertyValueFactory<>("offeringCount"));
 		
-		table = new TableView<>();
-		table.setItems(courses);
+		
+		table = new TableView<>(courses);
+		table.setMinWidth(width/2 - 100);
+		table.setMinHeight(height - 200);
+		numberCol.setMinWidth(table.getMinWidth()/2);
+		offeringsCol.setMinWidth(table.getMinWidth()/2);
 		table.getColumns().addAll(nameCol, numberCol, offeringsCol);
 		return table;
 	}
@@ -617,7 +629,8 @@ public class MyGUI extends Application{
 		int num = splitCNumber(offering);
 		control.setOffering(num);
 		
-		window.setScene(new Scene(courseDisplay(courseName, num), width, height));
+		Scene scene = new Scene(courseDisplay(courseName, num), width, height);
+		styleAndSwitch(scene);
 	}
 	
 	/**
@@ -645,7 +658,8 @@ public class MyGUI extends Application{
 	 * change the window to the administration menu
 	 */
 	public void setAdminMenu() {
-		window.setScene(new Scene(adminMenu(), width, height));
+		Scene scene = new Scene(adminMenu(), width, height);
+		styleAndSwitch(scene);
 	}
 	
 	/**
@@ -703,6 +717,7 @@ public class MyGUI extends Application{
 		layout.getChildren().addAll(first, second, commit);
 		
 		Scene scene = new Scene(layout);
+		scene.getStylesheets().add("dinos.css");
 		newCourse.setScene(scene);
 		newCourse.showAndWait();
 		
@@ -712,7 +727,7 @@ public class MyGUI extends Application{
 	 */
 	private void addCourse(TextField course, TextField offering, TextField spot, Stage win) {
 		control.makeCourse(splitCName(course.getText()), splitCNumber(course.getText()), Integer.parseInt(offering.getText()), Integer.parseInt(spot.getText()));
-		window.setScene(new Scene(adminMenu(), width, height));
+		setAdminMenu();
 		win.close();
 		
 	}
@@ -723,7 +738,24 @@ public class MyGUI extends Application{
 	 */
 	public void activateSearch(TextField searchTag) {
 		control.setOffering(1);
-		window.setScene(new Scene(courseDisplay(searchTag, 1), width, height));
+		Scene scene = new Scene(courseDisplay(searchTag, 1), width, height);
+		styleAndSwitch(scene);
+		
+	}
+	/**
+	 * make whichever scene passed adopt the style from dinos.css
+	 * @param scene
+	 */
+	public void styleAndSwitch(Scene scene) {
+		scene.getStylesheets().add("dinos.css");
+		window.setScene(scene);
+	}
+	/**
+	 * switch to admin login
+	 */
+	public void adminScene() {
+		Scene scene = new Scene(adminLogin(), width, height);
+		styleAndSwitch(scene);
 	}
 
 }
