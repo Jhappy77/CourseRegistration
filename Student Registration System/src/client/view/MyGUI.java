@@ -247,10 +247,12 @@ public class MyGUI extends Application{
 		try
 		{
 			control.selectCourse(splitCName(input), splitCNumber(input));
+			
 		}
 		catch (Exception e)
 		{
 			makePopup("Error", e.getMessage());
+			return studentMenu();
 		}
 
 		HBox courseInfo = new HBox();
