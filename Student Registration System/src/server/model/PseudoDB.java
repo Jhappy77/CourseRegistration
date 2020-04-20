@@ -140,5 +140,12 @@ public class PseudoDB implements DatabaseOperator{
 			System.out.println(s);
 		}
 	}
+	
+	/**
+	 * Saves the passed course to the courseList
+	 */
+	public void saveCourse(Course c) {
+		courseList.add(c);
+	}
 
 }

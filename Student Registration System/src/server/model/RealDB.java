@@ -13,13 +13,11 @@ import com.mysql.cj.jdbc.Driver;
 /**
  * A very basic implementation of a MySQL Database reader.
  * For ENSF 409, we had very limited knowledge of how databases worked,
- * so the database we created only stores information for courses and students.
- * The information about each course's offerings and registrations is
- * simulated through the use of functions, for a real application 
+ * so the database we created only stores information for courses, offerings, and students.
+ * The information about registrations is simulated through the use of functions, for a real application 
  * this would not be the case.
- * The database architecture is also basic, and the only information that
- * is currently re-entered into the database is the new course info
- * whenever an administrator adds a new course. 
+ * The database architecture is also basic- to improve this,
+ * a database cache architecture could be implemented.
  * @author Joel Happ
  */
 public class RealDB implements DBCredentials, DatabaseOperator{
@@ -40,33 +38,47 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 		
 		/**
 		 * Loads the database and returns the filled Course Catalogue.
+		 * @return The course catalogue, filled with all courses & offerings
 		 */
 		public CourseCatalogue loadDatabase() {
-			
 			initializeConnection();
 			
 			// Load from DB
 			readAllStudents();
 			readAllCourses();
 			
-			// Simulate loading from DB
-			createSampleCourseOfferings();
+			// Add all offerings for each course
+			for(Course co: courses) {
+				readOfferings(co);
+			}
 			
 			// Create course catalogue
 			CourseCatalogue c = new CourseCatalogue();
 			c.setCourseList(courses);
 			
-			// Simulate loading from DB
+			// Simulate loading registrations from DB
 			try {
 				addSampleCoursesToStudents(c);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			
+			// Prints message to server about success
+			
+			printSuccessMessage(c);
+			
 			return c;
+		}
+		
+		private void printSuccessMessage(CourseCatalogue c) {
+			System.out.println("Added " + c.getCourseCount() + " courses and " +
+					students.size() + " students from database."); 
 		}
 
 
+		/**
+		 * Initializes the connection with the MySQL Server via JDBC
+		 */
 		public void initializeConnection() {
 			try {
 				// Register JDBC driver
@@ -81,15 +93,24 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 
 		}
 
+		/**
+		 * Closes the connection and the result set
+		 */
 		public void close() {
 			try {
-				// rs.close();
+				rs.close();
 				conn.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
 		}
 
+		/**
+		 * Inserts user into MySQL Database
+		 * @param id User ID
+		 * @param name User's full name
+		 * @param password User's password
+		 */
 		public void insertUserPreparedStatement(int id, String name, String password) {
 			try {
 				String query = "INSERT INTO STUDENTS (studentID, name, password) values(?,?,?)";
@@ -106,10 +127,14 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 		}
 		
-		
+		/**
+		 * Inserts a course into the MySQL Database
+		 * @param subjCode Course name
+		 * @param courseNum Course number
+		 */
 		public void insertCoursePreparedStatement(String subjCode, int courseNum) {
 			try {
-				String query = "INSERT INTO COURSES (courseCode, courseNum) values(?,?)";
+				String query = "INSERT INTO COURSETABLE (courseCode, courseNum) values(?,?)";
 				PreparedStatement pStat = conn.prepareStatement(query);
 				pStat.setString(1, subjCode);
 				pStat.setInt(2, courseNum);
@@ -121,24 +146,63 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
+		
+		/**
+		 * Inserts an offering into the MySQL Database
+		 * @param secNum Section number for offering
+		 * @param secCap Section cap for offering
+		 * @param c Course which offering is for
+		 */
+		public void insertOffering(int secNum, int secCap, Course c) {
+			try {
+				String query = "INSERT INTO offerings (secNum, secCap, courseID) values(?,?,?)";
+				PreparedStatement pStat = conn.prepareStatement(query);
+				pStat.setInt(1, secNum);
+				pStat.setInt(2, secCap);
+				pStat.setInt(3, c.getID());
+				int rowCount = pStat.executeUpdate();
+				System.out.println("Offering Row Count = " + rowCount);
+				pStat.close();
+			} catch (SQLException e) {
+				System.out.println("problem inserting offering for" + c.getFullCourseName() + " section" + secNum);
+				e.printStackTrace();
+			} catch(NullPointerException e) {
+				System.out.println("Could not insert offering with no ID");
+			}
+		}
 
 		/**
-		 * Code for creating a mySQL table.
+		 * Code for creating a mySQL table for offerings.
 		 * Should only be executed once.
 		 */
 		public void createTable() {
-			String sql = "CREATE TABLE STUDENTS" + "(studentId INTEGER not NULL, " + " name VARCHAR(255), " +" password VARCHAR(45), "+ " PRIMARY KEY ( id ))";
-
-			try {
-				Statement stmt = conn.createStatement(); // construct a statement
-				stmt.executeUpdate(sql); // execute my query (i.e. sql)
-				stmt.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				System.out.println("Table can NOT be created!");
-			}
-			System.out.println("Created table in given database...");
+//			String sql = "CREATE TABLE courseTable" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " courseCode VARCHAR(30), " +" courseNum INTEGER)";
+//
+//			try {
+//				Statement stmt = conn.createStatement(); // construct a statement
+//				stmt.executeUpdate(sql); // execute my query (i.e. sql)
+//				stmt.close();
+//			} catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				System.out.println("Table can NOT be created!");
+//			}
+//			System.out.println("Created table in given database...");
+//			
+//			
+//			sql = "CREATE TABLE offerings" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " secNum INTEGER, " +
+//			" secCap INTEGER," + "courseID INTEGER)";
+//
+//			try {
+//				Statement stmt = conn.createStatement(); // construct a statement
+//				stmt.executeUpdate(sql); // execute my query (i.e. sql)
+//				stmt.close();
+//			} catch (SQLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//				System.out.println("Table can NOT be created!");
+//			}
+//			System.out.println("Created table in given database...");
 		}
 		
 		/**
@@ -151,7 +215,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				rs = st.executeQuery(query);
 				while(rs.next()) {
 					Student s = new Student(rs.getString("name"), rs.getInt("studentID"), rs.getString("password"));
-					System.out.println(s);
+					//System.out.println(s);
 					students.add(s);
 				}
 				st.close();
@@ -167,56 +231,96 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 		 */
 		private void readAllCourses() {
 			try {
-				String query = "SELECT * FROM COURSES";
+				String query = "SELECT * FROM COURSETABLE";
 				Statement st = conn.createStatement();
 				rs = st.executeQuery(query);
 				while(rs.next()) {
-					Course c = new Course(rs.getString("courseCode"), rs.getInt("courseNum"));
-					System.out.println(c);
+					Course c = new Course(rs.getString("courseCode"), rs.getInt("courseNum"), rs.getInt("id"));
+					//System.out.println(c);
 					courses.add(c);
 				}
 				st.close();
 			} catch(SQLException e) {
-				System.out.println("Problem loading students");
+				System.out.println("Problem reading courses");
 				e.printStackTrace();
 			}
 		}
 		
+		
 		/**
-		 * Creates a bunch of sample course offerings for the courses in
-		 * the array list. For a real application, this would be replaced
-		 * by loading the offerings from the database, however to keep things
-		 * simple for this project we will just create a bunch of samples.
+		 * Reads specific course from DB
 		 */
-		private void createSampleCourseOfferings() {
-			int i = 0;
-			for(Course c:courses) {
-				if(i%5 == 0) {
-					c.addOffering(new CourseOffering(1, 200));
-					c.addOffering(new CourseOffering(2, 250));
+		private Course readCourse(String courseCode, int courseNum) {
+			try {
+				String query = "SELECT * FROM COURSETABLE where courseCode='" + courseCode +"' AND courseNum=" +courseNum;
+				Statement st = conn.createStatement();
+				rs = st.executeQuery(query);
+				while(rs.next()) {
+					Course c = new Course(rs.getString("courseCode"), rs.getInt("courseNum"), rs.getInt("id"));
+					return c;
 				}
-				else if(i%5==1) {
-					c.addOffering(new CourseOffering(1, 300));
-					c.addOffering(new CourseOffering(2, 300));
-					c.addOffering(new CourseOffering(3, 300));
-					c.addOffering(new CourseOffering(4, 300));
+				st.close();
+			} catch(SQLException e) {
+				System.out.println("Problem reading courses");
+				e.printStackTrace();
+			}
+			return null;
+		}
+		
+		
+		/**
+		 * Reads all offerings for a particular course from database, and them to that course.
+		 */
+		private void readOfferings(Course c) {
+			try {
+				String idString = Integer.toString(c.getID());
+				String query = "SELECT * FROM offerings WHERE courseID=" + idString;
+				Statement st = conn.createStatement();
+				rs = st.executeQuery(query);
+				while(rs.next()) {
+					c.addOffering(new CourseOffering(rs.getInt("secNum"), rs.getInt("secCap")));
+					//System.out.println("read an offering for " + c);
 				}
-				else if(i%5==2) {
-					c.addOffering(new CourseOffering(1, 69));
-				}
-				else if(i%5==3) {
-					c.addOffering(new CourseOffering(1, 150));
-					c.addOffering(new CourseOffering(2, 250));
-				}
-				else {
-					c.addOffering(new CourseOffering(1, 500));
-					c.addOffering(new CourseOffering(2, 100));
-					c.addOffering(new CourseOffering(3, 150));
-				}
-				i++;
+				st.close();
+				rs.close();
+			} catch(SQLException e) {
+				System.out.println("Problem reading offerings for course" + c.getFullCourseName());
+				e.printStackTrace();
 			}
 		}
 		
+//		/**
+//		 * Creates a bunch of sample course offerings for the courses in
+//		 * the array list. Only needs to be executed once.
+//		 */
+//		private void createSampleCourseOfferings() {
+//			int i = 0;
+//			for(Course c:courses) {
+//				if(i%5 == 0) {
+//					insertOffering(1, 200,c);
+//					insertOffering(2, 250,c);
+//				}
+//				else if(i%5==1) {
+//					insertOffering(1, 69,c);
+//				}
+//				else if(i%5==2) {
+//					insertOffering(1, 300,c);
+//					insertOffering(2, 300,c );
+//					insertOffering(3, 300, c);
+//					insertOffering(4, 300, c);
+//				}
+//				else if(i%5==3) {
+//					insertOffering(1, 150, c);
+//					insertOffering(2, 250,c);
+//				}
+//				else {
+//					insertOffering(1, 500, c);
+//					insertOffering(2, 100, c);
+//					insertOffering(3, 150, c);
+//				}
+//				i++;
+//			}
+//		}
 		
 //		/**
 //		 * Inserts a bunch of test users into the students table. 
@@ -316,6 +420,23 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				
 				if(st.getStudentName().contentEquals("Taylor Noel"))
 					new Registration(st, cat.searchCatalogue("SUCC", 69).getCourseOfferingBySecNum(1));
+			}
+		}
+		
+		/**
+		 * Saves a passed course to the database.
+		 */
+		public void saveCourse(Course c) {
+			insertCoursePreparedStatement(c.getCourseName(), c.getCourseNum());
+			// Gets the course to ensure it has the right ID
+			Course added = readCourse(c.getCourseName(), c.getCourseNum());
+			try {
+				for(int i= 0; true; i++) {
+				CourseOffering co = c.getCourseOfferingByIndex(i);
+				insertOffering(co.getSecNum(), co.getSecCap(), added);
+				}
+			} catch(Exception e) {
+				System.out.println("Finished adding course's offerings");
 			}
 		}
 

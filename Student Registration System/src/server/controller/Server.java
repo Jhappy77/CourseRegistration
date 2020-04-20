@@ -60,11 +60,7 @@ public class Server {
 		
 		
 		catalogue = db.loadDatabase();
-//		catalogue.loadFromDataBase(db);
-//		
-//		
-//		//Fill the catalogue with students???
-//		db.sampleDBTest(catalogue);
+
 	}
 	
 	/**

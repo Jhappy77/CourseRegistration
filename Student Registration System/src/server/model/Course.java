@@ -5,6 +5,7 @@ public class Course implements Comparable<Course>{
 
 	private String courseName;
 	private int courseNum;
+	private int courseID;
 	
 	// The preReq list keeps track of all the courses that are pre-requisites for this
 	// course.
@@ -23,6 +24,21 @@ public class Course implements Comparable<Course>{
 	public Course(String courseName, int courseNum) {
 		this.setCourseName(courseName);
 		this.setCourseNum(courseNum);
+		// Both of the following are only association
+		preReq = new ArrayList<Course>();
+		offeringList = new ArrayList<CourseOffering>();
+	}
+	
+	/**
+	 * Constructs a course with an ID and initializes its prerequisites and offeringList.
+	 * @param courseName Name of the course
+	 * @param courseNum Number of the course
+	 * @param courseID Course ID, unique integer
+	 */
+	public Course(String courseName, int courseNum, int courseID) {
+		this.setCourseName(courseName);
+		this.setCourseNum(courseNum);
+		this.courseID = courseID;
 		// Both of the following are only association
 		preReq = new ArrayList<Course>();
 		offeringList = new ArrayList<CourseOffering>();
@@ -91,7 +107,9 @@ public class Course implements Comparable<Course>{
 	public String toString () {
 		String st = "\n";
 		st += getCourseName() + " " + getCourseNum ();
+		st += " Course ID: " + courseID;
 		st += "\nAll course sections:\n";
+			
 		for (CourseOffering c : offeringList)
 			st += c;
 		st += "\n-------\n";
@@ -139,6 +157,10 @@ public class Course implements Comparable<Course>{
 	@Override
 	public int compareTo(Course c) {
 		return courseName.compareTo(c.getCourseName());
+	}
+	
+	public int getID() {
+		return courseID;
 	}
 
 }
