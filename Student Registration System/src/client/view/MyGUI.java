@@ -900,6 +900,7 @@ public class MyGUI extends Application{
 
 		//Make window
 		Scene scene = new Scene(layout);
+		scene.getStylesheets().add("dinos.css");
 		popUp.setScene(scene);
 		popUp.showAndWait();
 	}
