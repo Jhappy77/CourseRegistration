@@ -4,7 +4,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import server.model.CourseCatalogue;
-import server.model.DBManager;
+import server.model.DatabaseOperator;
 
 /**
  * Class to directly deal with the client
@@ -34,7 +34,7 @@ public class ServerApp {
  * @param cat course catalogue
  * @param db manager
  */
-	public ServerApp(int clientNumber, ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DBManager db)
+	public ServerApp(int clientNumber, ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DatabaseOperator db)
 	{
 		this.clientNumber = clientNumber;
 		reg = new RegistrationApp(cat,db);

@@ -1,19 +1,35 @@
 package server.model;
 import java.util.ArrayList;
 
-//This class is simulating a database for our
-//program
-public class DBManager {
+
+/**
+ * A class that runs a pseudo database, for testing purposes.
+ * @author Joel Happ
+ */
+public class PseudoDB implements DatabaseOperator{
 	
 	private ArrayList <Course> courseList;
 	private ArrayList <Student> studentList;
 
-	public DBManager () {
+	public PseudoDB () {
 		courseList = new ArrayList<Course>();
 		studentList = new ArrayList<Student>();
 	}
 
-	public ArrayList<Course> readFromDataBase() {
+	public CourseCatalogue loadDatabase() {
+		fillStudentArrayList();
+		CourseCatalogue c = new CourseCatalogue();
+		c.setCourseList(readCourses());
+		try {
+			addSampleCoursesToStudents(c);
+		}catch(Exception e) {
+			System.out.println("Error registering students in courses");
+		}
+		return c;
+	}
+	
+	
+	public ArrayList<Course> readCourses() {
 		Course c = new Course ("ENGG", 233);
 		c.addOffering(new CourseOffering(1, 200));
 		c.addOffering(new CourseOffering(2, 250));
@@ -50,7 +66,7 @@ public class DBManager {
 	}
 	
 	
-	public void fillStudentArrayList() {
+	private void fillStudentArrayList() {
 		studentList.add(new Student("Timothy", 300769, "1234"));
 		studentList.add(new Student("Petrune", 300669, "1234"));
 		studentList.add(new Student("Donald", 308008, "1234"));
@@ -105,20 +121,6 @@ public class DBManager {
 		}
 	}
 	
-	/**
-	 * Runs a sample database test
-	 * @param cat Catalogue to sync with
-	 */
-	public void sampleDBTest(CourseCatalogue cat) {
-		System.out.println("Courses loaded: " + courseList.size());
-		fillStudentArrayList();
-		System.out.println("Students loaded: " + studentList.size());
-		try {
-			addSampleCoursesToStudents(cat);
-		}catch(Exception e) {
-			System.out.println("Error registering students in courses");
-		}
-	}
 	
 	/**
 	 * Returns the student based on the id

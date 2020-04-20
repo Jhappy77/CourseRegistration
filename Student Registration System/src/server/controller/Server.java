@@ -7,7 +7,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import server.model.CourseCatalogue;
-import server.model.DBManager;
+import server.model.DatabaseOperator;
+import server.model.PseudoDB;
+import server.model.RealDB;
 
 /**
  * Class will create and monitor a port. When a new client joins it will create a server app instance for them
@@ -23,7 +25,7 @@ public class Server {
 	CourseCatalogue catalogue;
 	
 	//The database manager
-	DBManager db;
+	DatabaseOperator db;
 	
 	//The number of connections
 	int clientCount;
@@ -50,13 +52,19 @@ public class Server {
 		}
 		
 		//Make the course catalogue and the database
-		db = new DBManager();
-		catalogue = new CourseCatalogue();
-		catalogue.loadFromDataBase(db);
+		
+		// You can comment & uncomment the following lines of code
+		// to switch between using the real database or the pseudo database.
+		//db = new PseudoDB();
+		db = new RealDB();
 		
 		
-		//Fill the catalogue with students???
-		db.sampleDBTest(catalogue);
+		catalogue = db.loadDatabase();
+//		catalogue.loadFromDataBase(db);
+//		
+//		
+//		//Fill the catalogue with students???
+//		db.sampleDBTest(catalogue);
 	}
 	
 	/**

@@ -1,26 +1,25 @@
 package server.controller;
-import java.util.Scanner;
 
 import server.model.Course;
 import server.model.CourseCatalogue;
 import server.model.CourseOffering;
-import server.model.DBManager;
+import server.model.DatabaseOperator;
 import server.model.Student;
 
 
 /**
  * Class to deal with all the clients courses
- * @author Joel Happ + Jerome Gobeil
+ * @author Joel Happ & Jerome Gobeil
  *
  */
 public class RegistrationApp {
 
 	private CourseCatalogue cat;
-	private DBManager db;
+	private DatabaseOperator db;
 	
 	Student selectedStudent;
 	
-	public RegistrationApp(CourseCatalogue cat, DBManager db) {
+	public RegistrationApp(CourseCatalogue cat, DatabaseOperator db) {
 		this.cat = cat;
 		this.db = db;
 	}
