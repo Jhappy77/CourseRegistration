@@ -3,6 +3,7 @@ import java.io.Serializable;
 
 /**
  * Trimmed down version of course class to use for sending over a socket
+ * en lieu of JSON / XML
  * @author Jerome Gobeil
  *
  */

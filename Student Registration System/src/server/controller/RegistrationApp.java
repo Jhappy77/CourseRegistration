@@ -1,16 +1,15 @@
 package server.controller;
-import java.util.Scanner;
 
 import server.model.Course;
 import server.model.CourseCatalogue;
 import server.model.CourseOffering;
-import server.model.DBManager;
+import server.model.DatabaseOperator;
 import server.model.Student;
 
 
 /**
  * Class to deal with all the clients courses
- * @author Joel Happ + Jerome Gobeil
+ * @author Joel Happ & Jerome Gobeil
  *
  */
 public class RegistrationApp {
@@ -19,27 +18,18 @@ public class RegistrationApp {
 	 * Reference to the global course catalogue
 	 */
 	private CourseCatalogue cat;
-	
-	/**
-	 * Reference to the database
-	 */
-	private DBManager db;
-	
+	private DatabaseOperator db;
+
 	/**
 	 * The selected student (Who logged in)
 	 */
 	Student selectedStudent;
-	
-	/**
-	 * Contructor for the registration app
-	 * @param cat The catalogue
-	 * @param db the Database Manager
-	 */
-	public RegistrationApp(CourseCatalogue cat, DBManager db) {
+
+	public RegistrationApp(CourseCatalogue cat, DatabaseOperator db) {
 		this.cat = cat;
 		this.db = db;
 	}
-	
+
 	/**
 	 * Remove selected course from the selected student
 	 * @param student
@@ -64,18 +54,18 @@ public class RegistrationApp {
 		{
 			//Get offering and check if its full
 			CourseOffering off = getCourseOffering(courseName,courseNumber,offeringSecNumber);
-			
+
 			//Check if offering full
 			if (off.remainingSpots() <= 0)
 				throw new Exception("No spots left in this offering");
-			
+
 			//Add the offering
 			selectedStudent.addCourseOffering(off);
 		}
 		else
 			throw new Exception("No Student Selected");
 	}
-	
+
 	/**
 	 * Makes a new course with the given name and course number
 	 * @param courseName
@@ -88,7 +78,7 @@ public class RegistrationApp {
 	{
 		cat.addNewCourse(courseName, courseNumber, numberOfOfferings, maxInOffering);
 	}
-	
+
 	/**
 	 * Finds the course offering from the given course
 	 * @param courseName
@@ -99,7 +89,7 @@ public class RegistrationApp {
 	private CourseOffering getCourseOffering(String courseName, int courseNumber, int offeringSectionNumber) throws Exception{
 		return getCourse(courseName, courseNumber).getCourseOfferingBySecNum(offeringSectionNumber);
 	}
-	
+
 	/**
 	 * Finds the course corresponding to the given name and number
 	 * @param courseName
@@ -110,7 +100,7 @@ public class RegistrationApp {
 	{
 		return cat.searchCatalogue(courseName, courseNumber);
 	}
-	
+
 	/**
 	 * Returns a list of all the students registrations
 	 * @return CourseLite[] of the courses the student is in
@@ -122,24 +112,24 @@ public class RegistrationApp {
 			//If no registrations send a message
 			if (selectedStudent.numberOfRegistrations() == 0)
 				throw new Exception("Not Registered in any courses");
-			
+
 			//Make a list for the courses
 			CourseLite[] courseList = new CourseLite[selectedStudent.numberOfRegistrations()];
-			
+
 			//For each course make a CourseLite
 			for (int i = 0; i < selectedStudent.numberOfRegistrations(); i++)
 			{
 				CourseOffering off = selectedStudent.getOfferingByIndex(i);
 				courseList[i] = makeCourseLite(off.getTheCourse());
 			}
-			
+
 			return courseList;
 		}
 		else
 			throw new Exception("Student is not currently selected");
-		
+
 	}
-	
+
 	/**
 	 * Gets the currently selected students name
 	 * @return the students name
@@ -148,7 +138,7 @@ public class RegistrationApp {
 	{
 		return selectedStudent.getStudentName();
 	}
-	
+
 	/**
 	 * Makes a array of courseLite for every single course in the catalogue
 	 * @return the array of course lite
@@ -158,18 +148,18 @@ public class RegistrationApp {
 		//If there aren't any course just return null
 		if (cat.getCourseCount() == 0)
 			throw new Exception("No Courses in Catalogue");
-		
+
 		CourseLite[] courseList = new CourseLite[cat.getCourseCount()];
-		
+
 		//Make a courselite for every course
 		for (int i = 0; i < cat.getCourseCount(); i++)
 		{
 			courseList[i] = makeCourseLite(cat.getCourseByIndex(i));
 		}
-		
+
 		return courseList;
 	}
-	
+
 	/**
 	 * Finds the course corresponding to the given name and number, returns null if course cant be found
 	 * @param courseName
@@ -178,15 +168,15 @@ public class RegistrationApp {
 	 */
 	public CourseLite findCourse(String courseName, int courseNumber) throws Exception
 	{
-		
+
 		//Find course
 		Course c;
 		c = getCourse(courseName, courseNumber);
-		
+
 		//Make a course lite and return it
 		return makeCourseLite(c);
 	}
-	
+
 	/**
 	 * Makes a course lite object and returns it
 	 * @param c the course
@@ -194,16 +184,16 @@ public class RegistrationApp {
 	 */
 	private CourseLite makeCourseLite(Course c)
 	{
-		
+
 		//Check if the selected student is in this course
 		int secNum = selectedStudent.checkEnrolled(c);
 		Boolean enrolled = false;
 		if (secNum != -1)
 			enrolled = true;
-		
+
 		//Make course lite
 		CourseLite newCourse = new CourseLite(c.getCourseName(),c.getCourseNum(),c.getNumOfferings(),secNum,enrolled);
-		
+
 		//add the offerings to the course
 		for (int i = 0; i < c.getNumOfferings(); i++)
 		{
@@ -216,10 +206,10 @@ public class RegistrationApp {
 				System.err.println("Error getting course offerings: " + e.getMessage());
 			}
 		}
-		
+
 		return newCourse;
 	}
-	
+
 	/**
 	 * Finds a student by ID and checks if their password is correct
 	 * @param id
@@ -228,9 +218,9 @@ public class RegistrationApp {
 	 */
 	public String validateStudent(int id, String password) throws Exception{
 		selectedStudent = db.getStudent(id);
-		
+
 		//If invalid Id send that back
-		if(selectedStudent==null) { 
+		if(selectedStudent==null) {
 			throw new Exception("Invalid Username");
 		}
 		else
@@ -240,7 +230,7 @@ public class RegistrationApp {
 			{
 				return selectedStudent.getStudentName();
 			}
-			
+
 			//If wrong send that back
 			else
 			{
@@ -250,7 +240,7 @@ public class RegistrationApp {
 		}
 	}
 
-	
+
 	/**
 	 * Removes the selected student
 	 */

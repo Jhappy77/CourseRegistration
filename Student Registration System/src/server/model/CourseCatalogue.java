@@ -10,8 +10,11 @@ public class CourseCatalogue {
 	
 	private ArrayList <Course> courseList;
 	
+	/**
+	 * Constructs and initializes a course catalogue
+	 */
 	public CourseCatalogue () {
-
+		courseList = new ArrayList<Course>();
 	}
 	
 	/**
@@ -33,13 +36,13 @@ public class CourseCatalogue {
 		return courseList.get(index);
 	}
 	
-	/**
-	 * Creates a new DBManager, and sets the course list to be the result of
-	 * reading from the database.
-	 */
-	public void loadFromDataBase(DBManager db) {
-		setCourseList(db.readFromDataBase());
-	}
+//	/**
+//	 * Creates a new DBManager, and sets the course list to be the result of
+//	 * reading from the database.
+//	 */
+//	public void loadFromDataBase(PseudoDB db) {
+//		setCourseList(db.readCourses());
+//	}
 	
 	/**
 	 * Searches the course catalogue for the given course name and course number.
