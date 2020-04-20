@@ -5,3 +5,7 @@
 /DBManager.class
 /Registration.class
 /Student.class
+/DBCredentials.class
+/DatabaseOperator.class
+/PseudoDB.class
+/RealDB.class

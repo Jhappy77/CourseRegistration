@@ -176,33 +176,33 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 		 * Should only be executed once.
 		 */
 		public void createTable() {
-//			String sql = "CREATE TABLE courseTable" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " courseCode VARCHAR(30), " +" courseNum INTEGER)";
-//
-//			try {
-//				Statement stmt = conn.createStatement(); // construct a statement
-//				stmt.executeUpdate(sql); // execute my query (i.e. sql)
-//				stmt.close();
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				System.out.println("Table can NOT be created!");
-//			}
-//			System.out.println("Created table in given database...");
-//			
-//			
-//			sql = "CREATE TABLE offerings" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " secNum INTEGER, " +
-//			" secCap INTEGER," + "courseID INTEGER)";
-//
-//			try {
-//				Statement stmt = conn.createStatement(); // construct a statement
-//				stmt.executeUpdate(sql); // execute my query (i.e. sql)
-//				stmt.close();
-//			} catch (SQLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//				System.out.println("Table can NOT be created!");
-//			}
-//			System.out.println("Created table in given database...");
+////			String sql = "CREATE TABLE courseTable" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " courseCode VARCHAR(30), " +" courseNum INTEGER)";
+////
+////			try {
+////				Statement stmt = conn.createStatement(); // construct a statement
+////				stmt.executeUpdate(sql); // execute my query (i.e. sql)
+////				stmt.close();
+////			} catch (SQLException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////				System.out.println("Table can NOT be created!");
+////			}
+////			System.out.println("Created table in given database...");
+////			
+////			
+////			sql = "CREATE TABLE offerings" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " secNum INTEGER, " +
+////			" secCap INTEGER," + "courseID INTEGER)";
+////
+////			try {
+////				Statement stmt = conn.createStatement(); // construct a statement
+////				stmt.executeUpdate(sql); // execute my query (i.e. sql)
+////				stmt.close();
+////			} catch (SQLException e) {
+////				// TODO Auto-generated catch block
+////				e.printStackTrace();
+////				System.out.println("Table can NOT be created!");
+////			}
+////			System.out.println("Created table in given database...");
 		}
 		
 		/**
@@ -289,72 +289,72 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 		}
 		
-//		/**
-//		 * Creates a bunch of sample course offerings for the courses in
-//		 * the array list. Only needs to be executed once.
-//		 */
-//		private void createSampleCourseOfferings() {
-//			int i = 0;
-//			for(Course c:courses) {
-//				if(i%5 == 0) {
-//					insertOffering(1, 200,c);
-//					insertOffering(2, 250,c);
-//				}
-//				else if(i%5==1) {
-//					insertOffering(1, 69,c);
-//				}
-//				else if(i%5==2) {
-//					insertOffering(1, 300,c);
-//					insertOffering(2, 300,c );
-//					insertOffering(3, 300, c);
-//					insertOffering(4, 300, c);
-//				}
-//				else if(i%5==3) {
-//					insertOffering(1, 150, c);
-//					insertOffering(2, 250,c);
-//				}
-//				else {
-//					insertOffering(1, 500, c);
-//					insertOffering(2, 100, c);
-//					insertOffering(3, 150, c);
-//				}
-//				i++;
-//			}
-//		}
-		
-//		/**
-//		 * Inserts a bunch of test users into the students table. 
-//		 * Only ever needs to be called once.
-//		 */
-//		private void insertSampleUsers() {
-//			insertUserPreparedStatement(300769, "Timothy",  "1234");
-//			insertUserPreparedStatement(300669, "Petrune",  "1234");
-//			insertUserPreparedStatement(308008, "Donald", "1234");
-//			insertUserPreparedStatement(300750, "Jebediah", "1234");
-//			insertUserPreparedStatement(300456, "Luigi", "1234");
-//			insertUserPreparedStatement(300333, "Zelda", "1234");
-//			insertUserPreparedStatement(300777, "Moshi", "1234");
-//			insertUserPreparedStatement(300543, "Egbert", "1234");
-//			insertUserPreparedStatement(300228, "Zebulon", "1234");
-//			insertUserPreparedStatement(420420, "Taylor Noel", "I Suk");
-//			insertUserPreparedStatement(300123, "Danny DeVito", "Hot");
-//		}
+////		/**
+////		 * Creates a bunch of sample course offerings for the courses in
+////		 * the array list. Only needs to be executed once.
+////		 */
+////		private void createSampleCourseOfferings() {
+////			int i = 0;
+////			for(Course c:courses) {
+////				if(i%5 == 0) {
+////					insertOffering(1, 200,c);
+////					insertOffering(2, 250,c);
+////				}
+////				else if(i%5==1) {
+////					insertOffering(1, 69,c);
+////				}
+////				else if(i%5==2) {
+////					insertOffering(1, 300,c);
+////					insertOffering(2, 300,c );
+////					insertOffering(3, 300, c);
+////					insertOffering(4, 300, c);
+////				}
+////				else if(i%5==3) {
+////					insertOffering(1, 150, c);
+////					insertOffering(2, 250,c);
+////				}
+////				else {
+////					insertOffering(1, 500, c);
+////					insertOffering(2, 100, c);
+////					insertOffering(3, 150, c);
+////				}
+////				i++;
+////			}
+////		}
 //		
-//		/**
-//		 * Inserts a bunch of test courses into the courses table.
-//		 * Only ever needs to be called once.
-//		 */
-//		private void insertSampleCourses() {
-//			insertCoursePreparedStatement("ENGG", 233);
-//			insertCoursePreparedStatement("ENSF", 409);
-//			insertCoursePreparedStatement("MATH", 277);
-//			insertCoursePreparedStatement("ENGG", 202);
-//			insertCoursePreparedStatement("PHYS", 259);
-//			insertCoursePreparedStatement("SUCC", 69);
-//			insertCoursePreparedStatement("ENGG", 201);
-//			insertCoursePreparedStatement("ENCM", 369);
-//			insertCoursePreparedStatement("ECON", 201);
-//		}
+////		/**
+////		 * Inserts a bunch of test users into the students table. 
+////		 * Only ever needs to be called once.
+////		 */
+////		private void insertSampleUsers() {
+////			insertUserPreparedStatement(300769, "Timothy",  "1234");
+////			insertUserPreparedStatement(300669, "Petrune",  "1234");
+////			insertUserPreparedStatement(308008, "Donald", "1234");
+////			insertUserPreparedStatement(300750, "Jebediah", "1234");
+////			insertUserPreparedStatement(300456, "Luigi", "1234");
+////			insertUserPreparedStatement(300333, "Zelda", "1234");
+////			insertUserPreparedStatement(300777, "Moshi", "1234");
+////			insertUserPreparedStatement(300543, "Egbert", "1234");
+////			insertUserPreparedStatement(300228, "Zebulon", "1234");
+////			insertUserPreparedStatement(420420, "Taylor Noel", "I Suk");
+////			insertUserPreparedStatement(300123, "Danny DeVito", "Hot");
+////		}
+////		
+////		/**
+////		 * Inserts a bunch of test courses into the courses table.
+////		 * Only ever needs to be called once.
+////		 */
+////		private void insertSampleCourses() {
+////			insertCoursePreparedStatement("ENGG", 233);
+////			insertCoursePreparedStatement("ENSF", 409);
+////			insertCoursePreparedStatement("MATH", 277);
+////			insertCoursePreparedStatement("ENGG", 202);
+////			insertCoursePreparedStatement("PHYS", 259);
+////			insertCoursePreparedStatement("SUCC", 69);
+////			insertCoursePreparedStatement("ENGG", 201);
+////			insertCoursePreparedStatement("ENCM", 369);
+////			insertCoursePreparedStatement("ECON", 201);
+////		}
 		
 		/**
 		 * Returns the student based on the id.
