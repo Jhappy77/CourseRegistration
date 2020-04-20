@@ -855,6 +855,7 @@ public class MyGUI extends Application{
 		styleAndSwitch(scene);
 
 	}
+	
 	/**
 	 * make whichever scene passed adopt the style from dinos.css
 	 * @param scene

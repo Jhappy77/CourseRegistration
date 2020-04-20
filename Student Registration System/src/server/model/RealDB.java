@@ -27,6 +27,11 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 		private ArrayList<Course> courses;
 		
 		
+//		public static void main(String [] args) {
+//			RealDB myApp = new RealDB();
+//			myApp.initializeConnection();
+//		}
+		
 		// Attributes
 		private Connection conn;
 		private ResultSet rs;

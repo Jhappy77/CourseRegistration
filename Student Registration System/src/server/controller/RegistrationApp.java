@@ -77,6 +77,7 @@ public class RegistrationApp {
 	public void makeNewCourse(String courseName, int courseNumber, int numberOfOfferings, int maxInOffering) throws Exception
 	{
 		cat.addNewCourse(courseName, courseNumber, numberOfOfferings, maxInOffering);
+		db.saveCourse(cat.searchCatalogue(courseName, courseNumber));
 	}
 
 	/**
