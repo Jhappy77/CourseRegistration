@@ -2,7 +2,7 @@ package server.controller;
 
 
 /**
- * Enum to say what kind of package has been passed
+ * Enum to states what kind of package has been passed
  * @author Jerome Gobeil
  *
  */
@@ -13,8 +13,8 @@ public enum PackageType {
 	//second element = password (String)
 	
 	LOGINRESULT, 
-	//Data is boolean: 
-	//true is success, false if failure
+	//Data is String: 
+	//String is the students name
 	
 	ADDCOURSE, 
 	//Data is string[]: 
@@ -29,14 +29,17 @@ public enum PackageType {
 	
 	SCHEDULE,
 	//Data is CourseLite[], null if no registrations
-	//CourseLite only has one offering which is the one the student is registered in
-	//CourseLite is used to reduce the number of classes that both client and server must have
+	//CourseLite[] is the list of currently enrolled courses
 	
 	REQUESTSCHEDULE,
 	//Data is empty
 	
 	COURSE,
 	//Data is CourseLite, null if course not found
+	
+	COURSECHANGED,
+	//Data is String message
+	//Sent when a course has been successfully added, removed or created
 	
 	FINDCOURSE,
 	//Data is string[]
@@ -48,6 +51,21 @@ public enum PackageType {
 	
 	CATALOGUE,
 	//Data is CourseLite[], null if no courses exist
+	
+	LOGOUT,
+	//Makes the server deselect the current student
+	//Data is null
+	
+	NEWCOURSE,
+	//Makes a new course
+	//Data is a string[]
+	//First element is course name
+	//Second is course number (int)
+	//Third is the number of sections (int)
+	//Fourth is the maximum spots for each section
+	
+	ERROR,
+	//Data is String to be printed/displayed on GUI
 	
 	MESSAGE
 	//Data is string

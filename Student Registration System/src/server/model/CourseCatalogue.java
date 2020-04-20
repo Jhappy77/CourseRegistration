@@ -10,8 +10,11 @@ public class CourseCatalogue {
 	
 	private ArrayList <Course> courseList;
 	
-	public CourseCatalogue (DBManager db) {
-		loadFromDataBase (db);
+	/**
+	 * Constructs and initializes a course catalogue
+	 */
+	public CourseCatalogue () {
+		courseList = new ArrayList<Course>();
 	}
 	
 	/**
@@ -33,13 +36,13 @@ public class CourseCatalogue {
 		return courseList.get(index);
 	}
 	
-	/**
-	 * Creates a new DBManager, and sets the course list to be the result of
-	 * reading from the database.
-	 */
-	private void loadFromDataBase(DBManager db) {
-		setCourseList(db.readFromDataBase());
-	}
+//	/**
+//	 * Creates a new DBManager, and sets the course list to be the result of
+//	 * reading from the database.
+//	 */
+//	public void loadFromDataBase(PseudoDB db) {
+//		setCourseList(db.readCourses());
+//	}
 	
 	/**
 	 * Searches the course catalogue for the given course name and course number.
@@ -56,7 +59,42 @@ public class CourseCatalogue {
 				return c;
 			}	
 		}
-		throw new Exception ("The course that was searched for was not found.");
+		throw new Exception ("Course could not be found");
+	}
+	
+	/**
+	 * Adds a new course with the given name and number
+	 * @param courseName
+	 * @param courseNum
+	 * @param sectionCount
+	 * @param maxPerOffering
+	 * @throws Exception
+	 */
+	public void addNewCourse(String courseName, int courseNum, int sectionCount, int maxPerOffering) throws Exception
+	{
+		
+		//Check if a course exists with the same name and number
+		try
+		{
+			searchCatalogue(courseName, courseNum);
+		}
+		//If course doesnt exist make a new course
+		catch (Exception e)
+		{
+			Course newCourse = new Course(courseName.trim().toUpperCase(), courseNum);
+			
+			for (int i = 0; i < sectionCount; i++)
+			{
+				newCourse.addOffering(new CourseOffering(i+1, maxPerOffering));
+			}
+			
+			//Add new course to the list
+			courseList.add(newCourse);
+			
+			return;
+		}
+		
+		throw new Exception("Could not make new course, course already exists");
 	}
 	
 	/**
@@ -75,7 +113,9 @@ public class CourseCatalogue {
 		this.courseList = courseList;
 	}
 	
-	
+	/**
+	 * Override to be able to print the catalogue
+	 */
 	@Override
 	public String toString () {
 		String st = "All courses in the catalogue: \n";

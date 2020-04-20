@@ -9,25 +9,39 @@ import java.io.Serializable;
  */
 public class Package <T> implements Serializable{
 
-	//Data to send
+	/**
+	 * The data to include in the package
+	 */
 	private T data;
 	
-	//The type of package
+	/**
+	 * The type of package being sent
+	 */
 	private PackageType type;
 	
-	//Get the data
+	/**
+	 * Getter for the data
+	 * @return the data
+	 */
 	public T getData()
 	{
 		return data;
 	}
 	
-	//Get the type
+	/**
+	 * Getter for the type of package
+	 * @return
+	 */
 	public PackageType getType()
 	{
 		return type;
 	}
 	
-	//Constructor for the package
+	/**
+	 * Basic constructor for the package
+	 * @param type
+	 * @param data
+	 */
 	public Package(PackageType type, T data)
 	{
 		this.type = type;

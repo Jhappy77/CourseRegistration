@@ -1,56 +1,78 @@
 package server.model;
 import java.util.ArrayList;
 
-//This class is simulating a database for our
-//program
-public class DBManager {
-	
+
+/**
+ * A class that runs a pseudo database, for testing purposes.
+ * @author Joel Happ
+ */
+public class PseudoDB implements DatabaseOperator{
+
+	/**
+	 * The list of courses
+	 */
 	private ArrayList <Course> courseList;
+
+	/**
+	 * The list of students
+	 */
 	private ArrayList <Student> studentList;
 
-	public DBManager () {
+	public PseudoDB () {
 		courseList = new ArrayList<Course>();
 		studentList = new ArrayList<Student>();
+		studentList.add(new Student("Administration", 0, "300"));
 	}
 
-	public ArrayList<Course> readFromDataBase() {
+	public CourseCatalogue loadDatabase() {
+		fillStudentArrayList();
+		CourseCatalogue c = new CourseCatalogue();
+		c.setCourseList(readCourses());
+		try {
+			addSampleCoursesToStudents(c);
+		}catch(Exception e) {
+			System.out.println("Error registering students in courses");
+		}
+		return c;
+	}
+
+
+	public ArrayList<Course> readCourses() {
 		Course c = new Course ("ENGG", 233);
 		c.addOffering(new CourseOffering(1, 200));
 		c.addOffering(new CourseOffering(2, 250));
 		courseList.add(c);
-		
+
 		c = new Course("ENSF", 409);
 		c.addOffering(new CourseOffering(1, 300));
 		courseList.add(c);
-		
+
 		c= new Course("MATH", 277);
 		c.addOffering(new CourseOffering(1, 150));
 		c.addOffering(new CourseOffering(2, 150));
 		c.addOffering(new CourseOffering(3, 150));
 		c.addOffering(new CourseOffering(4, 150));
 		courseList.add(c);
-		
+
 		c = new Course ("ENGG", 202);
 		c.addOffering(new CourseOffering(1, 250));
 		c.addOffering(new CourseOffering(2, 250));
 		courseList.add(c);
-		
+
 		c= new Course("PHYS", 259);
 		c.addOffering(new CourseOffering(1, 150));
 		c.addOffering(new CourseOffering(2, 150));
 		c.addOffering(new CourseOffering(3, 150));
 		c.addOffering(new CourseOffering(4, 150));
 		courseList.add(c);
-		
-		c= new Course("SUCC", 69);
-		c.addOffering(new CourseOffering(1, 69));
-		courseList.add(c);
-		
+
 		return courseList;
 	}
-	
-	
-	public void fillStudentArrayList() {
+
+	/**
+	 * Simulates loading several students from a database
+	 */
+	private void fillStudentArrayList() {
 		studentList.add(new Student("Timothy", 300769, "1234"));
 		studentList.add(new Student("Petrune", 300669, "1234"));
 		studentList.add(new Student("Donald", 308008, "1234"));
@@ -60,9 +82,8 @@ public class DBManager {
 		studentList.add(new Student("Moshi", 300777, "1234"));
 		studentList.add(new Student("Egbert", 300543, "1234"));
 		studentList.add(new Student("Zebulon", 300228, "1234"));
-		studentList.add(new Student("Taylor Noel", 420420, "I Suk"));
 	}
-	
+
 	/**
 	 * Simulates registering students in a bunch of courses.
 	 * @param cat Course catalogue
@@ -70,55 +91,40 @@ public class DBManager {
 	public void addSampleCoursesToStudents(CourseCatalogue cat) throws Exception {
 		int i = 0;
 		for(Student st:studentList) {
-			
+
 			if(true) {
-			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(i%3);
+			CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(1);
 			if(co!=null) {
 				new Registration(st, co);
 			}}
-			
+
 			if(i%2==0) {
 				CourseOffering co = cat.searchCatalogue("MATH", 277).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
-			
+
 			if(i%3==0) {
-				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(0);
+				CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
-			
+
 			if(i%4==0) {
-				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(0);
+				CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}
 			}
-		
+
 			i++;
-			
-			if(st.getStudentName().contentEquals("Taylor Noel"))
-				new Registration(st, cat.searchCatalogue("SUCC", 69).getCourseOfferingBySecNum(1));
+
 		}
 	}
-	
-	/**
-	 * Runs a sample database test
-	 * @param cat Catalogue to sync with
-	 */
-	public void sampleDBTest(CourseCatalogue cat) {
-		readFromDataBase();
-		fillStudentArrayList();
-		try {
-			addSampleCoursesToStudents(cat);
-		}catch(Exception e) {
-			System.out.println("You failed miserably");
-		}
-	}
-	
+
+
 	/**
 	 * Returns the student based on the id
 	 * @param id
@@ -131,11 +137,21 @@ public class DBManager {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * Print a list of all the students
+	 */
 	public void printAllStudents() {
 		for(Student s:studentList) {
 			System.out.println(s);
 		}
+	}
+
+	/**
+	 * Saves the passed course to the courseList
+	 */
+	public void saveCourse(Course c) {
+		courseList.add(c);
 	}
 
 }

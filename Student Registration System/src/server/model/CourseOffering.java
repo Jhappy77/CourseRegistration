@@ -20,8 +20,17 @@ public class CourseOffering {
 	 * Returns the number of people registered in the course.
 	 * @return An integer representing the number of people registered.
 	 */
-	private int numberOfRegs() {
+	public int numberOfRegs() {
 		return offeringRegList.size();
+	}
+	
+	/**
+	 * Returns the number of remaining spots in the offering
+	 * @return
+	 */
+	public int remainingSpots()
+	{
+		return secCap - offeringRegList.size();
 	}
 	
 	/**
@@ -118,7 +127,8 @@ public class CourseOffering {
 	 * Adds a registration to the course.
 	 * @param registration Registration to be added
 	 */
-	public void addRegistration(Registration registration) {
+	public void addRegistration(Registration registration){
+		
 		offeringRegList.add(registration);
 	}
 	

@@ -4,25 +4,33 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 import server.model.CourseCatalogue;
-import server.model.DBManager;
+import server.model.DatabaseOperator;
 
 /**
  * Class to directly deal with the client
  * @author Jerome Gobeil
  *
  */
-public class ServerApp {
+public class ServerApp implements Runnable{
 
-	//Input for the client
+	/**
+	 * The input of the client port
+	 */
 	ObjectInputStream clientIn;
 	
-	//Output for the client
+	/**
+	 * The output of the client port
+	 */
 	ObjectOutputStream clientOut;
 	
-	//The client number to help keep track of the client when there's multiple connections
+	/**
+	 * The client number for the client connected to this server port
+	 */
 	int clientNumber;
 	
-	//Registration app for this client
+	/**
+	 * The registration app
+	 */
 	RegistrationApp reg;
 	
 	
@@ -34,7 +42,7 @@ public class ServerApp {
  * @param cat course catalogue
  * @param db manager
  */
-	public ServerApp(int clientNumber, ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DBManager db)
+	public ServerApp(int clientNumber, ObjectInputStream in, ObjectOutputStream out, CourseCatalogue cat, DatabaseOperator db)
 	{
 		this.clientNumber = clientNumber;
 		reg = new RegistrationApp(cat,db);
@@ -43,12 +51,14 @@ public class ServerApp {
 		
 		System.out.println("Client " + clientNumber + ": Connected");
 		
-		//For testing purposes, should be run from a thread
-		Execute();
+		// !! For testing purposes, should be run from a thread
+		//Execute();
 	}
 	
-	//Monitors the input and deals with anything that comes up
-	public void Execute()
+	/**
+	 * Monitors the port and then deals with any package it receives
+	 */
+	public void run()
 	{
 		//Wait for a package to come in
 		while (true)
@@ -107,22 +117,19 @@ public class ServerApp {
 				String[] l = (String[]) pac.getData();
 					
 				//Check if valid and return the result
-				sendLoginResult(reg.validateStudent(Integer.parseInt(l[0]), l[1]));
+				sendLoginResult(l);
 				break;
-
-				
+			
 			//Add a course to the student
 			case ADDCOURSE:
 				System.out.println("Client " + clientNumber + ": Received Add Course");
 				
-				//Get Data
+				//Get data
 				String[] a = (String[]) pac.getData();
-					
-				//Add the course to the student
-				reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
 				
-				//Send updated schedule
-				sendSchedule();
+				//Register for course and send answer back
+				addCourse(a);
+				
 				break;
 
 			//Remove a course from the student
@@ -132,11 +139,9 @@ public class ServerApp {
 				//Get Data
 				String[] r = (String[]) pac.getData();
 				
-				//Remove the course
-				reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
-				
-				//Send updated schedule
-				sendSchedule();
+				//Remove the course and send answer back
+				removeCourse(r);
+
 				break;
 				
 			//Just send back their schedule
@@ -162,15 +167,129 @@ public class ServerApp {
 				sendCatalogue();
 				break;
 				
+			//Make a new course
+			case NEWCOURSE:
+				System.out.println("Client " + clientNumber + ": Received Make New Course");
+				
+				//Make a new course and send back result
+				makeNewCourse((String[])pac.getData());
+				break;
+			
+			//Just logout the student
+			case LOGOUT:
+				System.out.println("Client " + clientNumber + ": Received Logout");
+				
+				reg.deselectStudent();
+				break;
+				
 		}
 	}
 	
-	private void sendCatalogue()
+	/**
+	 * Remove the course from the selected student
+	 * @param r
+	 */
+	synchronized private void makeNewCourse(String[] m)
 	{
-		System.out.println("Client " + clientNumber + ": Sending Catalogue");
+		Package ret;
+		
+		//Make the course
+		try
+		{
+			//Make a new course the course
+			reg.makeNewCourse(m[0], Integer.parseInt(m[1]), Integer.parseInt(m[2]), Integer.parseInt(m[3]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Made Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Making Course");
+		}
+		
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error making course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
+	}
+	
+	/**
+	 * Remove the course from the selected student
+	 * @param r
+	 */
+	synchronized private void removeCourse(String[] r)
+	{
+		Package ret;
+		
+		//Remove the course
+		try
+		{
+			//Remove the course
+			reg.removeCourseFromStudent(r[0], Integer.parseInt(r[1]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Removed Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Removing Course");
+		}
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error removing course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
+	}
+	
+	/**
+	 * Register the selected student for a course and send a error if it cant
+	 * @param a
+	 */
+	synchronized private void addCourse(String[] a)
+	{
+		Package ret;
+		
+		//Add the course to the student
+		try
+		{
+			reg.addCourseToStudent(a[0], Integer.parseInt(a[1]), Integer.parseInt(a[2]));
+			ret = new Package(PackageType.COURSECHANGED, "Successfully Added Course");
+			System.out.println("Client " + clientNumber + ": Sending Success Adding Course");
+		}
+		//If a error occurs signing up for course send that back
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error adding course: " + e.getMessage());
+			ret = new Package(PackageType.ERROR,e.getMessage());
+		}
+		
+		//Send package
+		sendPackage(ret);
+
+	}
+	
+	/**
+	 * Send the Catalogue to the client
+	 */
+	synchronized private void sendCatalogue()
+	{
+		
+		Package pac;
 		
 		//Make the package
-		Package pac = new Package(PackageType.CATALOGUE, reg.getEntireCourseList());
+		try
+		{
+			 pac = new Package(PackageType.CATALOGUE, reg.getEntireCourseList());
+			 System.out.println("Client " + clientNumber + ": Sending Catalogue");
+		}
+		
+		//If an error occurs such as now courses send appropriate error to the Client
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber +": Error sending catalogue: " + e.getMessage());
+			pac = new Package(PackageType.ERROR, e.getMessage());
+		}
 		
 		//Send package
 		sendPackage(pac);
@@ -180,22 +299,22 @@ public class ServerApp {
 	 * Sends a courseLite object to the client for display
 	 * @param f is the data from the find course packet
 	 */
-	private void sendCourse(String[] f)
+	synchronized private void sendCourse(String[] f)
 	{
-		System.out.println("Client " + clientNumber + ": Sending Course");
+		Package pac;
 		
-		CourseLite c;
 		try
 		{
-			c = reg.findCourse(f[0],Integer.parseInt(f[1]));
-		}
-		catch (Exception e)
-		{
-			c = null;
+			pac = new Package(PackageType.COURSE, reg.findCourse(f[0],Integer.parseInt(f[1])));
+			System.out.println("Client " + clientNumber + ": Sending Course");
 		}
 		
-		//Make package
-		Package pac = new Package(PackageType.COURSE, c);
+		//If a error occurs send a appropriate message to the client
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber + ": Error Sending Course: " + e.getMessage());
+			pac = new Package(PackageType.ERROR, e.getMessage());
+		}
 		
 		//Send package
 		sendPackage(pac);
@@ -204,12 +323,23 @@ public class ServerApp {
 	/**
 	 * Sends the students schedule
 	 */
-	private void sendSchedule()
+	synchronized private void sendSchedule()
 	{
-		System.out.println("Client " + clientNumber + ": Sending Schedule");
+
+		//Make the package
+		Package pac;
+		try
+		{
+			pac = new Package(PackageType.SCHEDULE, reg.getSchedule());
+			System.out.println("Client " + clientNumber + ": Sending Schedule");
+		}
 		
-		//Make package
-		Package pac = new Package(PackageType.SCHEDULE, reg.getSchedule());
+		//If a error occurs send a appropriate response
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber + ": Error Sending Schedule: " + e.getMessage());
+			pac = new Package(PackageType.ERROR, e.getMessage());
+		}
 		
 		//Send package
 		sendPackage(pac);
@@ -219,13 +349,23 @@ public class ServerApp {
 	 * Sends a message to the client with the result of the login attempt
 	 * @param result
 	 */
-	private void sendLoginResult(Boolean result)
+	synchronized private void sendLoginResult(String[] input)
 	{
-		System.out.println("Client " + clientNumber + ": Sending Login Result");
-		
+
 		//Make package
-		Package pac = new Package(PackageType.LOGINRESULT, result);
-		
+		Package pac;
+		try
+		{
+			String name = reg.validateStudent(Integer.parseInt(input[0]),input[1]);
+			pac = new Package(PackageType.LOGINRESULT, name);
+			System.out.println("Client " + clientNumber + ": Success loging in as: " + name);
+		}
+		catch (Exception e)
+		{
+			System.out.println("Client " + clientNumber + ": Error Logging In: " + e.getMessage());
+			pac = new Package(PackageType.ERROR, e.getMessage());
+		}
+		 
 		//Send package
 		sendPackage(pac);
 	}

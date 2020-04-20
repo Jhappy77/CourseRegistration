@@ -13,8 +13,8 @@
 /ClientApp.class
 /CourseLite.class
 /MyGUI.class
-/Server/
 /server/
-/controller/
-/model/
+/dino.css
+/styler/
+/dinos.css
 /client/
