@@ -22,6 +22,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -43,89 +44,84 @@ Under "Resolution", choose "Accessible", and under "Rule Pattern", enter javafx/
 
 
 /**
- * Right now there is a bug when searching for courses, after you have 
- * searched for one course and the information is displayed, is you try searching for another 
+ * Right now there is a bug when searching for courses, after you have
+ * searched for one course and the information is displayed, is you try searching for another
  * it just writes the label on top of the first one rather than replacing it.
  * Main things that need to be added are:
- * 
- * 
+ *
+ *
  * ADMIN
  * 3. allow admin to create a new courses (# of offerings, spots per offering, prerequisites) // EVERYTHING WORKING EXCEPT ADDING PREREQS
- * 
+ *
  * @author Taylor
  *
  */
 
 
 public class MyGUI extends Application{
-	
-	
+
+
 	Stage window;
 	Scene login, studentScene, adminScene, studentMenu;
-	int width = 700;
-	int height = 300;
-	VBox rightPanel;
-	
+	int width = 1200;
+	int height = 800;
+
 
 
 	public static void main(String [] args) {
 		launch(args);
 	}
-	
+
 	private Controller control;
-	
-	@Override 
+
+	@Override
 	public void start(Stage primaryStage) {
-		
-		
+
+
 		System.out.println("Client Started");
-		
-		
+
+
 		// Creates new reference to ClientApp (Controller)
 		control = new Controller(this);
-		
-		
+
+
 		System.out.println("Building stage");
-		
-		
+
+
 		window = primaryStage;
 		window.setTitle("Login");
-		
-		//Layout 1 - Main window where user chooses between 
+
+		//Layout 1 - Main window where user chooses between
 		//			 Student and Admin
 		login = new Scene(optionScene(), width, height);
-		
+		login.getStylesheets().add("dinos.css");
+
 		//Layout 2 - Main Login window for Students where they
 		//			 are prompted to input their id and password
 		studentScene = new Scene(studentLogin(), width, height);
-		
-		//Layout 3 - Admin's main window (INCOMPLETE)
-		adminScene = new Scene(adminLogin(), width, height);
-		
-		//Layout 4 - Student's main window with course search,
-		// 			 their schedule, and where they can enroll in courses
-		//studentMenu = new Scene(studentMenu(), width, height);
+		studentScene.getStylesheets().add("dinos.css");
+
 
 		window.setScene(login);
 		window.show();
 	}
-	
+
 ///////////////////////////GRID PANES ////////////////////////////////////////
-	
-	
+
+
 	/**
-	 * Sets up the general layout of each window by setting 
+	 * Sets up the general layout of each window by setting
 	 * the padding, vertical gap, and horizontal gap
-	 * @return general layout 
+	 * @return general layout
 	 */
 	private VBox makeLayout() {
 		VBox layout = new VBox();
-		layout.setPadding(new Insets(10,10,10,10));	
+		layout.setPadding(new Insets(10,10,10,10));
 		layout.setSpacing(15);
 		return layout;
 	}
 	/**
-	 * Creates the first scene which has the options for the 
+	 * Creates the first scene which has the options for the
 	 * user to pick the student route or the admin one
 	 * @return layout for the window
 	 */
@@ -133,103 +129,106 @@ public class MyGUI extends Application{
 		VBox layout = makeLayout();
 		layout.setSpacing(10);
 		layout.setAlignment(Pos.CENTER);
-		
+
 		//University of Calgary Title
 		Label title = new Label("University of Calgary");
-		
+		title.setId("bold-label");
+
 		//Student Button
 		Button student = new Button();
 		student.setText("Sign In");
 		student.setOnAction(e -> window.setScene(studentScene));
-		
+
 		//Admin Button
 		Button admin = new Button();
 		admin.setText("Admin");
-		admin.setOnAction(e -> window.setScene(adminScene));
-		
+		admin.setOnAction(e -> adminScene());
+
 		//HBox for the buttons so they are on the same line
 		HBox buttons = new HBox();
 		buttons.setSpacing(100);
 		buttons.getChildren().addAll(student, admin);
 		buttons.setAlignment(Pos.CENTER);
-		
+
 		//Adding all the components to the layout
 		layout.getChildren().addAll(title, buttons);
-		
+
 		return layout;
 	}
-	
+
 	/**
-	 * Creates the first student scene which has the text fields to 
+	 * Creates the first student scene which has the text fields to
 	 * prompt the user to enter their id and password
 	 * @return layout for the window
 	 */
 	private VBox studentLogin() {
 		VBox layout = makeLayout();
-		layout.setSpacing(50);
 		HBox topPanel = new HBox();
 		VBox centrePanel = new VBox();
 		centrePanel.setSpacing(10);
+		centrePanel.setMinHeight(height);
 		centrePanel.setAlignment(Pos.CENTER);
-		
+
 		//Student Id Block
 		HBox idBlock = new HBox();
 		idBlock.setSpacing(10);
 		idBlock.setAlignment(Pos.CENTER);
 		Label idLabel = new Label("Student ID");
 		TextField idText = new TextField();
+		idText.setId("text-input");
 		idBlock.getChildren().addAll(idLabel,idText);
-		
+
 		//Student Password Block
 		HBox passwordBlock = new HBox();
 		passwordBlock.setSpacing(10);
 		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		TextField passwordText = new TextField();
+		PasswordField passwordText = new PasswordField();
+		passwordText.setId("text-input");
 		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
-		
+
 		//Login Response Label
 		Label loginResponse = new Label("");
-			
+
 		//Login Button
 		Button loginButton = new Button();
 		loginButton.setText("Login");
 		loginButton.setOnAction(e -> {
 			loginStudent(idText, passwordText, loginResponse);
 			});
-		
+
 		//Go Back Button
 		Button goBack1 = new Button();
 		goBack1.setText("Go Back");
 		goBack1.setOnAction(e -> window.setScene(login));
 		topPanel.getChildren().add(goBack1);
-		
+
 		centrePanel.getChildren().addAll(idBlock, passwordBlock, loginButton, loginResponse);
-		
+
 		//Adding all the components to the layout
 		layout.getChildren().addAll(topPanel, centrePanel);
-		
+
 		return layout;
 	}
-	
+
 	/**
-	 * Creates the first admin scene which has the textfields to 
+	 * Creates the first admin scene which has the textfields to
 	 * prompt the user to enter their username and password
 	 * @return layout for the window
 	 */
 	private VBox studentMenu() {
 		VBox layout = makeLayout();
-		
+
 		HBox title = setTitle();
 		HBox panels = setPanels(setLeftPanel(), setRightPanel());
-		
+
 		//Adding all the components to the layout
 		layout.getChildren().addAll(title, panels);
-		
+
 		return layout;
-		
+
 	}
-	
+
 	/**
 	 * Shows the course display of a certain course
 	 * @param courseName Name of the course
@@ -237,13 +236,13 @@ public class MyGUI extends Application{
 	private VBox courseDisplay(TextField courseName, int num) {
 		VBox layout = makeLayout();
 		HBox title = setTitle();
-	
+
 		VBox leftPanel = setLeftPanel();
-		
+
 		HBox panels = setPanels(leftPanel, setRightPanel());
-		
+
 		String input = courseName.getText();
-		
+
 		//Try and find the course
 		try
 		{
@@ -253,49 +252,47 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-		
+
 		HBox courseInfo = new HBox();
+		courseInfo.setAlignment(Pos.CENTER);
 		courseInfo.setSpacing(10);
-			
+
 		//Lecture Drop-Down
 		ChoiceBox<String> lectures = new ChoiceBox<>();
-		for(int i = 0; i < control.getSelectedCourseOfferings();)
+		for(int i = 0; i < control.getSelectedCourseOfferings();) {
 			lectures.getItems().add("Lecture " + (++i));
-			
+		}
+
 		lectures.setValue("Lecture " + num); // default value
-			
+
 		//Listen for selection changes
 		lectures.getSelectionModel().selectedItemProperty().addListener((v, oldValue, newValue) -> changeOffering(newValue, courseName));
-			
+
 		//Course Name Label
 		Label course = new Label(control.getSelectedCourseName());
-			
+
 		courseInfo.getChildren().addAll(course, lectures);
-			
+
 		//Spots Available
 		Label spots = new Label("Spots: " + control.getSelectedCourseSpots());
-			
-		HBox buttons = new HBox();
-		buttons.setSpacing(15);
-			
-		//Enroll/Unenroll  
+
+		//Enroll/Unenroll
 		Button enroll = new Button();
 		enroll.setText("Enroll/Unenroll");
+		enroll.setAlignment(Pos.CENTER);
 		enroll.setOnAction(e -> changeCourseEnrollment());
-		
-		buttons.getChildren().add(enroll);
-			
-		leftPanel.getChildren().addAll(courseInfo, spots, buttons);
-			
+
+		leftPanel.getChildren().addAll(courseInfo, spots, enroll);
+
 		layout.getChildren().addAll(title, panels);
-			
-		
-		
+
+
+
 		return layout;
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Creates the main window for the users which displays their schedule and
 	 * prompts the user to search for and enroll in courses
@@ -306,38 +303,39 @@ public class MyGUI extends Application{
 		layout.setSpacing(50);
 		HBox topPanel = new HBox();
 		VBox centrePanel = new VBox();
+		centrePanel.setMinHeight(height - 100);
 		centrePanel.setSpacing(10);
 		centrePanel.setAlignment(Pos.CENTER);
-		
+
 		// Password Block
 		HBox passwordBlock = new HBox();
 		passwordBlock.setSpacing(10);
 		passwordBlock.setAlignment(Pos.CENTER);
 		Label passwordLabel = new Label("Password");
-		TextField passwordText = new TextField();
+		PasswordField passwordText = new PasswordField();
 		passwordBlock.getChildren().addAll(passwordLabel, passwordText);
-		
+
 		//Login Response Label
 		Label loginResponse = new Label("");
-			
+
 		//Login Button
 		Button loginButton = new Button();
 		loginButton.setText("Login");
 		loginButton.setOnAction(e -> {
 			loginAdmin(passwordText, loginResponse); //!! MAKE FUNCTION
 			});
-		
+
 		//Go Back Button
 		Button goBack1 = new Button();
 		goBack1.setText("Go Back");
 		goBack1.setOnAction(e -> window.setScene(login));
 		topPanel.getChildren().add(goBack1);
-		
+
 		centrePanel.getChildren().addAll(passwordBlock, loginButton, loginResponse);
-		
+
 		//Adding all the components to the layout
 		layout.getChildren().addAll(topPanel, centrePanel);
-		
+
 		return layout;
 	}
 
@@ -346,44 +344,41 @@ public class MyGUI extends Application{
 	 */
 	private VBox adminMenu() {
 		VBox layout = makeLayout();
-		
+
 		HBox title = new HBox();
-		title.setSpacing(450);
-		
+		title.setSpacing(width*3/5);
+
 		//Welcome label
 		Label welcome = new Label("Welcome, " + control.getStudentName());
-						
+
 		//Log Out Button
 		Button logoutButton = new Button();
 		logoutButton.setText("Log Out");
 		logoutButton.setOnAction(e -> logout());
-		
+
 		title.getChildren().addAll(welcome, logoutButton);
-		
-		HBox panels = new HBox();
-		panels.setSpacing(200);
-		panels.setPadding(new Insets(0,50,0,50));
-		VBox left = new VBox();
-		left.setAlignment(Pos.CENTER);
-		VBox right = new VBox();
-		panels.getChildren().addAll(left, right);
-		
+
+
+		VBox left = panelSetUp();
+		VBox right = panelSetUp();
+		HBox panels = new HBox(left, right);
+
 		//Course Catalogue Label
 		Label catalogue = new Label();
 		catalogue.setText("Course Catalogue");
 		right.getChildren().addAll(catalogue, buildTable());
-		
-		//Add a new course 
+
+		//Add a new course
 		Button newCourse = new Button("Add New Course");
 		newCourse.setOnAction(e -> addCourseWindow());
-		
+
 		left.getChildren().addAll(newCourse);
-		
+
 		//Adding all the components to the layout
 		layout.getChildren().addAll(title, panels);
-		
+
 		return layout;
-		
+
 	}
 
 	/**
@@ -394,34 +389,34 @@ public class MyGUI extends Application{
 		control.logout();
 		window.setScene(login);
 	}
-	
-	
-	
-	
+
+
+
+
 	/////////// END OF GRID PANES //////////////////////////////////
-	
+
 	/**
 	 * add the welcome, logout button and browse button to the top panel
 	 */
 	private HBox setTitle() {
 		HBox title = new HBox();
 		title.setSpacing(200);
-		
+
 		//Welcome label
 		Label welcome = new Label("Welcome, " + control.getStudentName());
-						
+
 		//Log Out Button
 		Button logoutButton = new Button();
 		logoutButton.setText("Log Out");
 		logoutButton.setOnAction(e -> logout());
-				
+
 		//Browse Catalogue Button
 		Button browse = new Button();
 		browse.setText("Browse Catalogue");
 		browse.setOnAction(e -> browseCatalogue());
 		title.getChildren().addAll(welcome, browse, logoutButton);
 		title.setAlignment(Pos.CENTER);
-		
+
 		return title;
 	}
 	/**
@@ -429,42 +424,53 @@ public class MyGUI extends Application{
 	 * @return
 	 */
 	private VBox setLeftPanel() {
-		VBox leftPanel = new VBox();
-		leftPanel.setSpacing(10);
-		
+		VBox leftPanel = panelSetUp();
+
 		//View Courses search
-		Label courseLabel = new Label("View Course"); // later, add name of student here
-				
+		Label courseLabel = new Label("View Course");
+
 		HBox searchPanel = new HBox();
+		searchPanel.setAlignment(Pos.CENTER);
 		searchPanel.setSpacing(10);
 		TextField searchTag = new TextField("search for a course");
-		Button search = new Button();
-		search.setText("Search");
+		Button search = new Button("Search");
 		search.setOnAction(e -> activateSearch(searchTag));
 		searchPanel.getChildren().addAll(searchTag, search);
 		leftPanel.getChildren().addAll(courseLabel, searchPanel);
-				
+
 		return leftPanel;
 	}
+	/**
+	 * Set up that can be used for panels, such as the left and right ones in the courseDisplay
+	 * @return
+	 */
+	private VBox panelSetUp() {
+		VBox panel = new VBox();
+		panel.setSpacing(10);
+		panel.setMinWidth(width/2);
+		panel.setPadding(new Insets(20,20,20,20));
+		panel.setAlignment(Pos.TOP_CENTER);
+		return panel;
+	}
+
 	/**
 	 * add the schedule to the right panel
 	 * @return
 	 */
 	private VBox setRightPanel() {
-		VBox rightPanel = new VBox();
-		rightPanel.setSpacing(10);
-		
+		VBox rightPanel = panelSetUp();
+
 		//Schedule List
 		ListView<String> courseList = new ListView<>();
 		fillCourses(courseList);
-		courseList.setMaxWidth(150);
-		courseList.setMaxHeight(142);
-			
-						
+		courseList.setMaxWidth(width/2 - 100);
+		courseList.setMaxHeight(250);
+
+
 		//Schedule Display
 		Label schedule = new Label("Your Schedule");
 		rightPanel.getChildren().addAll(schedule, courseList);
-				
+
 		return rightPanel;
 	}
 	/**
@@ -476,13 +482,12 @@ public class MyGUI extends Application{
 	private HBox setPanels(VBox leftPanel, VBox rightPanel) {
 		HBox panels = new HBox();
 		panels.setPadding(new Insets(10,10,10,10));
-		panels.setSpacing(200);
 		panels.getChildren().addAll(leftPanel, rightPanel);
-		
+
 		return panels;
 	}
-	
-	
+
+
 	/**
 	 * Gets what the student has entered into log-in field, logs in student
 	 * @param inputID The textfield to input ID
@@ -496,7 +501,7 @@ public class MyGUI extends Application{
 			inputPass.clear();
 			control.login(id, password);
 			System.out.println("Passed control");
-			
+
 		}catch(NumberFormatException e) {
 			responseLabel.setText("Invalid username entered! Please enter a student ID!");
 		}catch(Exception e) {
@@ -509,9 +514,10 @@ public class MyGUI extends Application{
 	 * change the window to the student menu
 	 */
 	public void setStudentMenu() {
-		window.setScene(new Scene (studentMenu(), width, height));
+		Scene scene = new Scene(studentMenu(), width, height);
+		styleAndSwitch(scene);
 	}
-	
+
 	/**
 	 * Splits course name from string
 	 * @param courseName
@@ -527,7 +533,7 @@ public class MyGUI extends Application{
 			throw new Exception("Input in invalid format");
 		}
 	}
-	
+
 	/**
 	 * Splits course number from string
 	 * @param courseName
@@ -543,7 +549,7 @@ public class MyGUI extends Application{
 			throw new Exception("Input in invalid format");
 		}
 	}
-	
+
 	/**
 	 * Splits course offering from string
 	 * @param courseName
@@ -557,7 +563,7 @@ public class MyGUI extends Application{
 	 * Checks to see if the student is enrolled and unenrolls is they are, otherwise enrolls them in the course.
 	 */
 	private void changeCourseEnrollment() {
-		
+
 		if(control.checkEnrolment())
 		{
 			//Try un enrolling from the course
@@ -570,9 +576,9 @@ public class MyGUI extends Application{
 			{
 				//Make popup
 				makePopup("Error", e.getMessage());
-			}	
+			}
 		}
-			
+
 		else
 		{
 			//Try enrolling for the course
@@ -587,10 +593,11 @@ public class MyGUI extends Application{
 				makePopup("Error",e.getMessage());
 			}
 		}
-		
-		
-			
-		window.setScene(new Scene (studentMenu(), width, height));
+
+
+
+		Scene scene = new Scene (studentMenu(), width, height);
+		styleAndSwitch(scene);
 	}
 	/**
 	 * Gets the student's schedule from the controller and then fills a ListView in order
@@ -612,9 +619,9 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-		
+
 	}
-	
+
 	/**
 	 * based on clicking a course in your schedule, change the left side of the screen to display the information
 	 * @param value
@@ -631,35 +638,36 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-		
+
 		TextField course = new TextField();
 		course.setText(courseName + " " + courseNum);
 		int num = splitCOffering(value);
 		control.setOffering(num);
-		
-		window.setScene(new Scene(courseDisplay(course, num), width, height));
+
+		Scene scene = new Scene(courseDisplay(course, num), width, height);
+		styleAndSwitch(scene);
 	}
 
-	
+
 	/**
 	 * Window to display the course catalogue
 	 */
 	public void browseCatalogue() {
 		Stage catalogue = new Stage();
-		
+
 		catalogue.initModality((Modality.APPLICATION_MODAL));
 		catalogue.setTitle("Course Catalogue");
 		catalogue.setMinWidth(250);
-		
+
 		VBox layout = new VBox();
-		
+
 		layout.getChildren().addAll(buildTable());
-		
+
 		Scene scene = new Scene(layout);
+		scene.getStylesheets().add("dinos.css");
 		catalogue.setScene(scene);
 		catalogue.showAndWait();
-		
-		
+
 	}
 	/**
 	 * Build the course catalogue table
@@ -680,26 +688,30 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-			
-		
-		
+
+
+
 		TableView<CourseLite> table;
-		
+
 		TableColumn<CourseLite, String> nameCol = new TableColumn<>("Course");
 		nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-		
+
 		TableColumn<CourseLite, Integer> numberCol = new TableColumn<>("Number");
 		numberCol.setCellValueFactory(new PropertyValueFactory<>("number"));
-		
+
 		TableColumn<CourseLite, Integer> offeringsCol = new TableColumn<>("Number of Offerings");
 		offeringsCol.setCellValueFactory(new PropertyValueFactory<>("offeringCount"));
-		
-		table = new TableView<>();
-		table.setItems(courses);
+
+
+		table = new TableView<>(courses);
+		table.setMinWidth(width/2 - 100);
+		table.setMinHeight(height - 200);
+		numberCol.setMinWidth(table.getMinWidth()/2);
+		offeringsCol.setMinWidth(table.getMinWidth()/2);
 		table.getColumns().addAll(nameCol, numberCol, offeringsCol);
 		return table;
 	}
-	
+
 	/**
 	 * Change the offering based on lecture drop down
 	 * @param offering
@@ -715,12 +727,13 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-		
+
 		control.setOffering(num);
-		
-		window.setScene(new Scene(courseDisplay(courseName, num), width, height));
+
+		Scene scene = new Scene(courseDisplay(courseName, num), width, height);
+		styleAndSwitch(scene);
 	}
-	
+
 	/**
 	 * Log an admin in based on if the password is correct
 	 * @param inputPass Password inputted by user
@@ -732,7 +745,7 @@ public class MyGUI extends Application{
 			inputPass.clear();
 			control.login(0, password);
 			System.out.println("Passed control");
-			
+
 		}catch(NumberFormatException e) {
 			responseLabel.setText("Invalid username entered! Please enter a student ID!");
 		}catch(Exception e) {
@@ -740,15 +753,16 @@ public class MyGUI extends Application{
 			// Note: incomplete
 			responseLabel.setText(e.getMessage());
 		}
-		
+
 	}
 	/**
 	 * change the window to the administration menu
 	 */
 	public void setAdminMenu() {
-		window.setScene(new Scene(adminMenu(), width, height));
+		Scene scene = new Scene(adminMenu(), width, height);
+		styleAndSwitch(scene);
 	}
-	
+
 	/**
 	 * From admin, add course to the catalogue.
 	 * asks user for # of offerings, spots per offering, prerequisites
@@ -756,29 +770,29 @@ public class MyGUI extends Application{
 	 */
 	private void addCourseWindow() {
 		Stage newCourse = new Stage();
-		
+
 		newCourse.initModality((Modality.APPLICATION_MODAL));
 		newCourse.setTitle("Add New Course");
-		
+
 		VBox layout = new VBox();
 		layout.setPadding(new Insets(10,10,10,10));
 		layout.setSpacing(10);
 		layout.setAlignment(Pos.CENTER);
-		
+
 		//Course name
 		HBox codeBlock = new HBox();
 		codeBlock.setSpacing(10);
 		Label codeLabel = new Label("Course Code");
 		TextField codeText = new TextField();
 		codeBlock.getChildren().addAll(codeLabel, codeText);
-		
+
 		//number of offerings
 		HBox offeringsBlock = new HBox();
 		offeringsBlock.setSpacing(10);
 		Label offeringsLabel = new Label("Number of Offerings");
 		TextField offeringsText = new TextField();
 		offeringsBlock.getChildren().addAll(offeringsLabel, offeringsText);
-		
+
 		//number of spots per offering
 		HBox spotsBlock = new HBox();
 		spotsBlock.setSpacing(10);
@@ -786,33 +800,34 @@ public class MyGUI extends Application{
 		TextField spotsText = new TextField();
 		spotsBlock.getChildren().addAll(spotsLabel, spotsText);
 
-		
+
 		HBox first = new HBox();
 		first.setSpacing(10);
 		first.setAlignment(Pos.CENTER);
 		first.getChildren().add(codeBlock);
-		
+
 		HBox second = new HBox();
 		second.setSpacing(10);
 		second.setAlignment(Pos.CENTER);
 		second.getChildren().addAll(offeringsBlock, spotsBlock);
-		
+
 		Button commit = new Button("Commit");
 		commit.setOnAction(e -> addCourse(codeText, offeringsText, spotsText, newCourse));
-		
-		
+
+
 		layout.getChildren().addAll(first, second, commit);
-		
+
 		Scene scene = new Scene(layout);
+		scene.getStylesheets().add("dinos.css");
 		newCourse.setScene(scene);
 		newCourse.showAndWait();
-		
+
 	}
 	/**
 	 * Commit the new course to the catalogue
 	 */
 	private void addCourse(TextField course, TextField offering, TextField spot, Stage win) {
-		
+
 		try
 		{
 			String message = control.makeCourse(splitCName(course.getText()), splitCNumber(course.getText()), Integer.parseInt(offering.getText()), Integer.parseInt(spot.getText()));
@@ -822,21 +837,38 @@ public class MyGUI extends Application{
 		{
 			makePopup("Error", e.getMessage());
 		}
-		
-		window.setScene(new Scene(adminMenu(), width, height));
+
+		setAdminMenu();
 		win.close();
-		
+
 	}
-	
+
 	/**
 	 * change the screen based on searching for a new course
 	 * @param searchTag
 	 */
 	public void activateSearch(TextField searchTag) {
 		control.setOffering(1);
-		window.setScene(new Scene(courseDisplay(searchTag, 1), width, height));
+		Scene scene = new Scene(courseDisplay(searchTag, 1), width, height);
+		styleAndSwitch(scene);
+
 	}
-	
+	/**
+	 * make whichever scene passed adopt the style from dinos.css
+	 * @param scene
+	 */
+	public void styleAndSwitch(Scene scene) {
+		scene.getStylesheets().add("dinos.css");
+		window.setScene(scene);
+	}
+	/**
+	 * switch to admin login
+	 */
+	public void adminScene() {
+		Scene scene = new Scene(adminLogin(), width, height);
+		styleAndSwitch(scene);
+	}
+
 	/**
 	 * Makes a popup window
 	 * @param name
@@ -844,28 +876,28 @@ public class MyGUI extends Application{
 	 */
 	private void makePopup(String name, String text)
 	{
-		
+
 		Stage popUp = new Stage();
-		
+
 		//Male window
 		popUp.initModality(Modality.APPLICATION_MODAL);
 		popUp.setTitle(name);
 		popUp.setMinWidth(350);
 		popUp.setMinHeight(150);
-		
+
 		//Make the text label
 		Label label = new Label();
 		label.setText(text);
-		
+
 		//Make close button
 		Button closeButton = new Button("Close");
 		closeButton.setOnAction(e -> popUp.close());
-		
+
 		//Add to layout
 		VBox layout = new VBox(30);
 		layout.getChildren().addAll(label, closeButton);
 		layout.setAlignment(Pos.CENTER);
-		
+
 		//Make window
 		Scene scene = new Scene(layout);
 		popUp.setScene(scene);
