@@ -17,7 +17,7 @@ public class Controller {
 	private ClientPort clientPort;
 	
 	/**
-	 * 
+	 * Constructor for the controller
 	 * @param view
 	 */
 	public Controller(MyGUI view) {
@@ -80,23 +80,43 @@ public class Controller {
 		model.setSelectedCourse(c);
 	}
 	
+	/**
+	 * Getter for the selected courses name
+	 * @return the name
+	 */
 	public String getSelectedCourseName() {
 		return model.getSelectedCourseName();
 	}
 	
+	/**
+	 * Getter for the selected courses Spots
+	 * @return
+	 */
 	public String getSelectedCourseSpots() {
 		return model.getSelectedCourseSpots();
 	}
 	
-	
+	/**
+	 * Getter for the selected courses offerings
+	 * @return
+	 */
 	public int getSelectedCourseOfferings() {
 		return model.getSelectedCourse().getOfferingCount();
 	}
 	
+	/**
+	 * Getter for the selected course
+	 * @return
+	 */
 	public CourseLite getSelectedCourse() {
 		return model.getSelectedCourse();
 	}
 	
+	/**
+	 * Getter for the schedule
+	 * @return list of enrolled courses
+	 * @throws Exception if no courses are present
+	 */
 	public CourseLite[] getSchedule() throws Exception{
 
 		return clientPort.requestSchedule();
@@ -122,7 +142,6 @@ public class Controller {
 		
 	}
 	
-	
 	/**
 	 * Unenrolls student from selected course, 
 	 * updates the student's schedule.
@@ -140,7 +159,6 @@ public class Controller {
 			
 			String message = clientPort.makeCourse(name, num, offerings, spots);
 			return message;
-		
 	}
 	
 	/**
@@ -154,13 +172,13 @@ public class Controller {
 		return model.getCatalogue();
 	}
 	
-	
 	/**
 	 * Set the offering based on the drop down selection
 	 */
 	public void setOffering(int num) {
 		model.setSelectedOffering(num);
 	}
+	
 	/**
 	 * Check whether or not the student is enrolled in the course
 	 * @return

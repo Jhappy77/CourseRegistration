@@ -8,6 +8,9 @@ import java.util.ArrayList;
  */
 public class CourseCatalogue {
 	
+	/**
+	 * List of all the courses
+	 */
 	private ArrayList <Course> courseList;
 	
 	/**

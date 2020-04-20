@@ -14,7 +14,7 @@ import com.mysql.cj.jdbc.Driver;
  * A very basic implementation of a MySQL Database reader.
  * For ENSF 409, we had very limited knowledge of how databases worked,
  * so the database we created only stores information for courses, offerings, and students.
- * The information about registrations is simulated through the use of functions, for a real application 
+ * The information about registrations is simulated through the use of functions, for a real application
  * this would not be the case.
  * The database architecture is also basic- to improve this,
  * a database cache architecture could be implemented.
@@ -22,64 +22,76 @@ import com.mysql.cj.jdbc.Driver;
  */
 public class RealDB implements DBCredentials, DatabaseOperator{
 
-		// Local array lists
+		/**
+		 * List of students
+		 */
 		private ArrayList<Student> students;
+
+		/**
+		 * List of courses
+		 */
 		private ArrayList<Course> courses;
-		
-		
-//		public static void main(String [] args) {
-//			RealDB myApp = new RealDB();
-//			myApp.initializeConnection();
-//		}
-		
-		// Attributes
+
+		/**
+		 * Connection
+		 */
 		private Connection conn;
+
+		/**
+		 * Result set
+		 */
 		private ResultSet rs;
-		
+
+		/**
+		 * The constructor for the database
+		 */
 		public RealDB() {
 			students = new ArrayList<Student>();
 			courses = new ArrayList<Course>();
 		}
-		
+
 		/**
 		 * Loads the database and returns the filled Course Catalogue.
 		 * @return The course catalogue, filled with all courses & offerings
 		 */
 		public CourseCatalogue loadDatabase() {
 			initializeConnection();
-			
+
 			// Load from DB
 			readAllStudents();
 			readAllCourses();
-			
+
 			// Add all offerings for each course
 			for(Course co: courses) {
 				readOfferings(co);
 			}
-			
+
 			// Create course catalogue
 			CourseCatalogue c = new CourseCatalogue();
 			c.setCourseList(courses);
-			
+
 			// Simulate loading registrations from DB
 			try {
 				addSampleCoursesToStudents(c);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 			// Prints message to server about success
-			
+
 			printSuccessMessage(c);
-			
+
 			return c;
 		}
-		
+
+		/**
+		 * Prints how many courses and students were loaded
+		 * @param c the catalogue
+		 */
 		private void printSuccessMessage(CourseCatalogue c) {
 			System.out.println("Added " + c.getCourseCount() + " courses and " +
-					students.size() + " students from database."); 
+					students.size() + " students from database.");
 		}
-
 
 		/**
 		 * Initializes the connection with the MySQL Server via JDBC
@@ -131,7 +143,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
-		
+
 		/**
 		 * Inserts a course into the MySQL Database
 		 * @param subjCode Course name
@@ -151,7 +163,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
-		
+
 		/**
 		 * Inserts an offering into the MySQL Database
 		 * @param secNum Section number for offering
@@ -193,8 +205,8 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 ////				System.out.println("Table can NOT be created!");
 ////			}
 ////			System.out.println("Created table in given database...");
-////			
-////			
+////
+////
 ////			sql = "CREATE TABLE offerings" + "(id INTEGER PRIMARY KEY NOT NULL AUTO_INCREMENT, " + " secNum INTEGER, " +
 ////			" secCap INTEGER," + "courseID INTEGER)";
 ////
@@ -209,7 +221,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 ////			}
 ////			System.out.println("Created table in given database...");
 		}
-		
+
 		/**
 		 * Reads all students from database, stores them in the students arrayList
 		 */
@@ -229,8 +241,8 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
-		
-		
+
+
 		/**
 		 * Reads all courses from database, stores them in the courses arrayList
 		 */
@@ -250,8 +262,8 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
-		
-		
+
+
 		/**
 		 * Reads specific course from DB
 		 */
@@ -271,8 +283,8 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 			return null;
 		}
-		
-		
+
+
 		/**
 		 * Reads all offerings for a particular course from database, and them to that course.
 		 */
@@ -293,7 +305,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 				e.printStackTrace();
 			}
 		}
-		
+
 ////		/**
 ////		 * Creates a bunch of sample course offerings for the courses in
 ////		 * the array list. Only needs to be executed once.
@@ -326,9 +338,9 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 ////				i++;
 ////			}
 ////		}
-//		
+//
 ////		/**
-////		 * Inserts a bunch of test users into the students table. 
+////		 * Inserts a bunch of test users into the students table.
 ////		 * Only ever needs to be called once.
 ////		 */
 ////		private void insertSampleUsers() {
@@ -344,7 +356,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 ////			insertUserPreparedStatement(420420, "Taylor Noel", "I Suk");
 ////			insertUserPreparedStatement(300123, "Danny DeVito", "Hot");
 ////		}
-////		
+////
 ////		/**
 ////		 * Inserts a bunch of test courses into the courses table.
 ////		 * Only ever needs to be called once.
@@ -360,13 +372,13 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 ////			insertCoursePreparedStatement("ENCM", 369);
 ////			insertCoursePreparedStatement("ECON", 201);
 ////		}
-		
+
 		/**
 		 * Returns the student based on the id.
-		 * Since all the students are already stored in the students 
-		 * arrayList, no query is necessary. In the future, this 
+		 * Since all the students are already stored in the students
+		 * arrayList, no query is necessary. In the future, this
 		 * architecture should be improved and modified to fit a database
-		 * caching model. 
+		 * caching model.
 		 * @param id
 		 * @return The student
 		 */
@@ -377,8 +389,7 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 			return null;
 		}
-		
-		
+
 		/**
 		 * Simulates registering students in a bunch of courses.
 		 * @param cat Course catalogue
@@ -386,48 +397,48 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 		public void addSampleCoursesToStudents(CourseCatalogue cat) throws Exception {
 			int i = 0;
 			for(Student st:students) {
-				
+
 				if(true) {
 				CourseOffering co = cat.searchCatalogue("ENGG", 233).getCourseOfferingBySecNum(1);
 				if(co!=null) {
 					new Registration(st, co);
 				}}
-				
+
 				if(i%2==0) {
 					CourseOffering co = cat.searchCatalogue("MATH", 211).getCourseOfferingBySecNum(1);
 					if(co!=null) {
 						new Registration(st, co);
 					}
 				}
-				
+
 				if(i%2==1) {
 					CourseOffering co = cat.searchCatalogue("MATH", 211).getCourseOfferingBySecNum(2);
 					if(co!=null) {
 						new Registration(st, co);
 					}
 				}
-				
+
 				if(i%3==0) {
 					CourseOffering co = cat.searchCatalogue("ENSF", 409).getCourseOfferingBySecNum(1);
 					if(co!=null) {
 						new Registration(st, co);
 					}
 				}
-				
+
 				if(i%4==0) {
 					CourseOffering co = cat.searchCatalogue("ENGG", 202).getCourseOfferingBySecNum(1);
 					if(co!=null) {
 						new Registration(st, co);
 					}
 				}
-			
+
 				i++;
-				
+
 				if(st.getStudentName().contentEquals("Taylor Noel"))
 					new Registration(st, cat.searchCatalogue("SUCC", 69).getCourseOfferingBySecNum(1));
 			}
 		}
-		
+
 		/**
 		 * Saves a passed course to the database.
 		 */
@@ -445,5 +456,5 @@ public class RealDB implements DBCredentials, DatabaseOperator{
 			}
 		}
 
-	
+
 }

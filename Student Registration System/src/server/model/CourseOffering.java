@@ -41,6 +41,10 @@ public class CourseOffering {
 		return theCourse.getCourseName();
 	}
 	
+	/**
+	 * Getter for the course number
+	 * @return
+	 */
 	public int getCourseNum() {
 		return theCourse.getCourseNum();
 	}

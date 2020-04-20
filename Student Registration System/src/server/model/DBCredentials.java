@@ -1,5 +1,10 @@
 package server.model;
 
+/**
+ * Class to deal with the database credentials
+ * @author Joel Happ
+ *
+ */
 public interface DBCredentials {
 		
 	// JDBC driver name and database URL
