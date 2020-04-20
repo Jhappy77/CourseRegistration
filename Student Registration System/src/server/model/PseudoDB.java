@@ -58,14 +58,10 @@ public class PseudoDB implements DatabaseOperator{
 		c.addOffering(new CourseOffering(4, 150));
 		courseList.add(c);
 		
-		c= new Course("SUCC", 69);
-		c.addOffering(new CourseOffering(1, 69));
-		courseList.add(c);
-		
 		return courseList;
 	}
 	
-	
+
 	private void fillStudentArrayList() {
 		studentList.add(new Student("Timothy", 300769, "1234"));
 		studentList.add(new Student("Petrune", 300669, "1234"));
@@ -76,7 +72,6 @@ public class PseudoDB implements DatabaseOperator{
 		studentList.add(new Student("Moshi", 300777, "1234"));
 		studentList.add(new Student("Egbert", 300543, "1234"));
 		studentList.add(new Student("Zebulon", 300228, "1234"));
-		studentList.add(new Student("Taylor Noel", 420420, "I Suk"));
 	}
 	
 	/**
@@ -116,8 +111,6 @@ public class PseudoDB implements DatabaseOperator{
 		
 			i++;
 			
-			if(st.getStudentName().contentEquals("Taylor Noel"))
-				new Registration(st, cat.searchCatalogue("SUCC", 69).getCourseOfferingBySecNum(1));
 		}
 	}
 	
