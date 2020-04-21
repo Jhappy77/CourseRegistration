@@ -73,8 +73,8 @@ public class Server {
 
 		// You can comment & uncomment the following lines of code
 		// to switch between using the real database or the pseudo database.
-		//db = new PseudoDB();
-		db = new RealDB();
+		db = new PseudoDB();
+		//db = new RealDB();
 
 
 		catalogue = db.loadDatabase();

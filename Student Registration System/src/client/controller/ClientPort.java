@@ -12,7 +12,8 @@ import server.controller.PackageType;
 
 /**
  * Communicates through the port to the server app.
- * @author Jerome Gobeil + Joel Happ
+ * @author Jerome Gobeil
+ * @author Joel Happ
  */
 public class ClientPort {
 
