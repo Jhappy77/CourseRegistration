@@ -27,10 +27,12 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -53,7 +55,7 @@ Under "Resolution", choose "Accessible", and under "Rule Pattern", enter javafx/
  * ADMIN
  * 3. allow admin to create a new courses (# of offerings, spots per offering, prerequisites) // EVERYTHING WORKING EXCEPT ADDING PREREQS
  *
- * @author Taylor
+ * @author Taylor Noel
  *
  */
 public class MyGUI extends Application{
@@ -99,7 +101,7 @@ public class MyGUI extends Application{
 
 
 		System.out.println("Client Started");
-
+		primaryStage.getIcons().add(new Image("https://snipboard.io/KmQHnL.jpg"));
 
 		// Creates new reference to ClientApp (Controller)
 		control = new Controller(this);
@@ -683,13 +685,15 @@ public class MyGUI extends Application{
 		catalogue.initModality((Modality.APPLICATION_MODAL));
 		catalogue.setTitle("Course Catalogue");
 		catalogue.setMinWidth(250);
-
+		catalogue.getIcons().add(new Image("https://snipboard.io/KmQHnL.jpg"));
+	
 		VBox layout = new VBox();
 
 		layout.getChildren().addAll(buildTable());
 
 		Scene scene = new Scene(layout);
 		scene.getStylesheets().add("dinos.css");
+		 scene.setFill(Color.rgb(37,37,37));
 		catalogue.setScene(scene);
 		catalogue.showAndWait();
 
@@ -886,6 +890,7 @@ public class MyGUI extends Application{
 	 */
 	public void styleAndSwitch(Scene scene) {
 		scene.getStylesheets().add("dinos.css");
+		scene.setFill(Color.rgb(37,37,37));
 		window.setScene(scene);
 	}
 	/**
@@ -911,7 +916,7 @@ public class MyGUI extends Application{
 		popUp.setTitle(name);
 		popUp.setMinWidth(350);
 		popUp.setMinHeight(200);
-
+		popUp.getIcons().add(new Image("https://snipboard.io/KmQHnL.jpg"));
 		//Make the text label
 		Label label = new Label();
 		label.setText(text);

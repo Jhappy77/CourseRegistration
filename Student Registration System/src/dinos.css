@@ -1,5 +1,5 @@
 .root{
-  -fx-background-color: #383838;
+  -fx-background-color: linear-gradient(#383838, #25252B);
   -fx-font-size: 15pt;
 }
 .label{

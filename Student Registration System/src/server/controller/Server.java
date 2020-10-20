@@ -15,7 +15,7 @@ import server.model.RealDB;
 
 /**
  * Class will create and monitor a port. When a new client joins it will create a server app instance for them
- * @author Jerome Gobeil
+ * @author Jerome Gobeil and Joel Happ
  *
  */
 public class Server {

@@ -13,8 +13,12 @@
 /ClientApp.class
 /CourseLite.class
 /MyGUI.class
-/server/
-/dino.css
-/styler/
-/dinos.css
+/.classpath
+/.gitignore
+/.project
+/MyFrame
+/README.md
 /client/
+/dinos.css
+/server/
+/src/
